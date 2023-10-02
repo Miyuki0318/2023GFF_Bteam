@@ -1,0 +1,9 @@
+BaseCross/.vs/**/*
+BaseCross/Temp/Debug/**/*
+BaseCross/Temp/DirectXTX/Debug/
+BaseCross/Temp/Release/
+ReedMe.txt
+BaseCross/media/
+BaseCross/Temp/
+BaseCross/Debug/
+BaseCross/Release/
