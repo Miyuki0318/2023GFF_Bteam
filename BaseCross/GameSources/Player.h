@@ -14,6 +14,7 @@ namespace basecross
 		Vec3 m_rotation;
 		Vec2 m_velocity;
 		
+		float m_timeSpeed;
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
@@ -26,11 +27,12 @@ namespace basecross
 		{
 			m_position.zero();
 			m_rotation.zero();
-			m_velocity.zero();
+			m_velocity = Vec2(0.0f, 1.5f);
+			m_timeSpeed = 0.3f;
 			m_acsel = 0.0f;
 			m_speed = 10.0f;
 			m_gravity = -5.0f;
-			m_isAir = false;
+			m_isAir = true;
 		}
 
 		virtual ~Player() {}
@@ -45,9 +47,15 @@ namespace basecross
 		*/
 		void OnUpdate() override;
 
+		void OnPushA();
+
+		void OnReleaseA();
+
 		/*!
 		@brief Õ“Ë”»’è‚ª‹N‚«‚é“x‚ÉŒÄ‚Ño‚³‚ê‚éŠÖ”
 		*/
 		void OnCollisionExcute(shared_ptr<GameObject>& other) override;
+
+		void MovePlayer();
 	};
 }

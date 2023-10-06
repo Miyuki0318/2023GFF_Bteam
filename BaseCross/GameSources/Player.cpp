@@ -27,33 +27,55 @@ namespace basecross
 	void Player::OnUpdate()
 	{
 		// Aボタン入力があったら
-		if (Input::GetPushA())
+		Input::GetPushA() == true ? OnPushA() : Input::GetReleaseA() == true ? OnReleaseA() : 0;
+
+		// プレイヤーの移動関数
+		MovePlayer();
+
+		// デバッグ文字列
+		Debug::Log(L"pos : ", m_position);
+		Debug::Log(L"velo : ", m_velocity);
+		Debug::Log(L"acsel : ", m_acsel);
+		Debug::Log(L"isAir : ", m_isAir);
+	}
+
+
+
+	void Player::OnPushA()
+	{
+		m_timeSpeed = 0.05f;
+	}
+
+	void Player::OnReleaseA()
+	{
+		// メンバ変数の設定
+		m_isAir = true;
+		m_acsel = 5.0f;
+		m_timeSpeed = 1.0f;
+
+		// スティック入力を取得し移動ベクトルに保持
+		const Vec2& stick = Input::GetLStickValue();
+		if (stick.length() > 0.0f)
 		{
-			// メンバ変数の設定
-			m_isAir = true;
-			m_acsel = 5.0f;
-
-			// スティック入力を取得し移動ベクトルに保持
-			const Vec2& stick = Input::GetLStickValue();
-			if (stick.length() > 0.0f)
-			{
-				m_velocity = stick * 3.0f;
-			}
+			m_velocity = stick * 3.0f;
 		}
+	}
 
+	void Player::MovePlayer()
+	{
 		// トランスフォームの取得
 		auto ptrTrans = GetComponent<Transform>();
 
 		// 前フレームからのデルタタイムを取得
-		float deltaTime = App::GetApp()->GetElapsedTime();
+		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
 
 		// 現在の座標を取得
-		Vec2 pos;
-		pos.x = ptrTrans->GetPosition().x;
-		pos.y = ptrTrans->GetPosition().y;
+		m_position.x = ptrTrans->GetPosition().x;
+		m_position.y = ptrTrans->GetPosition().y;
 
 		// ポジションに移動ベクトルと速度と加速度とデルタタイムで掛けた数を加算
-		pos += -m_velocity * m_speed * m_acsel * deltaTime;
+		m_position.x += -m_velocity.x * m_speed * m_acsel * deltaTime;
+		m_position.y += -m_velocity.y * m_speed * m_acsel * deltaTime;
 
 		// 空中なら
 		if (m_isAir)
@@ -71,7 +93,7 @@ namespace basecross
 			decrease *= m_velocity.x > 0.0f ? 1.0f : -1.0f;
 
 			// X軸移動ベクトルが0.01より大きかったら(符号問わず)
-			if (m_velocity.x > 0.01f || m_velocity.x < -0.01f)
+			if (m_velocity.x > 0.1f || m_velocity.x < -0.1f)
 			{
 				// X軸移動ベクトルを減少量で減算
 				m_velocity.x -= decrease;
@@ -84,13 +106,7 @@ namespace basecross
 		}
 
 		// 座標の更新
-		ptrTrans->SetPosition(Vec3(pos.x, pos.y, 0.0f));
-
-		// デバッグ文字列
-		Debug::Log(L"pos : ", pos);
-		Debug::Log(L"velo : ", m_velocity);
-		Debug::Log(L"acsel : ", m_acsel);
-		Debug::Log(L"isAir : ", m_isAir);
+		ptrTrans->SetPosition(m_position);
 	}
 
 	// 地面に接地したら

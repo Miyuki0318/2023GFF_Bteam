@@ -17,6 +17,9 @@ namespace Input
 	bool GetPressA();
 	bool GetPressA(const int index);
 
+	bool GetReleaseA();
+	bool GetReleaseA(const int index);
+
 	Vec2 GetLStickValue();
 	Vec2 GetLStickValue(const int index);
 }

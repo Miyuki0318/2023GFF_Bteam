@@ -65,6 +65,26 @@ namespace Input
 		return false;
 	}
 
+	bool GetReleaseA()
+	{
+		if (GetPadConected())
+		{
+			return GetPad().wReleasedButtons & XINPUT_GAMEPAD_A;
+		}
+
+		return false;
+	}
+
+	bool GetReleaseA(const int index)
+	{
+		if (GetPadConected(index))
+		{
+			return GetPad(index).wReleasedButtons & XINPUT_GAMEPAD_A;
+		}
+
+		return false;
+	}
+
 	Vec2 GetLStickValue()
 	{
 		if (GetPadConected())
