@@ -5,13 +5,11 @@
 
 #pragma once
 
-
-#include "ProjectShader.h"
-#include "ProjectBehavior.h"
+#include "Params.h"
+#include "OzawaUtility.h"
+#include "DebugLog.h"
+#include "Input.h"
 #include "Scene.h"
 #include "GameStage.h"
-#include "Character.h"
 #include "Player.h"
-
-
-
+#include "Ground.h"
