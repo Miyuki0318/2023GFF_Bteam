@@ -33,8 +33,8 @@ namespace basecross
 
 	void GameStage::CreateViewLight() 
 	{
-		const Vec3 eye(0.0f, 15.0f, -75.0f);
-		const Vec3 at(0.0f, 15.0f, 0.0f);
+		const Vec3 eye(0.0f, 25.0f, -100.0f);
+		const Vec3 at(0.0f, 25.0f, 0.0f);
 		auto PtrView = CreateView<SingleView>();
 		// ビューのカメラの設定
 		auto PtrCamera = ObjectFactory::Create<Camera>();
@@ -50,7 +50,7 @@ namespace basecross
 	void GameStage::CreateGround()
 	{
 		AddGameObject<Player>();
-		AddGameObject<Ground>(Vec3(0.0f, -0.5f, 0.0f), Vec3(1000.0f, 1.0f, 10.0f));
+		AddGameObject<Ground>(Vec3(0.0f, -2.5f, 0.0f), Vec3(1000.0f, 5.0f, 10.0f));
 	}
 
 	void GameStage::OnCreate() 
@@ -87,6 +87,7 @@ namespace basecross
 
 		// デバック用文字列の表示非表示切り替え
 		const auto& debugStr = GetSharedObject(L"DebugString");
+		debugStr->SetDrawLayer(10);
 		debugStr->SetDrawActive(true);
 	}
 }

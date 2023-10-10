@@ -20,6 +20,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Input.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DebugSphere.h">
+      <Filter>DebugObject</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DebugObject.h">
+      <Filter>DebugObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
@@ -40,6 +46,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DebugSphere.cpp">
+      <Filter>DebugObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -56,6 +65,9 @@
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{e111a3b0-8abd-498d-8c10-e7d7d367997e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugObject">
+      <UniqueIdentifier>{e511a72f-dee7-46db-9104-69603f016977}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
