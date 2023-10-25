@@ -26,31 +26,87 @@ namespace basecross
 		// サウンドディレクトリパスの取得
 		const wstring soundPath = mediaPath + L"Sounds/";
 
-
-		// 地面のテクスチャの読み込み
-		app->RegisterTexture(L"GROUND", texturePath + L"Ground.png");
+		// 炎のテクスチャの読み込み
+		app->RegisterTexture(L"EFFECT", texturePath + L"Effect.png");
 	}
 
 	void GameStage::CreateViewLight() 
 	{
-		const Vec3 eye(0.0f, 25.0f, -100.0f);
-		const Vec3 at(0.0f, 25.0f, 0.0f);
-		auto PtrView = CreateView<SingleView>();
 		// ビューのカメラの設定
-		auto PtrCamera = ObjectFactory::Create<Camera>();
-		PtrView->SetCamera(PtrCamera);
-		PtrCamera->SetEye(eye);
-		PtrCamera->SetAt(at);
+		auto ptrCamera = ObjectFactory::Create<GameCamera>();
+		m_gameView = CreateView<SingleView>();
+		m_gameView->SetCamera(ptrCamera);
+
 		// マルチライトの作成
-		auto PtrMultiLight = CreateLight<MultiLight>();
-		// デフォルトのライティングを指定
-		PtrMultiLight->SetDefaultLighting();
+		auto ptrMultiLight = CreateLight<MultiLight>();
+		ptrMultiLight->SetDefaultLighting();
 	}
 
-	void GameStage::CreateGround()
+	void GameStage::CreatePlayer()
 	{
-		AddGameObject<Player>();
-		AddGameObject<Ground>(Vec3(0.0f, -2.5f, 0.0f), Vec3(1000.0f, 5.0f, 10.0f));
+		auto player = AddGameObject<Player>();
+		SetSharedGameObject(L"Player", player);
+		
+		const auto& gameCamera = dynamic_pointer_cast<GameCamera>(m_gameView->GetCamera());
+		gameCamera->SetTargetObject(player);
+	}
+
+	void GameStage::CreateStage()
+	{
+		const auto& data = CSVLoader::LoadFile("Test");
+
+		const float up = 22.5f;
+		const float left = -22.0f;
+		const float scale = 1.0f;
+
+		for (size_t i = 0; i < data.size(); i++)
+		{
+			for (size_t j = 0; j < data.at(i).size(); j++)
+			{
+				shared_ptr<CubeObject> ptr;
+				if (data.at(i).at(j) == "-1")
+				{
+					ptr = AddGameObject<Alpha>(Vec2(left + (j * scale), up - (i * scale)), scale);
+				}
+				if (data.at(i).at(j) == "1")
+				{
+					ptr = AddGameObject<Grass>(Vec2(left + (j * scale), up - (i * scale)), scale);
+				}
+				if (data.at(i).at(j) == "2")
+				{
+					ptr = AddGameObject<Dirt>(Vec2(left + (j * scale), up - (i * scale)), scale);
+				}
+				if (data.at(i).at(j) == "3")
+				{
+					ptr = AddGameObject<Rock>(Vec2(left + (j * scale), up - (i * scale)), scale);
+				}
+				if (data.at(i).at(j) == "4")
+				{
+					ptr = AddGameObject<SandStone>(Vec2(left + (j * scale), up - (i * scale)), scale);
+				}
+				if (data.at(i).at(j) == "20")
+				{
+					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Up);
+				}
+				if (data.at(i).at(j) == "21")
+				{
+					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Down);
+				}
+				if (data.at(i).at(j) == "22")
+				{
+					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Left);
+				}
+				if (data.at(i).at(j) == "23")
+				{
+					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Right);
+				}
+
+				if (ptr)
+				{
+					ptr->SetTarget(GetSharedGameObject<Player>(L"Player"));
+				}
+			}
+		}
 	}
 
 	void GameStage::OnCreate() 
@@ -69,12 +125,21 @@ namespace basecross
 			CreateViewLight();
 
 			// 地面の作成
-			CreateGround();
+			CreatePlayer();
+
+			// ステージ
+			CreateStage();
 		}
 		catch (...) 
 		{
 			throw;
 		}
+	}
+
+	void GameStage::OnUpdate()
+	{
+		const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
+		Debug::Log(L"FPS : ", fps);
 	}
 
 	void GameStage::OnDraw()

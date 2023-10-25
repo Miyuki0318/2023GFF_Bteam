@@ -9,13 +9,13 @@ namespace basecross
 		ptrTrans->SetPosition(m_position);
 		ptrTrans->SetScale(m_scale);
 
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-		ptrDraw->SetTextureResource(L"GROUND");
-		ptrDraw->SetOwnShadowActive(true);
+		//auto ptrDraw = AddComponent<PNTStaticDraw>();
+		//ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+		//ptrDraw->SetTextureResource(L"GROUND");
+		//ptrDraw->SetOwnShadowActive(true);
 
 		auto ptrColl = AddComponent<CollisionObb>();
-		ptrColl->SetDrawActive(true);
+		//ptrColl->SetDrawActive(true);
 		ptrColl->SetFixed(true);
 	}
 

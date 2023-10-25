@@ -1,19 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h">
       <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h">
-      <Filter>Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Params.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -26,20 +19,56 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugObject.h">
       <Filter>DebugObject</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h">
+      <Filter>DebugObject</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Block.h">
+      <Filter>Block</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Params.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Project.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h">
+      <Filter>Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Number.h">
+      <Filter>Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h">
+      <Filter>Billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h">
+      <Filter>Billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Gimmick.h">
+      <Filter>Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h">
+      <Filter>Gimmick\Spike</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
       <Filter>Stage</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp">
-      <Filter>Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
@@ -49,6 +78,45 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugSphere.cpp">
       <Filter>DebugObject</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp">
+      <Filter>DebugObject</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp">
+      <Filter>Block</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp">
+      <Filter>Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp">
+      <Filter>Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp">
+      <Filter>Billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp">
+      <Filter>Billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Gimmick.cpp">
+      <Filter>Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp">
+      <Filter>Gimmick\Spike</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -57,17 +125,41 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{453d3360-7746-4ddc-a524-8fdb64e77f89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ground">
-      <UniqueIdentifier>{207fb51b-b2ee-4173-a14c-653edf7943c6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Player">
       <UniqueIdentifier>{b7203f66-e17b-4fb0-b460-69899aaca174}</UniqueIdentifier>
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{e111a3b0-8abd-498d-8c10-e7d7d367997e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Block">
+      <UniqueIdentifier>{38e652ad-56e5-4df5-bf03-6767e5b2d1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{3db4cbc9-9e20-4a11-9f66-0634bdb12cd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{a3fbc840-37f9-4d31-a517-d54cc83c56e1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="DebugObject">
       <UniqueIdentifier>{e511a72f-dee7-46db-9104-69603f016977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sprite">
+      <UniqueIdentifier>{78f895cb-f76c-449d-a785-d6fe87f1592b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Billboard">
+      <UniqueIdentifier>{d3d1cc5f-1097-4d1d-909d-5d480bb921a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{3a59888d-8a81-4153-83df-2ab9ca37f373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick">
+      <UniqueIdentifier>{83d7ade7-08e1-4128-9a0f-771b302c419b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Spike">
+      <UniqueIdentifier>{eccd8bf9-88d2-4e76-96ab-1bdb93c3809b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{a7bf6690-ecd5-4bdb-905e-112c1f6684f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

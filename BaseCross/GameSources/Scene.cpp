@@ -25,6 +25,29 @@ namespace basecross{
 
 		// 白塗りテクスチャ
 		app->RegisterTexture(L"WHITE", texturePath + L"White.png");
+
+
+		// モデルディレクトリパス
+		const wstring modelPath = mediaPath + L"Models/";
+
+		// 草ブロックモデル
+		RegisterSingleMesh(L"GRASS", modelPath + L"Grass/", L"Grass", false);
+
+		// 土ブロックモデル
+		RegisterSingleMesh(L"DIRT", modelPath + L"Dirt/", L"Dirt", false);
+
+		// 岩ブロックモデル
+		RegisterSingleMesh(L"ROCK", modelPath + L"Rock/", L"Rock", false);
+
+		// 砂岩ブロックモデル
+		RegisterSingleMesh(L"SANDSTONE", modelPath + L"SandStone/", L"Sandstone", false);
+
+		// スパイクモデル
+		RegisterSingleMesh(L"SPIKE", modelPath, L"Spike", false);
+
+		// ロボットモデル
+		RegisterSingleMesh(L"ROBOT_BODY", modelPath + L"Robot/", L"Robot_Body", true);
+		RegisterMultiMesh(L"ROBOT_ARM", modelPath + L"Robot/", L"Robot_Arm", true);
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)
@@ -61,10 +84,12 @@ namespace basecross{
 	{
 		try 
 		{
-			//クリアする色を設定
-			Col4 Col;
-			Col.set(31.0f / 255.0f, 30.0f / 255.0f, 71.0f / 255.0f, 255.0f / 255.0f);
-			SetClearColor(Col);
+			// リソースの読み込み
+			CreateResourses();
+
+			// クリアする色を設定
+			SetClearColor(Col4(160.0f / 256.0f, 216.0f / 256.0f, 239.0f / 256.0f, 1.0));
+
 			//自分自身にイベントを送る
 			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
 			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"GameStage");

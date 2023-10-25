@@ -14,16 +14,24 @@ namespace basecross
 		Vec3 m_position;
 		Vec3 m_rotation;
 		Vec2 m_velocity;
-		
+		const Vec2 m_deffVelo;
+		Mat4x4 m_bodyMat;
+		Mat4x4 m_armMat;
+
+		weak_ptr<DebugObject> m_arm;
+		weak_ptr<Billboard> m_effect;
 		vector<weak_ptr<DebugSphere>> m_aligment;
 
 		const float m_maxAcsel;
+		const float m_slowTime;
+		const float m_normalTime;
 
 		float m_timeSpeed;
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
 		bool m_isAir;
+		bool m_firePossible;
 
 	public:
 
@@ -33,16 +41,33 @@ namespace basecross
 		*/
 		Player(const shared_ptr<Stage>& stagePtr) :
 			GameObject(stagePtr),
-			m_maxAcsel(5.0f)
+			m_maxAcsel(5.0f),
+			m_slowTime(0.1f),
+			m_normalTime(2.0f),
+			m_deffVelo(0.0f, -1.0f)
 		{
 			m_position.zero();
 			m_rotation.zero();
-			m_velocity = Vec2(0.0f, 1.5f);
+			m_velocity = m_deffVelo;
 			m_timeSpeed = 0.3f;
 			m_acsel = 0.0f;
-			m_speed = 10.0f;
+			m_speed = 3.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
+			m_firePossible = true;
+
+			m_bodyMat.affineTransformation(
+				Vec3(1.0f),
+				Vec3(0.0f),
+				Vec3(0.0f, -XM_PIDIV2, 0.0f),
+				Vec3(0.0f, -0.65f, 0.0f)
+			);
+			m_armMat.affineTransformation(
+				Vec3(1.0f),
+				Vec3(0.0f),
+				Vec3(0.0f, -XM_PIDIV2, 0.0f),
+				Vec3(0.0f, -1.05f, 0.0f)
+			);
 		}
 
 		/*!
@@ -81,10 +106,46 @@ namespace basecross
 		void OnCollisionExcute(shared_ptr<GameObject>& other) override;
 
 		/*!
+		@brief 衝突されなくなったら呼び出される関数
+		*/
+		void OnCollisionExit(shared_ptr<GameObject>& other) override;
+
+		/*!
 		@brief プレイヤーの移動関数
 		*/
 		void MovePlayer();
 
-		void AligmentRotate();
+		/*!
+		@brief プレイヤーの移動量減少関数
+		*/
+		void MoveReduction();
+
+		/*!
+		@brief プレイヤーの回転関数
+		*/
+		void RotatePlayer();
+
+		/*!
+		@brief エアショックの軌道描画関数
+		*/
+		void RotateAligment();
+
+		/*!
+		@brief アニメーション更新関数
+		*/
+		void AnimationUpdate();
+
+		/*!
+		@brief エフェクト描画関数
+		*/
+		void EffectUpdate();
+
+		void BlockEnter(shared_ptr<GameObject>& block);
+
+		void BlockExcute(shared_ptr<GameObject>& block);
+
+		void BlockExit(shared_ptr<GameObject>& block);
+
+		void SpikeEnter(shared_ptr<GameObject>& obj);
 	};
 }
