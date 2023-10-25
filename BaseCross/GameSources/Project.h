@@ -22,5 +22,6 @@
 #include "CubeObject.h"
 #include "Gimmick.h"
 #include "Spike.h"
+#include "Enemy.h"
 #include "Player.h"
 #include "Block.h"

@@ -61,6 +61,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h">
       <Filter>Gimmick\Spike</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
