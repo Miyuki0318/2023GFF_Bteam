@@ -49,8 +49,8 @@ namespace basecross
 			m_position.zero();
 			m_rotation.zero();
 			m_velocity = m_deffVelo;
-			m_timeSpeed = 0.3f;
-			m_acsel = 0.0f;
+			m_timeSpeed = m_normalTime;
+			m_acsel = 1.0f;
 			m_speed = 3.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
