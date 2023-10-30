@@ -3,22 +3,21 @@
 
 namespace basecross
 {
-	void CubeObject::OnCreate()
+	void Enemy::OnCreate()
 	{
 		SetPosition(m_position);
 		SetRotation(m_rotation);
 		SetScale(m_scale);
 
-		auto ptrColl = AddComponent<CollisionObb>();
-		ptrColl->SetFixed(true);
+		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetUpdateActive(false);
 
 		SetAlphaActive(true);
 	}
 
-	void CubeObject::OnUpdate()
+	void Enemy::OnUpdate()
 	{
-		auto ptrColl = GetComponent<CollisionObb>();
+		auto ptrColl = GetComponent<CollisionSphere>();
 
 		if (m_targetObj.lock())
 		{
@@ -28,7 +27,6 @@ namespace basecross
 
 			float length = (targetPos - pos).length();
 			ptrColl->SetUpdateActive(length <= m_scale.x * m_collRange);
-			SetDrawActive(length <= 50.0f);
 		}
 		else
 		{

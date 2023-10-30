@@ -213,7 +213,7 @@ namespace Utility
 	@brief シンプルな頂点データと頂点インデックスを作成
 	@param (vertex) 頂点データと頂点インデックス構造体
 	*/
-	void SimpleVerticesIndices(Params::VertexData& vertex);
+	void SimpleVerticesIndices(VertexData& vertex);
 
 	/*!
 	@brief シンプルな頂点データと頂点インデックスを作成
@@ -229,7 +229,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (color) 固定色
 	*/
-	void SimpleVerticesIndices(Params::VertexData& vertex, const Col4& color);
+	void SimpleVerticesIndices(VertexData& vertex, const Col4& color);
 
 	/*!
 	@brief 数字用頂点データと頂点インデックスを作成
@@ -244,7 +244,7 @@ namespace Utility
 	@param (vertex) 頂点データと頂点インデックス構造体
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(Params::VertexData& vertex, const int number);
+	void NumberVerticesIndices(VertexData& vertex, const int number);
 
 	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)

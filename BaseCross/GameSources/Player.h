@@ -11,6 +11,10 @@ namespace basecross
 {
 	class Player : public GameObject
 	{
+		shared_ptr<Transform> m_ptrTrans;
+		shared_ptr<PNTBoneModelDraw> m_bodyDraw;
+		shared_ptr<PNTBoneModelDraw> m_armDraw;
+
 		Vec3 m_position;
 		Vec3 m_rotation;
 		Vec2 m_velocity;
@@ -23,6 +27,7 @@ namespace basecross
 		vector<weak_ptr<DebugSphere>> m_aligment;
 
 		const float m_maxAcsel;
+		const float m_damageAcsel;
 		const float m_slowTime;
 		const float m_normalTime;
 
@@ -42,6 +47,7 @@ namespace basecross
 		Player(const shared_ptr<Stage>& stagePtr) :
 			GameObject(stagePtr),
 			m_maxAcsel(5.0f),
+			m_damageAcsel(3.0f),
 			m_slowTime(0.1f),
 			m_normalTime(2.0f),
 			m_deffVelo(0.0f, -1.0f)
@@ -146,6 +152,18 @@ namespace basecross
 
 		void BlockExit(shared_ptr<GameObject>& block);
 
-		void SpikeEnter(shared_ptr<GameObject>& obj);
+		void SpikeEnter(shared_ptr<GameObject>& spike);
+
+		void SpikeExcute(shared_ptr<GameObject>& spike);
+
+		void DamageKnockBack(const Vec2& velocity);
+
+		bool CollHitUpper(const Vec3& position, const Vec3& helfScale);
+
+		bool CollHitUnder(const Vec3& position, const Vec3& helfScale);
+
+		bool CollHitLeft(const Vec3& position, const Vec3& helfScale);
+
+		bool CollHitRight(const Vec3& position, const Vec3& helfScale);
 	};
 }

@@ -37,15 +37,4 @@ namespace Params {
 			scale = sc;
 		}
 	};
-
-	/*!
-	@brief 頂点データ
-	@param vertices
-	@param indices
-	*/
-	struct VertexData
-	{
-		vector<VertexPositionColorTexture> vertices; // 頂点
-		vector<uint16_t> indices; // インデックス
-	};
 }

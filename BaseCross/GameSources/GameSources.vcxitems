@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h" />
@@ -39,11 +40,13 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugSphere.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameCamera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gimmick.cpp" />

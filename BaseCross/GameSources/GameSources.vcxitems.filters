@@ -64,6 +64,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
       <Filter>Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h">
+      <Filter>Bird</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
@@ -120,6 +123,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp">
       <Filter>Gimmick\Spike</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp">
+      <Filter>Bird</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -163,6 +172,9 @@
     </Filter>
     <Filter Include="Enemy">
       <UniqueIdentifier>{a7bf6690-ecd5-4bdb-905e-112c1f6684f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bird">
+      <UniqueIdentifier>{3a9dbf15-8d60-4ba1-9c4c-ebaac0ba2577}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

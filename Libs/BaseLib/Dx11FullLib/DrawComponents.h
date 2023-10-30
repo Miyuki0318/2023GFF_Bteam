@@ -5,7 +5,6 @@
 */
 #pragma once
 #include "stdafx.h"
-#include "Params.h"
 
 namespace basecross {
 
@@ -956,7 +955,7 @@ namespace basecross {
 		*/
 		//--------------------------------------------------------------------------------------
 		explicit PCTSpriteDraw(const shared_ptr<GameObject>& GameObjectPtr,
-			Params::VertexData& Vertex);
+			VertexData& Vertex);
 		//--------------------------------------------------------------------------------------
 		/*!
 		@brief	デストラクタ
@@ -1933,7 +1932,7 @@ namespace basecross {
 		@param[in]	Vertex	頂点とインデックスの配列
 		*/
 		//--------------------------------------------------------------------------------------
-		void CreateOriginalMesh(Params::VertexData& Vertex);
+		void CreateOriginalMesh(VertexData& Vertex);
 		//--------------------------------------------------------------------------------------
 		/*!
 		@brief	オリジナルメッシュの頂点バッファを変更する

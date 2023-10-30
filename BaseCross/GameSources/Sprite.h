@@ -23,7 +23,7 @@ namespace basecross
 		Col4 m_emissiveColor;			// エミッシブ色
 		wstring m_texWstr;				// テクスチャキー
 
-		Params::VertexData m_vertex;	// 頂点データ
+		VertexData m_vertex;	// 頂点データ
 
 	public:
 

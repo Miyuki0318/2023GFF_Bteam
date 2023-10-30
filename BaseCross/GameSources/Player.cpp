@@ -14,27 +14,27 @@ namespace basecross
 		m_arm = GetStage()->AddGameObject<DebugObject>();
 
 		// トランスフォームの設定
-		auto ptrTrans = GetComponent<Transform>();
-		ptrTrans->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
-		ptrTrans->SetScale(Vec3(1.0f));
+		m_ptrTrans = GetComponent<Transform>();
+		m_ptrTrans->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
+		m_ptrTrans->SetScale(Vec3(1.0f));
 		
 		m_arm.lock()->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
 		m_arm.lock()->SetScale(Vec3(1.0f));
 
 		// 描画の設定
-		auto ptrDraw = AddComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMeshResource(L"ROBOT_BODY");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
-		ptrDraw->AddAnimation(L"WALK", 0, 60, true);
-		ptrDraw->AddAnimation(L"DAMAGE", 180, 30, false);
-		ptrDraw->ChangeCurrentAnimation(L"WALK");
+		m_bodyDraw = AddComponent<PNTBoneModelDraw>();
+		m_bodyDraw->SetMeshResource(L"ROBOT_BODY");
+		m_bodyDraw->SetMeshToTransformMatrix(m_bodyMat);
+		m_bodyDraw->AddAnimation(L"WALK", 0, 60, true);
+		m_bodyDraw->AddAnimation(L"DAMAGE", 180, 30, false);
+		m_bodyDraw->ChangeCurrentAnimation(L"WALK");
 
-		auto armDraw = m_arm.lock()->AddComponent<PNTBoneModelDraw>();
-		armDraw->SetMultiMeshResource(L"ROBOT_ARM");
-		armDraw->SetMeshToTransformMatrix(m_armMat);
-		armDraw->AddAnimation(L"WALK", 0, 60, true);
-		armDraw->AddAnimation(L"FIRE", 120, 30, false);
-		armDraw->ChangeCurrentAnimation(L"WALK");
+		m_armDraw = m_arm.lock()->AddComponent<PNTBoneModelDraw>();
+		m_armDraw->SetMultiMeshResource(L"ROBOT_ARM");
+		m_armDraw->SetMeshToTransformMatrix(m_armMat);
+		m_armDraw->AddAnimation(L"WALK", 0, 60, true);
+		m_armDraw->AddAnimation(L"FIRE", 120, 30, false);
+		m_armDraw->ChangeCurrentAnimation(L"WALK");
 
 		// コリジョンの設定
 		auto ptrColl = AddComponent<CollisionSphere>();
@@ -87,7 +87,8 @@ namespace basecross
 		Debug::Log(L"pos : ", m_position);
 		Debug::Log(L"velo : ", m_velocity);
 		Debug::Log(L"acsel : ", m_acsel);
-		Debug::Log(L"isAir : ", m_isAir);
+		Debug::Log(m_isAir != false ? L"空中" : L"接地");
+		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
 
 	// Aボタン押した時
@@ -116,8 +117,7 @@ namespace basecross
 		m_velocity = (stick.length() > 0.0f ? stick.round(1) : m_deffVelo) * 3.0f;
 		
 		// 腕のアニメーションを変更
-		auto arm = m_arm.lock()->GetComponent<PNTBoneModelDraw>();
-		arm->ChangeCurrentAnimation(L"FIRE");
+		m_armDraw->ChangeCurrentAnimation(L"FIRE");
 
 		// 照準を非表示にする
 		for (const auto& aligment : m_aligment)
@@ -147,6 +147,10 @@ namespace basecross
 		{
 			BlockExcute(other);
 		}
+		if (other->FindTag(L"Spike"))
+		{
+			SpikeExcute(other);
+		}
 	}
 
 	// コリジョンから離れたら
@@ -161,27 +165,23 @@ namespace basecross
 	// 移動関数
 	void Player::MovePlayer()
 	{
-		// トランスフォームの取得
-		auto ptrTrans = GetComponent<Transform>();
-
 		// 前フレームからのデルタタイムを取得
 		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
 
 		// 現在の座標を取得
-		m_position.x = ptrTrans->GetPosition().x;
-		m_position.y = ptrTrans->GetPosition().y;
+		m_position.x = m_ptrTrans->GetPosition().x;
+		m_position.y = m_ptrTrans->GetPosition().y;
 
 		// ポジションに移動ベクトルと速度と加速度とデルタタイムで掛けた数を加算
 		m_position.x += -m_velocity.x * m_speed * m_acsel * deltaTime;
 		m_position.y += -m_velocity.y * m_speed * m_acsel * deltaTime;
 
 		// 座標の更新
-		ptrTrans->SetPosition(m_position);
+		m_ptrTrans->SetPosition(m_position);
 
 		// 腕の座標の更新(腕と胴のモデルマトリクスのポジションy軸の差分をポジションから差し引く)
 		Vec3 pos = m_position;
-		auto body = GetComponent<PNTBoneModelDraw>();
-		auto& bone = body->GetVecLocalBones();
+		auto& bone = m_bodyDraw->GetVecLocalBones();
 		pos.y -= (m_armMat.getMajor3().y - m_bodyMat.getMajor3().y) - bone.at(1).getTranslation().y;
 		m_arm.lock()->SetPosition(pos);
 	}
@@ -244,8 +244,7 @@ namespace basecross
 		}
 
 		// ローテーションの更新
-		auto ptrTrans = GetComponent<Transform>();
-		ptrTrans->SetRotation(Vec3(0.0f, body, 0.0f));
+		m_ptrTrans->SetRotation(Vec3(0.0f, body, 0.0f));
 		m_arm.lock()->SetRotation(Vec3(0.0f, 0.0f, arm));
 	}
 
@@ -272,26 +271,22 @@ namespace basecross
 	// アニメーションの更新
 	void Player::AnimationUpdate()
 	{
-		// 胴と腕の描画コンポーネントの取得
-		auto body = GetComponent<PNTBoneModelDraw>();
-		auto arm = m_arm.lock()->GetComponent<PNTBoneModelDraw>();
-
 		// 前フレームからのデルタタイムにゲームスピードを掛けた数を取得
 		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
 
 		// アニメーションが終わってたら待機状態にする
-		if (body->IsTargetAnimeEnd())
+		if (m_bodyDraw->IsTargetAnimeEnd())
 		{
-			body->ChangeCurrentAnimation(L"WALK");
+			m_bodyDraw->ChangeCurrentAnimation(L"WALK");
 		}
-		if (arm->IsTargetAnimeEnd())
+		if (m_armDraw->IsTargetAnimeEnd())
 		{
-			arm->ChangeCurrentAnimation(L"WALK");
+			m_armDraw->ChangeCurrentAnimation(L"WALK");
 		}
 
 		// アニメーションの更新
-		body->UpdateAnimation(deltaTime);
-		arm->UpdateAnimation(deltaTime);
+		m_bodyDraw->UpdateAnimation(deltaTime);
+		m_armDraw->UpdateAnimation(deltaTime);
 	}
 
 	// エフェクトの更新
@@ -312,19 +307,13 @@ namespace basecross
 	// ブロックに衝突した瞬間
 	void Player::BlockEnter(shared_ptr<GameObject>& block)
 	{
-		// 自身とブロックのトランスフォームの取得
-		auto ptrTrans = GetComponent<Transform>();
+		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
-
-		// 座標の取得
-		Vec3 pos = ptrTrans->GetPosition();
 		Vec3 objPos = objTrans->GetPosition();
-
-		// ブロックのスケールの半分
-		float helf = objTrans->GetScale().x / 2.0f;
+		Vec3 helf = objTrans->GetScale() / 2.0f;
 
 		// コリジョンに対して上から衝突
-		if (pos.y > objPos.y && ((pos.y - objPos.y) >= helf))
+		if (CollHitUpper(objPos, helf))
 		{
 			// エアショック使用可能にする
 			m_firePossible = true;
@@ -343,22 +332,22 @@ namespace basecross
 		}
 
 		// 下から衝突
-		if (pos.y < objPos.y && ((pos.y - objPos.y) <= -helf))
+		if (CollHitUnder(objPos, helf))
 		{
+			// 移動量が上方向なら
 			if (m_velocity.y < 0.0f)
 			{
+				// 反転させ、落下させる
 				m_velocity.y *= -1.0f;
 			}
 			return;
 		}
 
 		// 横から衝突
-		if (((pos.y - objPos.y) < helf) && ((pos.y - objPos.y) > -helf))
+		if (CollHitLeft(objPos, helf) || CollHitRight(objPos, helf))
 		{
-			if (((pos.x - objPos.x) < helf) || ((pos.x - objPos.x) > -helf))
-			{
-				m_velocity.x *= -0.5f;
-			}
+			// 移動量を半減しつつ反転させる
+			m_velocity.x *= -0.5f;
 			return;
 		}
 	}
@@ -366,19 +355,13 @@ namespace basecross
 	// ブロックに衝突し続けたら
 	void Player::BlockExcute(shared_ptr<GameObject>& block)
 	{
-		// 自身とブロックのトランスフォームの取得
-		auto ptrTrans = GetComponent<Transform>();
+		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
-
-		// 座標の取得
-		Vec3 pos = ptrTrans->GetPosition();
 		Vec3 objPos = objTrans->GetPosition();
-
-		// ブロックのスケールの半分
-		float helf = objTrans->GetScale().x / 2.0f;
+		Vec3 helf = objTrans->GetScale() / 2.0f;
 
 		// コリジョンに対して上から衝突
-		if (pos.y > objPos.y && ((pos.y - objPos.y) >= helf))
+		if (CollHitUpper(objPos, helf))
 		{
 			// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
 			m_velocity.y = 0.0f;
@@ -397,48 +380,115 @@ namespace basecross
 	// スパイクとの衝突した瞬間
 	void Player::SpikeEnter(shared_ptr<GameObject>& obj)
 	{
-		// 時間速度を通常速度で上書き
-		m_timeSpeed = m_normalTime;
-
-		// 軌道の表示をオフ
-		for (const auto& aligment : m_aligment)
-		{
-			aligment.lock()->SetDrawActive(false);
-		}
-
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
+
+		// パラメータの取得
+		Vec3 spikePos = spike->GetPosition();
+		Vec3 helfScale = spike->GetScale() / 2.0f;
 
 		// スパイクの方向に応じて処理
 		const auto& angle = spike->GetAngle();
 		switch (angle)
 		{
 		case Gimmick::Up:
-			m_firePossible = false;
-			m_velocity = Vec2(0.9f, -1.0f);
-			m_acsel = 3.0f;
-			break;
-
-		case Gimmick::Down:
-			m_firePossible = false;
-			m_velocity = Vec2(0.9f, 1.0f);
-			m_acsel = 3.0f;
+			if (CollHitUpper(spikePos, helfScale) || CollHitLeft(spikePos, helfScale) || CollHitRight(spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(0.9f, -1.0f));
+			}
+			if (CollHitUnder(spikePos, helfScale))
+			{
+				BlockEnter(obj);
+			}
 			break;
 
 		case Gimmick::Left:
-			m_firePossible = false;
-			m_velocity = Vec2(1.5f, -0.5f);
-			m_acsel = 3.0f;
+			if (CollHitLeft(spikePos, helfScale) || CollHitUpper(spikePos, helfScale) || CollHitUnder(spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(1.5f, -0.5f));
+			}
+			if (CollHitRight(spikePos, helfScale))
+			{
+				BlockEnter(obj);
+			}
 			break;
 
 		case Gimmick::Right:
-			m_firePossible = false;
-			m_velocity = Vec2(-1.5f, -0.5f);
-			m_acsel = 3.0f;
+			if (CollHitRight(spikePos, helfScale) || CollHitUpper(spikePos, helfScale) || CollHitUnder(spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(-1.5f, -0.5f));
+			}
+			if (CollHitLeft(spikePos, helfScale))
+			{
+				BlockEnter(obj);
+			}
 			break;
 
 		default:
 			break;
 		}
+	}
+
+	void Player::SpikeExcute(shared_ptr<GameObject>& obj)
+	{
+		// スパイクオブジェクトにキャスト
+		const auto& spike = dynamic_pointer_cast<Spike>(obj);
+
+		// パラメータの取得
+		Vec3 spikePos = spike->GetPosition();
+		Vec3 helfScale = spike->GetScale() / 2.0f;
+
+		// スパイクの方向に応じて処理
+		const auto& angle = spike->GetAngle();
+		switch (angle)
+		{
+		case Gimmick::Down:
+			if (CollHitUpper(spikePos, helfScale))
+			{
+				m_firePossible = true;
+				BlockExcute(obj);
+			}
+			break;
+			
+		default:
+			break;
+		}
+	}
+
+	void Player::DamageKnockBack(const Vec2& velocity)
+	{
+		// 時間速度を通常速度で上書き
+		m_timeSpeed = m_normalTime;
+		m_firePossible = false;
+		m_velocity = velocity;
+		m_acsel = m_damageAcsel;
+
+		// 軌道の表示をオフ
+		for (const auto& aligment : m_aligment)
+		{
+			aligment.lock()->SetDrawActive(false);
+		}
+	}
+
+	bool Player::CollHitUpper(const Vec3& position, const Vec3& helfScale)
+	{
+		return m_position.y > position.y && ((m_position.y - position.y) >= helfScale.y);
+	}
+
+	bool Player::CollHitUnder(const Vec3& position, const Vec3& helfScale)
+	{
+		return m_position.y < position.y && ((m_position.y - position.y) <= -helfScale.y);
+	}
+
+	bool Player::CollHitLeft(const Vec3& position, const Vec3& helfScale)
+	{
+		return ((m_position.y - position.y) < helfScale.y && (m_position.y - position.y) > -helfScale.y)
+			&& ((m_position.x - position.x) < helfScale.x);
+	}
+
+	bool Player::CollHitRight(const Vec3& position, const Vec3& helfScale)
+	{
+		return ((m_position.y - position.y) < helfScale.y && (m_position.y - position.y) > -helfScale.y)
+			&& ((m_position.x - position.x) > -helfScale.x);
 	}
 }
