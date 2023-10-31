@@ -48,6 +48,9 @@ namespace basecross{
 		// ロボットモデル
 		RegisterSingleMesh(L"ROBOT_BODY", modelPath + L"Robot/", L"Robot_Body", true);
 		RegisterMultiMesh(L"ROBOT_ARM", modelPath + L"Robot/", L"Robot_Arm", true);
+
+		// 鳥モデル
+		RegisterSingleMesh(L"BIRD", modelPath + L"Bird/", L"Bird", true);
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)

@@ -123,9 +123,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp">
       <Filter>Gimmick\Spike</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp">
       <Filter>Bird</Filter>
     </ClCompile>

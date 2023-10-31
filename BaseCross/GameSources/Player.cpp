@@ -136,10 +136,13 @@ namespace basecross
 		{
 			BlockEnter(other);
 		}
-
 		if (other->FindTag(L"Spike"))
 		{
 			SpikeEnter(other);
+		}
+		if (other->FindTag(L"Bird"))
+		{
+			BirdEnter(other);
 		}
 	}
 
@@ -308,7 +311,7 @@ namespace basecross
 	}
 
 	// ブロックに衝突した瞬間
-	void Player::BlockEnter(shared_ptr<GameObject>& block)
+	void Player::BlockEnter(const shared_ptr<GameObject>& block)
 	{
 		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
@@ -356,7 +359,7 @@ namespace basecross
 	}
 
 	// ブロックに衝突し続けたら
-	void Player::BlockExcute(shared_ptr<GameObject>& block)
+	void Player::BlockExcute(const shared_ptr<GameObject>& block)
 	{
 		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
@@ -374,14 +377,14 @@ namespace basecross
 	}
 
 	// ブロックとの衝突が無くなったら
-	void Player::BlockExit(shared_ptr<GameObject>& block)
+	void Player::BlockExit(const shared_ptr<GameObject>& block)
 	{
 		// 接地フラグを解除
 		m_isAir = true;
 	}
 
 	// スパイクとの衝突した瞬間
-	void Player::SpikeEnter(shared_ptr<GameObject>& obj)
+	void Player::SpikeEnter(const shared_ptr<GameObject>& obj)
 	{
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
@@ -400,6 +403,17 @@ namespace basecross
 				DamageKnockBack(Vec2(0.9f, -1.0f));
 			}
 			if (CollHitUnder(spikePos, helfScale))
+			{
+				BlockEnter(obj);
+			}
+			break;
+
+		case Gimmick::Down:
+			if (CollHitUnder(spikePos, helfScale) || CollHitLeft(spikePos, helfScale) || CollHitRight(spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(0.9f, 1.0f));
+			}
+			if (CollHitUpper(spikePos, helfScale))
 			{
 				BlockEnter(obj);
 			}
@@ -432,7 +446,7 @@ namespace basecross
 		}
 	}
 
-	void Player::SpikeExcute(shared_ptr<GameObject>& obj)
+	void Player::SpikeExcute(const shared_ptr<GameObject>& obj)
 	{
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
@@ -443,18 +457,52 @@ namespace basecross
 
 		// スパイクの方向に応じて処理
 		const auto& angle = spike->GetAngle();
-		switch (angle)
+		if (angle == Gimmick::Down)
 		{
-		case Gimmick::Down:
-			if (CollHitUpper(spikePos, helfScale))
-			{
-				m_firePossible = true;
-				BlockExcute(obj);
-			}
-			break;
-			
-		default:
-			break;
+			m_firePossible = true;
+			BlockExcute(obj);
+		}
+	}
+
+	void Player::BirdEnter(const shared_ptr<GameObject>& enemy)
+	{
+		// 鳥オブジェクトにキャスト
+		const auto& bird = dynamic_pointer_cast<Bird>(enemy);
+
+		// パラメータの取得
+		Vec3 birdPos = bird->GetPosition();
+		Vec3 helfScale = bird->GetScale() / 2.0f;
+
+		// 上から衝突
+		if (CollHitUpper(birdPos, helfScale))
+		{
+			// 移動量を反転させ、半分にする
+			m_velocity.x = -Input::GetLStickValue().round(1).x;
+			m_velocity.y = -2.0f;
+			m_acsel = m_damageAcsel;
+			m_firePossible = true;
+			return;
+		}
+
+		// 下から衝突
+		if (CollHitUnder(birdPos, helfScale))
+		{
+			DamageKnockBack(Vec2(0.9f, 1.0f));
+			return;
+		}
+
+		// 左から衝突
+		if (CollHitLeft(birdPos, helfScale))
+		{
+			DamageKnockBack(Vec2(1.5f, -0.5f));
+			return;
+		}
+
+		// 右から衝突
+		if (CollHitRight(birdPos, helfScale))
+		{
+			DamageKnockBack(Vec2(-1.5f, -0.5f));
+			return;
 		}
 	}
 
@@ -465,6 +513,9 @@ namespace basecross
 		m_firePossible = false;
 		m_velocity = velocity;
 		m_acsel = m_damageAcsel;
+
+		// アニメーションをダメージ状態にする
+		m_bodyDraw->ChangeCurrentAnimation(L"DAMAGE");
 
 		// 軌道の表示をオフ
 		for (const auto& aligment : m_aligment)

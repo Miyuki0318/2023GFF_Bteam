@@ -1,12 +1,15 @@
 #pragma once
 #include "stdafx.h"
-#include "DebugObject.h"
+#include "CubeObject.h"
 
 namespace basecross
 {
-	class Enemy : public DebugObject
+	class Enemy : public CubeObject
 	{
+	protected:
+
 		Vec2 m_velocity;
+		Mat4x4 m_modelMat;
 		weak_ptr<GameObject> m_targetObj;
 
 		const float m_speed;
@@ -16,7 +19,7 @@ namespace basecross
 	public:
 
 		Enemy(const shared_ptr<Stage>& stagePtr) :
-			DebugObject(stagePtr),
+			CubeObject(stagePtr),
 			m_speed(0.0f),
 			m_collRange(4.0f)
 		{
@@ -27,37 +30,23 @@ namespace basecross
 		}
 
 		Enemy(const shared_ptr<Stage>& stagePtr,
-			const Vec3& position, const Vec3& rotation,
-			const Vec2& velocity, float speed, float acsel
+			const Vec3& position, const Vec3& rotation, 
+			const Vec3& scale, float speed
 		) :
-			DebugObject(stagePtr, position, rotation, Vec3(1.0f)),
-			m_velocity(velocity),
+			CubeObject(stagePtr, position, rotation, scale),
 			m_speed(speed),
-			m_acsel(acsel),
 			m_collRange(4.0f)
 		{
+			m_velocity.zero();
+			m_acsel = 1.0f;
 		}
 
 		virtual ~Enemy() {}
-
-		void OnCreate() override;
-
-		void OnUpdate() override;
 
 		void SetMoveValue(const Vec2& velocity, float acsel)
 		{
 			m_velocity = velocity;
 			m_acsel = acsel < 1.0f ? 1.0f : acsel;
-		}
-
-		void SetTarget(const shared_ptr<GameObject>& objPtr)
-		{
-			m_targetObj = objPtr;
-		}
-
-		const shared_ptr<GameObject>& GetTarget() const
-		{
-			return m_targetObj.lock();
 		}
 	};
 }

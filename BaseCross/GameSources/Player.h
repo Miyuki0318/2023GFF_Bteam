@@ -146,15 +146,17 @@ namespace basecross
 		*/
 		void EffectUpdate();
 
-		void BlockEnter(shared_ptr<GameObject>& block);
+		void BlockEnter(const shared_ptr<GameObject>& block);
 
-		void BlockExcute(shared_ptr<GameObject>& block);
+		void BlockExcute(const shared_ptr<GameObject>& block);
 
-		void BlockExit(shared_ptr<GameObject>& block);
+		void BlockExit(const shared_ptr<GameObject>& block);
 
-		void SpikeEnter(shared_ptr<GameObject>& spike);
+		void SpikeEnter(const shared_ptr<GameObject>& spike);
 
-		void SpikeExcute(shared_ptr<GameObject>& spike);
+		void SpikeExcute(const shared_ptr<GameObject>& spike);
+
+		void BirdEnter(const shared_ptr<GameObject>& enemy);
 
 		void DamageKnockBack(const Vec2& velocity);
 

@@ -84,21 +84,25 @@ namespace basecross
 				{
 					ptr = AddGameObject<SandStone>(Vec2(left + (j * scale), up - (i * scale)), scale);
 				}
-				if (data.at(i).at(j) == "20")
+				if (data.at(i).at(j) == "ûôè„")
 				{
 					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Up);
 				}
-				if (data.at(i).at(j) == "21")
+				if (data.at(i).at(j) == "ûôâ∫")
 				{
 					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Down);
 				}
-				if (data.at(i).at(j) == "22")
+				if (data.at(i).at(j) == "ûôç∂")
 				{
 					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Left);
 				}
-				if (data.at(i).at(j) == "23")
+				if (data.at(i).at(j) == "ûôâE")
 				{
 					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Right);
+				}
+				if (data.at(i).at(j) == "íπ")
+				{
+					ptr = AddGameObject<Bird>(Vec2(left + (j * scale), up - (i * scale)), scale);
 				}
 
 				if (ptr)
