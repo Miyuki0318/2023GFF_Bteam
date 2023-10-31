@@ -14,14 +14,16 @@ namespace basecross
 		m_arm = GetStage()->AddGameObject<DebugObject>();
 
 		// トランスフォームの設定
+		// 胴のトランスフォーム
 		m_ptrTrans = GetComponent<Transform>();
 		m_ptrTrans->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
 		m_ptrTrans->SetScale(Vec3(1.0f));
 		
+		// 腕のトランスフォーム
 		m_arm.lock()->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
 		m_arm.lock()->SetScale(Vec3(1.0f));
 
-		// 描画の設定
+		// 胴の描画の設定
 		m_bodyDraw = AddComponent<PNTBoneModelDraw>();
 		m_bodyDraw->SetMeshResource(L"ROBOT_BODY");
 		m_bodyDraw->SetMeshToTransformMatrix(m_bodyMat);
@@ -29,6 +31,7 @@ namespace basecross
 		m_bodyDraw->AddAnimation(L"DAMAGE", 180, 30, false);
 		m_bodyDraw->ChangeCurrentAnimation(L"WALK");
 
+		// 腕の描画の設定
 		m_armDraw = m_arm.lock()->AddComponent<PNTBoneModelDraw>();
 		m_armDraw->SetMultiMeshResource(L"ROBOT_ARM");
 		m_armDraw->SetMeshToTransformMatrix(m_armMat);
@@ -45,6 +48,7 @@ namespace basecross
 		{
 			m_aligment.push_back(GetStage()->AddGameObject<DebugSphere>());
 			m_aligment.at(i).lock()->SetScale(0.15f);
+			m_aligment.at(i).lock()->SetDrawLayer(-1);
 			m_aligment.at(i).lock()->SetDrawActive(false);
 		}
 
@@ -55,7 +59,6 @@ namespace basecross
 
 	void Player::OnUpdate()
 	{
-
 		// Aボタン入力有無での関数分岐
 		if (m_acsel <= 1.7f && m_firePossible)
 		{
@@ -63,7 +66,7 @@ namespace basecross
 		}
 
 		// 照準の回転処理
-		if (m_timeSpeed == 0.1f)
+		if (m_timeSpeed == m_slowTime)
 		{
 			RotateAligment();
 		}
