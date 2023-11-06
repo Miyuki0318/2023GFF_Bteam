@@ -41,7 +41,7 @@ namespace basecross
 		) :
 			m_angle(angle),
 			m_angles{ 0.0f, 180.0f, 90.0f, -90.0f },
-			CubeObject(stagePtr, position, Vec3(0.0f, 0.0f, 0.0f), scale)
+			CubeObject(stagePtr, position, Vec3(0.0f, 0.0f, 0.0f), scale, true)
 		{
 		}
 

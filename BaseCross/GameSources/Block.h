@@ -8,9 +8,9 @@ namespace basecross
 	public:
 
 		Alpha(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const float scale, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), coll)
 		{
 		}
 
@@ -26,9 +26,9 @@ namespace basecross
 	public:
 
 		Grass(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const Vec3& scale, const float angle, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
 		{
 			m_bodyMat.affineTransformation(
 				Vec3(1.35f),
@@ -50,9 +50,9 @@ namespace basecross
 	public:
 
 		Dirt(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const Vec3& scale, const float angle, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
 		{
 			m_bodyMat.affineTransformation(
 				Vec3(1.35f),
@@ -74,9 +74,9 @@ namespace basecross
 	public:
 
 		Rock(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const Vec3& scale, const float angle, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
 		{
 			m_bodyMat.affineTransformation(
 				Vec3(1.35f),
@@ -98,9 +98,9 @@ namespace basecross
 	public:
 
 		SandStone(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const Vec3& scale, const float angle, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
 		{
 			m_bodyMat.affineTransformation(
 				Vec3(1.35f),

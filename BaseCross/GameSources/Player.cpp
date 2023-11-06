@@ -66,10 +66,7 @@ namespace basecross
 		}
 
 		// 照準の回転処理
-		if (m_timeSpeed == m_slowTime)
-		{
-			RotateAligment();
-		}
+		RotateAligment();
 
 		// プレイヤーの移動関数
 		MovePlayer();
@@ -97,14 +94,14 @@ namespace basecross
 	// Aボタン押した時
 	void Player::OnPushA()
 	{
-		// 時間を遅くする
-		m_timeSpeed = m_slowTime;
+		//// 時間を遅くする
+		//m_timeSpeed = m_slowTime;
 
-		// 照準を表示する
-		for (const auto& aligment : m_aligment)
-		{
-			aligment.lock()->SetDrawActive(true);
-		}
+		//// 照準を表示する
+		//for (const auto& aligment : m_aligment)
+		//{
+		//	aligment.lock()->SetDrawActive(true);
+		//}
 	}
 
 	// Aボタンを離した時
@@ -122,11 +119,11 @@ namespace basecross
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
 
-		// 照準を非表示にする
-		for (const auto& aligment : m_aligment)
-		{
-			aligment.lock()->SetDrawActive(false);
-		}
+		//// 照準を非表示にする
+		//for (const auto& aligment : m_aligment)
+		//{
+		//	aligment.lock()->SetDrawActive(false);
+		//}
 	}
 
 	// コリジョンに衝突したら
@@ -270,6 +267,7 @@ namespace basecross
 			pos += -velo * m_speed * m_maxAcsel * loopCount;
 			velo.y -= m_gravity * 0.016f / 20.0f;
 			aligment.lock()->SetPosition(pos);
+			aligment.lock()->SetDrawActive(Input::GetLStickValue().length() > 0.0f);
 			loopCount++;
 		}
 	}

@@ -9,17 +9,19 @@ namespace basecross
 		SetRotation(m_rotation);
 		SetScale(m_scale);
 
-		auto ptrColl = AddComponent<CollisionObb>();
-		ptrColl->SetFixed(true);
-		ptrColl->SetUpdateActive(false);
+		if (m_collActive)
+		{
+			auto ptrColl = AddComponent<CollisionObb>();
+			ptrColl->SetFixed(true);
+			ptrColl->SetAfterCollision(AfterCollision::None);
+			ptrColl->SetUpdateActive(false);
+		}
 
 		SetAlphaActive(true);
 	}
 
 	void CubeObject::OnUpdate()
 	{
-		auto ptrColl = GetComponent<CollisionObb>();
-
 		if (m_targetObj.lock())
 		{
 			auto targetTrans = m_targetObj.lock()->GetComponent<Transform>();
@@ -27,12 +29,14 @@ namespace basecross
 			Vec3 pos = GetPosition();
 
 			float length = (targetPos - pos).length();
-			ptrColl->SetUpdateActive(length <= m_scale.x * m_collRange);
-			SetDrawActive(length <= 50.0f);
-		}
-		else
-		{
-			ptrColl->SetUpdateActive(false);
+			SetDrawActive(length <= 55.0f);
+
+			if (m_collActive)
+			{
+				auto ptrColl = GetComponent<CollisionObb>();
+				ptrColl->SetUpdateActive(length <= m_scale.x * m_collRange);
+				ptrColl->SetAfterCollision(length <= m_scale.x * m_collRange ? AfterCollision::Auto : AfterCollision::None);
+			}
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace basecross
 			const Vec3& position, const Vec3& rotation, 
 			const Vec3& scale, float speed
 		) :
-			CubeObject(stagePtr, position, rotation, scale),
+			CubeObject(stagePtr, position, rotation, scale, true),
 			m_speed(speed),
 			m_collRange(4.0f)
 		{

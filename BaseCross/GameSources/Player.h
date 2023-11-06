@@ -46,7 +46,7 @@ namespace basecross
 		*/
 		Player(const shared_ptr<Stage>& stagePtr) :
 			GameObject(stagePtr),
-			m_maxAcsel(5.0f),
+			m_maxAcsel(4.5f),
 			m_damageAcsel(3.0f),
 			m_slowTime(0.1f),
 			m_normalTime(2.0f),

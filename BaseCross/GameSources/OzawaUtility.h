@@ -259,6 +259,11 @@ namespace Utility
 	@param (deg) ディグリー角
 	@return ラジアン角に変換されたディグリー角
 	*/
+	template<class T>
+	T DegToRad(const T& deg)
+	{
+		return deg * (XM_PI / 180.0f);
+	}
 	float DegToRad(const float& deg);
 	Vec2 DegToRad(const Vec2& deg);
 	Vec3 DegToRad(const Vec3& deg);
@@ -270,6 +275,11 @@ namespace Utility
 	@param (rad) ラジアン角
 	@return ディグリー角に変換されたラジアン角
 	*/
+	template<class T>
+	T RadToDeg(const T& deg)
+	{
+		return rad * (180.0f / XM_PI);
+	}
 	float RadToDeg(const float& rad);
 	Vec2 RadToDeg(const Vec2& rad);
 	Vec3 RadToDeg(const Vec3& rad);

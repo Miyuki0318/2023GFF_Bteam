@@ -16,13 +16,30 @@ namespace basecross
 			auto targetTrans = m_target.lock()->GetComponent<Transform>();
 			Vec3 targetPos = targetTrans->GetPosition();
 
-			bool left = (targetPos.x >= 0.0f);
+			const float diff = 1.5f;
+			const float followDistance = 0.2f;
+			const float speed = 3.0f;
+			bool left = (targetPos.x >= -5.5f);
+			bool under = (targetPos.y >= diff);
+			targetPos.y -= diff;
 
-			Vec3 eye = Vec3(m_startEye.x + (left != false ? targetPos.x : 0.0f), m_startEye.y, m_startEye.z);
-			Vec3 at = Vec3(m_startAt.x + (left != false ? targetPos.x : 0.0f), m_startAt.y, m_startAt.z);
+			Vec3 vec = targetPos - (m_currentAt - Vec3(0.0f, 7.5f, 0.0f));
+			float distance = vec.length();
 
-			SetEye(eye);
-			SetAt(at);
+			if (distance > followDistance)
+			{
+				float deltaTime = App::GetApp()->GetElapsedTime();
+				float move = (distance - followDistance) * (deltaTime * speed);
+
+				m_currentEye += Vec3(vec.normalize().x * move, under != false ? vec.normalize().y * move : 0.0f, 0.0f);
+				m_currentAt += Vec3(vec.normalize().x * move, under != false ? vec.normalize().y * move : 0.0f, 0.0f);
+			}
+
+
+
+			m_currentPos = targetPos;
+			SetEye(m_currentEye);
+			SetAt(m_currentAt);
 		}
 	}
 }
