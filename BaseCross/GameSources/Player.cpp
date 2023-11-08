@@ -55,6 +55,7 @@ namespace basecross
 		// エフェクトオブジェクトの生成
 		m_effect = GetStage()->AddGameObject<Billboard>(L"EFFECT", Vec2(0.0f), Vec3(0.0f));
 		m_effect.lock()->SetDrawLayer(1);
+		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
 	void Player::OnUpdate()
@@ -123,6 +124,7 @@ namespace basecross
 		// メンバ変数の設定
 		m_isAir = true;
 		m_acsel = m_maxAcsel;
+		m_cannonFire = false;
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
@@ -326,11 +328,33 @@ namespace basecross
 		pos.y += 0.5f;
 		pos.z = -1.0f;
 
+		m_effect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
+
 		// 更新
-		m_effect.lock()->SetDrawActive(m_firePossible);
-		m_effect.lock()->SetPosition(pos);
-		m_effect.lock()->SetRotation(0.0f, 0.0f, (atan2f(m_velocity.y, m_velocity.x) - XM_PIDIV2));
-		m_effect.lock()->SetScale(Vec2((m_acsel - 1.0f) * 3.0f));
+		if (m_firePossible && !m_cannonFire)
+		{
+			m_effect.lock()->SetPosition(pos);
+			m_effect.lock()->SetRotation(0.0f, 0.0f, (atan2f(m_velocity.y, m_velocity.x) - XM_PIDIV2));
+			m_effect.lock()->SetScale(Vec2((m_acsel - 1.0f) * 3.0f));
+		}
+		if (m_cannonFire)
+		{
+			const auto particle = m_particle.lock()->InsertParticle(2);
+			particle->SetEmitterPos(m_position);
+			particle->SetTextureResource(L"SMOKE_TX");
+			particle->SetMaxTime(3.0f);
+
+			// 生成したスプライトを配列で取得
+			vector<ParticleSprite>& pSpriteVec = particle->GetParticleSpriteVec();
+
+			// スプライトの数分ループ
+			for (auto& sprite : pSpriteVec)
+			{
+				sprite.m_Velocity = Vec3(m_velocity.x, m_velocity.y, 0.0f).normalize();
+				sprite.m_LocalScale = Vec2(m_acsel > 2.0f ? m_acsel / 2.5f : 0.0f);
+				sprite.m_LocalQt.rotationZ(Utility::DegToRad(Utility::RangeRand(360.0f, 0.0f)));
+			}
+		}
 	}
 
 	void Player::CannonStandby()
@@ -343,6 +367,7 @@ namespace basecross
 				m_acsel = 10.0f;
 				m_isAir = true;
 				m_firePossible = true;
+				m_cannonFire = true;
 				m_cannonStandby = false;
 
 				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;

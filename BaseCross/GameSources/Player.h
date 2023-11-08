@@ -27,6 +27,7 @@ namespace basecross
 		weak_ptr<DebugObject> m_arm;
 		weak_ptr<Billboard> m_effect;
 		weak_ptr<Cannon> m_activeCannon;
+		weak_ptr<MultiParticle> m_particle;
 		vector<weak_ptr<DebugSphere>> m_aligment;
 
 		const float m_maxAcsel;
@@ -40,6 +41,7 @@ namespace basecross
 		float m_gravity;
 		bool m_isAir;
 		bool m_firePossible;
+		bool m_cannonFire;
 		bool m_cannonStandby;
 
 	public:
@@ -56,8 +58,8 @@ namespace basecross
 			m_normalTime(1.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
-			m_position = Vec3(10.0f, 15.0f, 0.0f);
-			m_respawnPos = Vec3(10.0f, 15.0f, 0.0f);
+			m_position = Vec3(-22.0f, 10.0f, 0.0f);
+			m_respawnPos = Vec3(-22.0f, 10.0f, 0.0f);
 			m_rotation.zero();
 			m_scale = Vec3(1.0f);
 			m_velocity = m_deffVelo;
@@ -67,6 +69,7 @@ namespace basecross
 			m_gravity = -5.0f;
 			m_isAir = true;
 			m_firePossible = true;
+			m_cannonFire = false;
 			m_cannonStandby = false;
 
 			m_bodyMat.affineTransformation(

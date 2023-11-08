@@ -19,6 +19,7 @@ namespace basecross
 		bool m_isFire;
 		eType m_type;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
+		weak_ptr<MultiParticle> m_particle;
 
 	public:
 

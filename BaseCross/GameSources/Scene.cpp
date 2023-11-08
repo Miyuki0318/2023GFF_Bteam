@@ -26,6 +26,15 @@ namespace basecross{
 		// 白塗りテクスチャ
 		app->RegisterTexture(L"WHITE", texturePath + L"White.png");
 
+		// 煙テクスチャ
+		app->RegisterTexture(L"SMOKE_TX", texturePath + L"Smoke.png");
+		
+		// 炎テクスチャ
+		app->RegisterTexture(L"FIRE_TX", texturePath + L"Fire.png");
+
+		// 石テクスチャ
+		app->RegisterTexture(L"STONE_TX", texturePath + L"Stone.png");
+
 
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";

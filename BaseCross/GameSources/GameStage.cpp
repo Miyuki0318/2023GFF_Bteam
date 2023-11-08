@@ -177,15 +177,37 @@ namespace basecross
 					break;
 
 				case 210:
-					//ptr = AddGameObject<Conveyor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Left);
+					checker.count++;
+					checker.type = data.at(i).at(j);
+					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
+
+					if (checker.check)
+					{
+						auto p = AddGameObject<DebugSphere>(Vec3(left + (j * scale), under + ((data.size() - i) * scale), 0.0f), Vec3(0.0f), Vec3(scale));
+					}
+					else
+					{
+						AddGameObject<Block>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Block::DarkMetal, CubeObject::Normal, false);
+					}
 					break;
 
 				case 211:
-					//ptr = AddGameObject<Conveyor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Right);
+					checker.count++;
+					checker.type = data.at(i).at(j);
+					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
+
+					if (checker.check)
+					{
+						auto p = AddGameObject<DebugSphere>(Vec3(left + (j * scale), under + ((data.size() - i) * scale), 0.0f), Vec3(0.0f), Vec3(scale));
+					}
+					else
+					{
+						AddGameObject<Block>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Block::DarkMetal, CubeObject::Normal, false);
+					}
 					break;
 
 				case 220:
-					ptr = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Up, Cannon::Normal);
+					ptr = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Up, Cannon::Rotate);
 					break;
 
 				case 221:
