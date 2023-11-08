@@ -19,98 +19,63 @@ namespace basecross
 		void OnCreate() override;
 	};
 
-	class Grass : public CubeObject
+	class DeathColl : public CubeObject
 	{
-		Mat4x4 m_bodyMat;
-
 	public:
 
-		Grass(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const Vec3& scale, const float angle, const bool coll
+		DeathColl(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), coll)
 		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
-				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
-			);
 		}
 
-		~Grass() {}
+		~DeathColl() {}
 
 		void OnCreate() override;
 	};
 
-	class Dirt : public CubeObject
+	class Block : public CubeObject
 	{
-		Mat4x4 m_bodyMat;
+	public:
+
+		enum eBlock
+		{
+			Iron,
+			Metal,
+			DarkMetal,
+		};
+
+	private:
+
+		eBlock m_block;
+		Mat4x4 m_normalMat;
+		Mat4x4 m_slopeMat;
 
 	public:
 
-		Dirt(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const Vec3& scale, const float angle, const bool coll
+		Block(const shared_ptr<Stage>& stagePtr, const Vec2& position,
+			const Vec3& scale, const eBlock block, const eType type, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), scale, type, coll),
+			m_block(block)
 		{
-			m_bodyMat.affineTransformation(
+			m_normalMat.affineTransformation(
 				Vec3(1.35f),
 				Vec3(0.0f),
 				Vec3(0.0f),
 				Vec3(0.0f, -0.5f, 0.0f)
 			);
-		}
 
-		~Dirt() {}
-
-		void OnCreate() override;
-	};
-
-	class Rock : public CubeObject
-	{
-		Mat4x4 m_bodyMat;
-
-	public:
-
-		Rock(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const Vec3& scale, const float angle, const bool coll
-		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
-		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
+			m_slopeMat.affineTransformation(
+				Vec3(1.0f),
 				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
+				Utility::DegToRad(Vec3(0.0f, 0.0f, 0.0f)),
+				Vec3(0.0f, 0.0f, 0.0f)
 			);
 		}
 
-		~Rock() {}
-
-		void OnCreate() override;
-	};
-
-	class SandStone : public CubeObject
-	{
-		Mat4x4 m_bodyMat;
-
-	public:
-
-		SandStone(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const Vec3& scale, const float angle, const bool coll
-		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, 0.0f, Utility::DegToRad(angle)), scale, coll)
-		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
-				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
-			);
-		}
-
-		~SandStone() {}
+		~Block() {}
 
 		void OnCreate() override;
 	};

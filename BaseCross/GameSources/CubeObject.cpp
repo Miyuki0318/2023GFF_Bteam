@@ -6,14 +6,13 @@ namespace basecross
 	void CubeObject::OnCreate()
 	{
 		SetPosition(m_position);
-		SetRotation(m_rotation);
+		SetRotation(m_type != Normal ? Utility::DegToRad(m_angle.at(m_type)) : m_rotation);
 		SetScale(m_scale);
 
 		if (m_collActive)
 		{
 			auto ptrColl = AddComponent<CollisionObb>();
 			ptrColl->SetFixed(true);
-			ptrColl->SetAfterCollision(AfterCollision::None);
 			ptrColl->SetUpdateActive(false);
 		}
 
@@ -35,7 +34,6 @@ namespace basecross
 			{
 				auto ptrColl = GetComponent<CollisionObb>();
 				ptrColl->SetUpdateActive(length <= m_scale.x * m_collRange);
-				ptrColl->SetAfterCollision(length <= m_scale.x * m_collRange ? AfterCollision::Auto : AfterCollision::None);
 			}
 		}
 	}

@@ -13,6 +13,8 @@ namespace basecross
 	//--------------------------------------------------------------------------------------
 	class GameStage : public Stage 
 	{
+		vector<vector<string>> data;
+
 		// ƒrƒ…[
 		shared_ptr<SingleView> m_gameView;
 

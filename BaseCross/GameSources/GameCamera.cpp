@@ -20,7 +20,6 @@ namespace basecross
 			const float followDistance = 0.2f;
 			const float speed = 3.0f;
 			bool left = (targetPos.x >= -5.5f);
-			bool under = (targetPos.y >= diff);
 			targetPos.y -= diff;
 
 			Vec3 vec = targetPos - (m_currentAt - Vec3(0.0f, 7.5f, 0.0f));
@@ -31,8 +30,8 @@ namespace basecross
 				float deltaTime = App::GetApp()->GetElapsedTime();
 				float move = (distance - followDistance) * (deltaTime * speed);
 
-				m_currentEye += Vec3(vec.normalize().x * move, under != false ? vec.normalize().y * move : 0.0f, 0.0f);
-				m_currentAt += Vec3(vec.normalize().x * move, under != false ? vec.normalize().y * move : 0.0f, 0.0f);
+				m_currentEye += Vec3(vec.normalize().x * move, vec.normalize().y * move, 0.0f);
+				m_currentAt += Vec3(vec.normalize().x * move, vec.normalize().y * move, 0.0f);
 			}
 
 

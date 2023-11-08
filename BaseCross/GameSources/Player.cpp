@@ -16,12 +16,12 @@ namespace basecross
 		// トランスフォームの設定
 		// 胴のトランスフォーム
 		m_ptrTrans = GetComponent<Transform>();
-		m_ptrTrans->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
-		m_ptrTrans->SetScale(Vec3(1.0f));
+		m_ptrTrans->SetPosition(m_position);
+		m_ptrTrans->SetScale(m_scale);
 		
 		// 腕のトランスフォーム
-		m_arm.lock()->SetPosition(Vec3(0.0f, 2.0f, 0.0f));
-		m_arm.lock()->SetScale(Vec3(1.0f));
+		m_arm.lock()->SetPosition(m_position);
+		m_arm.lock()->SetScale(m_scale);
 
 		// 胴の描画の設定
 		m_bodyDraw = AddComponent<PNTBoneModelDraw>();
@@ -63,6 +63,11 @@ namespace basecross
 		if (m_acsel <= 1.7f && m_firePossible)
 		{
 			Input::GetPushA() == true ? OnPushA() : Input::GetReleaseA() == true ? OnReleaseA() : 0;
+		}
+
+		if (m_cannonStandby)
+		{
+			CannonStandby();
 		}
 
 		// 照準の回転処理
@@ -107,58 +112,74 @@ namespace basecross
 	// Aボタンを離した時
 	void Player::OnReleaseA()
 	{
-		// メンバ変数の設定
-		m_isAir = true;
-		m_acsel = m_maxAcsel;
-		m_timeSpeed = m_normalTime;
-
 		// スティック入力を取得し移動ベクトルに保持
 		Vec2 stick = Input::GetLStickValue();
 		m_velocity = (stick.length() > 0.0f ? stick.round(1) : m_deffVelo) * 3.0f;
+		if (!m_isAir && stick.y > 0.0f)
+		{
+			m_velocity.y = -stick.round(1).y * 3.0f;
+		}
 		
+		// メンバ変数の設定
+		m_isAir = true;
+		m_acsel = m_maxAcsel;
+
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
-
-		//// 照準を非表示にする
-		//for (const auto& aligment : m_aligment)
-		//{
-		//	aligment.lock()->SetDrawActive(false);
-		//}
 	}
 
 	// コリジョンに衝突したら
-	void Player::OnCollisionEnter(shared_ptr<GameObject>& other)
+	void Player::OnCollisionEnter(const CollisionPair& Pair)
 	{
+		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
+		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+
 		if (other->FindTag(L"Block"))
 		{
-			BlockEnter(other);
+			BlockEnter(other, hitPoint);
 		}
 		if (other->FindTag(L"Spike"))
 		{
-			SpikeEnter(other);
+			SpikeEnter(other, hitPoint);
 		}
 		if (other->FindTag(L"Bird"))
 		{
-			BirdEnter(other);
+			BirdEnter(other, hitPoint);
+		}
+		if (other->FindTag(L"Cannon"))
+		{
+			CannonEnter(other);
+		}
+		if (other->FindTag(L"Death"))
+		{
+			m_ptrTrans->SetPosition(m_respawnPos);
+			m_acsel = 1.0f;
+			m_velocity = m_deffVelo;
 		}
 	}
 
 	// コリジョンに衝突し続けたら
-	void Player::OnCollisionExcute(shared_ptr<GameObject>& other)
+	void Player::OnCollisionExcute(const CollisionPair& Pair)
 	{
+		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
+		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+
 		if (other->FindTag(L"Block"))
 		{
-			BlockExcute(other);
+			BlockExcute(other, hitPoint);
 		}
 		if (other->FindTag(L"Spike"))
 		{
-			SpikeExcute(other);
+			SpikeExcute(other, hitPoint);
 		}
 	}
 
 	// コリジョンから離れたら
-	void Player::OnCollisionExit(shared_ptr<GameObject>& other)
+	void Player::OnCollisionExit(const CollisionPair& Pair)
 	{
+		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
+		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+
 		if (other->FindTag(L"Block"))
 		{
 			BlockExit(other);
@@ -308,8 +329,33 @@ namespace basecross
 		m_effect.lock()->SetScale(Vec2((m_acsel - 1.0f) * 3.0f));
 	}
 
+	void Player::CannonStandby()
+	{
+		if (m_activeCannon.lock())
+		{
+			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
+			if (drawPtr->GetCurrentAnimationTime() > 0.4f)
+			{
+				m_acsel = 10.0f;
+				m_isAir = true;
+				m_firePossible = true;
+				m_cannonStandby = false;
+
+				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
+				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 5.0f;
+
+				m_activeCannon.reset();
+			}
+			else
+			{
+				m_position = m_activeCannon.lock()->GetPosition();
+				m_ptrTrans->SetPosition(m_position);
+			}
+		}
+	}
+
 	// ブロックに衝突した瞬間
-	void Player::BlockEnter(const shared_ptr<GameObject>& block)
+	void Player::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
@@ -317,10 +363,14 @@ namespace basecross
 		Vec3 helf = objTrans->GetScale() / 2.0f;
 
 		// コリジョンに対して上から衝突
-		if (CollHitUpper(objPos, helf))
+		if (CollHitUpper(hitPos, objPos, helf))
 		{
+			// 上にブロックがあるかのチェック
+			if (!BlockUpperCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+
 			// エアショック使用可能にする
 			m_firePossible = true;
+			m_respawnPos = Vec3(objPos.x, objPos.y + (helf.y * 3.0f), 0.0f);
 
 			// 移動量が下方向にあり
 			if (m_velocity.y > 0.0f)
@@ -336,8 +386,11 @@ namespace basecross
 		}
 
 		// 下から衝突
-		if (CollHitUnder(objPos, helf))
+		if (CollHitUnder(hitPos, objPos, helf))
 		{
+			// 下にブロックがあるかのチェック
+			if (!BlockUnderCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
+
 			// 移動量が上方向なら
 			if (m_velocity.y < 0.0f)
 			{
@@ -348,7 +401,7 @@ namespace basecross
 		}
 
 		// 横から衝突
-		if (CollHitLeft(objPos, helf) || CollHitRight(objPos, helf))
+		if (CollHitLeft(hitPos, objPos, helf) || CollHitRight(hitPos, objPos, helf))
 		{
 			// 移動量を半減しつつ反転させる
 			m_velocity.x *= -0.5f;
@@ -357,7 +410,7 @@ namespace basecross
 	}
 
 	// ブロックに衝突し続けたら
-	void Player::BlockExcute(const shared_ptr<GameObject>& block)
+	void Player::BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
 		auto objTrans = block->GetComponent<Transform>();
@@ -365,7 +418,7 @@ namespace basecross
 		Vec3 helf = objTrans->GetScale() / 2.0f;
 
 		// コリジョンに対して上から衝突
-		if (CollHitUpper(objPos, helf))
+		if (CollHitUpper(hitPos, objPos, helf))
 		{
 			// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
 			m_velocity.y = 0.0f;
@@ -381,8 +434,56 @@ namespace basecross
 		m_isAir = true;
 	}
 
+	bool Player::BlockUpperCheck(const Vec3& upperPos)
+	{
+		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
+
+		bool check = true;
+
+		for (const auto& ptr : blockVec)
+		{
+			if (!ptr.lock()) continue;
+
+			const auto& block = dynamic_pointer_cast<CubeObject>(ptr.lock());
+			if (!block) continue;
+
+			Vec3 pos = block->GetPosition();
+
+			if (pos == upperPos)
+			{
+				check = false;
+			}
+		}
+
+		return check;
+	}
+
+	bool Player::BlockUnderCheck(const Vec3& underPos)
+	{
+		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
+
+		bool check = true;
+
+		for (const auto& ptr : blockVec)
+		{
+			if (!ptr.lock()) continue;
+
+			const auto& block = dynamic_pointer_cast<CubeObject>(ptr.lock());
+			if (!block) continue;
+
+			Vec3 pos = block->GetPosition();
+
+			if (pos == underPos)
+			{
+				check = false;
+			}
+		}
+
+		return check;
+	}
+
 	// スパイクとの衝突した瞬間
-	void Player::SpikeEnter(const shared_ptr<GameObject>& obj)
+	void Player::SpikeEnter(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
@@ -396,46 +497,77 @@ namespace basecross
 		switch (angle)
 		{
 		case Gimmick::Up:
-			if (CollHitUpper(spikePos, helfScale) || CollHitLeft(spikePos, helfScale) || CollHitRight(spikePos, helfScale))
+			if (CollHitUpper(hitPos ,spikePos, helfScale) || CollHitLeft(hitPos, spikePos, helfScale) || CollHitRight(hitPos, spikePos, helfScale))
 			{
 				DamageKnockBack(Vec2(0.9f, -1.0f));
+				return;
 			}
-			if (CollHitUnder(spikePos, helfScale))
+			if (CollHitUnder(hitPos, spikePos, helfScale))
 			{
-				BlockEnter(obj);
+				BlockEnter(obj, hitPos);
+				return;
 			}
 			break;
 
 		case Gimmick::Down:
-			if (CollHitUnder(spikePos, helfScale) || CollHitLeft(spikePos, helfScale) || CollHitRight(spikePos, helfScale))
+			if (CollHitUnder(hitPos, spikePos, helfScale) || CollHitLeft(hitPos, spikePos, helfScale) || CollHitRight(hitPos, spikePos, helfScale))
 			{
 				DamageKnockBack(Vec2(0.9f, 1.0f));
+				return;
 			}
-			if (CollHitUpper(spikePos, helfScale))
+			if (CollHitUpper(hitPos, spikePos, helfScale))
 			{
-				BlockEnter(obj);
+				BlockEnter(obj, hitPos);
+				return;
 			}
 			break;
 
 		case Gimmick::Left:
-			if (CollHitLeft(spikePos, helfScale) || CollHitUpper(spikePos, helfScale) || CollHitUnder(spikePos, helfScale))
+			if (CollHitLeft(hitPos, spikePos, helfScale) || CollHitUpper(hitPos, spikePos, helfScale) || CollHitUnder(hitPos, spikePos, helfScale))
 			{
 				DamageKnockBack(Vec2(1.5f, -0.5f));
+				return;
 			}
-			if (CollHitRight(spikePos, helfScale))
+			if (CollHitRight(hitPos, spikePos, helfScale))
 			{
-				BlockEnter(obj);
+				BlockEnter(obj, hitPos);
+				return;
 			}
 			break;
 
 		case Gimmick::Right:
-			if (CollHitRight(spikePos, helfScale) || CollHitUpper(spikePos, helfScale) || CollHitUnder(spikePos, helfScale))
+			if (CollHitRight(hitPos, spikePos, helfScale) || CollHitUpper(hitPos, spikePos, helfScale) || CollHitUnder(hitPos, spikePos, helfScale))
 			{
 				DamageKnockBack(Vec2(-1.5f, -0.5f));
+				return;
 			}
-			if (CollHitLeft(spikePos, helfScale))
+			if (CollHitLeft(hitPos, spikePos, helfScale))
 			{
-				BlockEnter(obj);
+				BlockEnter(obj, hitPos);
+				return;
+			}
+			break;
+
+		case Gimmick::All:
+			if (CollHitUpper(hitPos, spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(0.9f, -1.0f));
+				return;
+			}
+			if (CollHitUnder(hitPos, spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(0.9f, 1.0f));
+				return;
+			}
+			if (CollHitLeft(hitPos, spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(1.5f, -0.5f));
+				return;
+			}
+			if (CollHitRight(hitPos, spikePos, helfScale))
+			{
+				DamageKnockBack(Vec2(-1.5f, -0.5f));
+				return;
 			}
 			break;
 
@@ -444,7 +576,7 @@ namespace basecross
 		}
 	}
 
-	void Player::SpikeExcute(const shared_ptr<GameObject>& obj)
+	void Player::SpikeExcute(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
@@ -458,11 +590,11 @@ namespace basecross
 		if (angle == Gimmick::Down)
 		{
 			m_firePossible = true;
-			BlockExcute(obj);
+			BlockExcute(obj, hitPos);
 		}
 	}
 
-	void Player::BirdEnter(const shared_ptr<GameObject>& enemy)
+	void Player::BirdEnter(const shared_ptr<GameObject>& enemy, const Vec3& hitPos)
 	{
 		// 鳥オブジェクトにキャスト
 		const auto& bird = dynamic_pointer_cast<Bird>(enemy);
@@ -472,7 +604,7 @@ namespace basecross
 		Vec3 helfScale = bird->GetScale() / 2.0f;
 
 		// 上から衝突
-		if (CollHitUpper(birdPos, helfScale))
+		if (CollHitUpper(hitPos, birdPos, helfScale))
 		{
 			// 移動量を反転させ、半分にする
 			m_velocity.x = -Input::GetLStickValue().round(1).x;
@@ -483,25 +615,39 @@ namespace basecross
 		}
 
 		// 下から衝突
-		if (CollHitUnder(birdPos, helfScale))
+		if (CollHitUnder(hitPos, birdPos, helfScale))
 		{
 			DamageKnockBack(Vec2(0.9f, 1.0f));
 			return;
 		}
 
 		// 左から衝突
-		if (CollHitLeft(birdPos, helfScale))
+		if (CollHitLeft(hitPos, birdPos, helfScale))
 		{
 			DamageKnockBack(Vec2(1.5f, -0.5f));
 			return;
 		}
 
 		// 右から衝突
-		if (CollHitRight(birdPos, helfScale))
+		if (CollHitRight(hitPos, birdPos, helfScale))
 		{
 			DamageKnockBack(Vec2(-1.5f, -0.5f));
 			return;
 		}
+	}
+
+	void Player::CannonEnter(const shared_ptr<GameObject>& cannon)
+	{
+		const auto& ptr = dynamic_pointer_cast<Cannon>(cannon);
+		ptr->OnFire();
+		m_activeCannon = ptr;
+
+		m_isAir = false;
+		m_firePossible = false;
+		m_cannonStandby = true;
+
+		m_velocity = Vec2(0.0f);
+		m_acsel = 1.0f;
 	}
 
 	void Player::DamageKnockBack(const Vec2& velocity)
@@ -522,25 +668,25 @@ namespace basecross
 		}
 	}
 
-	bool Player::CollHitUpper(const Vec3& position, const Vec3& helfScale)
+	bool Player::CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
 	{
-		return m_position.y > position.y && ((m_position.y - position.y) >= helfScale.y);
+		return hitPos.y > hitObjPos.y && ((hitPos.y - hitObjPos.y) >= helfScale.y);
 	}
 
-	bool Player::CollHitUnder(const Vec3& position, const Vec3& helfScale)
+	bool Player::CollHitUnder(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
 	{
-		return m_position.y < position.y && ((m_position.y - position.y) <= -helfScale.y);
+		return hitPos.y < hitObjPos.y && ((hitPos.y - hitObjPos.y) <= -helfScale.y);
 	}
 
-	bool Player::CollHitLeft(const Vec3& position, const Vec3& helfScale)
+	bool Player::CollHitLeft(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
 	{
-		return ((m_position.y - position.y) < helfScale.y && (m_position.y - position.y) > -helfScale.y)
-			&& ((m_position.x - position.x) < helfScale.x);
+		return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
+			&& ((hitPos.x - hitObjPos.x) < helfScale.x);
 	}
 
-	bool Player::CollHitRight(const Vec3& position, const Vec3& helfScale)
+	bool Player::CollHitRight(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
 	{
-		return ((m_position.y - position.y) < helfScale.y && (m_position.y - position.y) > -helfScale.y)
-			&& ((m_position.x - position.x) > -helfScale.x);
+		return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
+			&& ((hitPos.x - hitObjPos.x) > -helfScale.x);
 	}
 }

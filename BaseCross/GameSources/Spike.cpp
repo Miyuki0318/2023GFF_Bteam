@@ -7,8 +7,8 @@ namespace basecross
 	{
 		Gimmick::OnCreate();
 		auto ptrDraw = AddComponent<PNTStaticModelDraw>();
-		ptrDraw->SetMeshResource(L"SPIKE");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
+		ptrDraw->SetMeshResource(m_angle != All ? L"SPIKE" : L"SPIKE_BLOCK");
+		ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 
 		AddTag(L"Spike");
 	}

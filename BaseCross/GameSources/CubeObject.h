@@ -6,24 +6,40 @@ namespace basecross
 {
 	class CubeObject : public DebugObject
 	{
+	public:
+
+		enum eType
+		{
+			Normal,
+			Left,
+			Right,
+			SlopeL,
+			SlopeR,
+		};
+
+	protected:
+
+		eType m_type;
+		vector<Vec3> m_angle;
 		const float m_collRange;
 		const bool m_collActive;
 		weak_ptr<GameObject> m_targetObj;
 
 	public:
 
-		enum eAngle
-		{
-			Normal = 0,
-			Left = 45,
-			Right = -45,
-		};
-
 		CubeObject(const shared_ptr<Stage>& stagePtr) :
 			DebugObject(stagePtr),
 			m_collRange(5.0f),
 			m_collActive(true)
 		{
+			m_type = Normal;
+			m_angle = {
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 0.0f, -45.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 180.0f, 45.0f),
+			};
 		}
 
 		CubeObject(const shared_ptr<Stage>& stagePtr,
@@ -33,6 +49,31 @@ namespace basecross
 			m_collRange(4.0f),
 			m_collActive(active)
 		{
+			m_type = Normal;
+			m_angle = {
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 0.0f, -45.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 180.0f, 45.0f),
+			};
+		}
+
+		CubeObject(const shared_ptr<Stage>& stagePtr,
+			const Vec3& position, const Vec3& scale, const eType& type, const bool active
+		) :
+			DebugObject(stagePtr, position, Vec3(0.0f), scale),
+			m_type(type),
+			m_collRange(4.0f),
+			m_collActive(active)
+		{
+			m_angle = {
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 0.0f, -45.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 180.0f, 45.0f),
+			};
 		}
 
 		virtual ~CubeObject() {}

@@ -13,7 +13,7 @@ namespace basecross
 		) :
 			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), angle)
 		{
-			m_bodyMat.affineTransformation(
+			m_modelMat.affineTransformation(
 				Vec3(1.35f),
 				Vec3(0.0f),
 				Vec3(0.0f, XM_PIDIV2, 0.0f),

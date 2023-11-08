@@ -9,39 +9,56 @@ namespace basecross
 		AddTag(L"Block");
 	}
 
-	void Grass::OnCreate()
+	void DeathColl::OnCreate()
 	{
 		CubeObject::OnCreate();
-		AddTag(L"Block");
-		auto ptrDraw = AddComponent<PNTStaticModelDraw>();
-		ptrDraw->SetMeshResource(L"GRASS");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
+		AddTag(L"Death");
 	}
 
-	void Dirt::OnCreate()
+	void Block::OnCreate()
 	{
 		CubeObject::OnCreate();
 		AddTag(L"Block");
-		auto ptrDraw = AddComponent<PNTStaticModelDraw>();
-		ptrDraw->SetMeshResource(L"DIRT");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
-	}
 
-	void Rock::OnCreate()
-	{
-		CubeObject::OnCreate();
-		AddTag(L"Block");
-		auto ptrDraw = AddComponent<PNTStaticModelDraw>();
-		ptrDraw->SetMeshResource(L"ROCK");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
-	}
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
 
-	void SandStone::OnCreate()
-	{
-		CubeObject::OnCreate();
-		AddTag(L"Block");
-		auto ptrDraw = AddComponent<PNTStaticModelDraw>();
-		ptrDraw->SetMeshResource(L"SANDSTONE");
-		ptrDraw->SetMeshToTransformMatrix(m_bodyMat);
+		// メッシュの設定
+		switch (m_type)
+		{
+		case CubeObject::Normal:
+		case CubeObject::Left:
+		case CubeObject::Right:
+			ptrDraw->SetMeshResource(L"BLOCK");
+			ptrDraw->SetMeshToTransformMatrix(m_normalMat);
+			break;
+
+		case CubeObject::SlopeL:
+		case CubeObject::SlopeR:
+			ptrDraw->SetMeshResource(L"SLOPE");
+			ptrDraw->SetMeshToTransformMatrix(m_slopeMat);
+			break;
+
+		default:
+			break;
+		}
+
+		// テクスチャの設定
+		switch (m_block)
+		{
+		case Block::Iron:
+			ptrDraw->SetTextureResource(L"GRASS_TX");
+			break;
+
+		case Block::Metal:
+			ptrDraw->SetTextureResource(L"DIRT_TX");
+			break;
+
+		case Block::DarkMetal:
+			ptrDraw->SetTextureResource(L"ROCK_TX");
+			break;
+
+		default:
+			break;
+		}
 	}
 }

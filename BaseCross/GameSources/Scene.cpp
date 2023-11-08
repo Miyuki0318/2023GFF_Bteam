@@ -30,20 +30,16 @@ namespace basecross{
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";
 
-		// 草ブロックモデル
-		RegisterSingleMesh(L"GRASS", modelPath + L"Grass/", L"Grass", false);
-
-		// 土ブロックモデル
-		RegisterSingleMesh(L"DIRT", modelPath + L"Dirt/", L"Dirt", false);
-
-		// 岩ブロックモデル
-		RegisterSingleMesh(L"ROCK", modelPath + L"Rock/", L"Rock", false);
-
-		// 砂岩ブロックモデル
-		RegisterSingleMesh(L"SANDSTONE", modelPath + L"SandStone/", L"Sandstone", false);
+		// ブロックモデル
+		RegisterSingleMesh(L"BLOCK", modelPath + L"Block/", L"Block", false);
+		RegisterSingleMesh(L"SLOPE", modelPath + L"Block/", L"Slope", false);
+		app->RegisterTexture(L"GRASS_TX", modelPath + L"Block/Grass.png");
+		app->RegisterTexture(L"DIRT_TX", modelPath + L"Block/Dirt.png");
+		app->RegisterTexture(L"ROCK_TX", modelPath + L"Block/Rock.png");
 
 		// スパイクモデル
 		RegisterSingleMesh(L"SPIKE", modelPath, L"Spike", false);
+		RegisterSingleMesh(L"SPIKE_BLOCK", modelPath, L"SpikeBlock", false);
 
 		// ロボットモデル
 		RegisterSingleMesh(L"ROBOT_BODY", modelPath + L"Robot/", L"Robot_Body", true);
@@ -51,6 +47,9 @@ namespace basecross{
 
 		// 鳥モデル
 		RegisterSingleMesh(L"BIRD", modelPath + L"Bird/", L"Bird", true);
+
+		// 大砲モデル
+		RegisterSingleMesh(L"CANNON", modelPath + L"Cannon/", L"Cannon", true);
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)
