@@ -126,6 +126,10 @@ namespace basecross
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
+
+		// SEの再生
+		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+		audioPtr->Start(L"AIRSHOCK_SE", 0, 0.5f);
 	}
 
 	// コリジョンに衝突したら
@@ -343,6 +347,9 @@ namespace basecross
 
 				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 5.0f;
+
+				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+				audioPtr->Start(L"CANNON_SE", 0, 0.75f);
 
 				m_activeCannon.reset();
 			}

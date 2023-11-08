@@ -42,6 +42,13 @@ namespace basecross
 		ptrMultiLight->SetDefaultLighting();
 	}
 
+	// BGMの再生
+	void GameStage::CreateBGM()
+	{
+		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+		m_bgm = audioPtr->Start(L"GAME_BGM", XAUDIO2_LOOP_INFINITE, 0.3f);
+	}
+
 	void GameStage::CreatePlayer()
 	{
 		auto player = AddGameObject<Player>();
@@ -55,7 +62,7 @@ namespace basecross
 	{
 		CreateSharedObjectGroup(L"Stage");
 
-		data = CSVLoader::LoadFile("Stage");
+		const auto& data = CSVLoader::LoadFile("Stage");
 
 		struct Checker
 		{
@@ -256,6 +263,9 @@ namespace basecross
 
 			// ビューとライトの作成
 			CreateViewLight();
+
+			// BGMの再生
+			CreateBGM();
 
 			// 地面の作成
 			CreatePlayer();

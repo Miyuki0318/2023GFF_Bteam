@@ -63,7 +63,7 @@ namespace basecross
 			m_velocity = m_deffVelo;
 			m_timeSpeed = m_normalTime;
 			m_acsel = 1.0f;
-			m_speed = 3.0f;
+			m_speed = 4.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
 			m_firePossible = true;

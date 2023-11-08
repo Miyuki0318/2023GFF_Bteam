@@ -13,10 +13,11 @@ namespace basecross
 	//--------------------------------------------------------------------------------------
 	class GameStage : public Stage 
 	{
-		vector<vector<string>> data;
-
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
+
+		// BGM
+		weak_ptr<SoundItem> m_bgm;
 
 		// リソースの読み込み
 		void CreateResourses();
@@ -24,13 +25,20 @@ namespace basecross
 		// ビューの作成
 		void CreateViewLight();
 
+		// BGMの再生
+		void CreateBGM();
+
 		// 地面の作成
 		void CreatePlayer();
 
+		// ステージの作成
 		void CreateStage();
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		*/
 		GameStage() :Stage() {}
 
 		/*!

@@ -50,6 +50,20 @@ namespace basecross{
 
 		// 大砲モデル
 		RegisterSingleMesh(L"CANNON", modelPath + L"Cannon/", L"Cannon", true);
+
+
+		// サウンドディレクトリパス
+		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
+		const wstring SEPath = mediaPath + L"Sounds/SE/";
+
+		// ゲーム用BGM
+		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
+
+		// 衝撃波SE
+		app->RegisterWav(L"AIRSHOCK_SE", SEPath + L"AirShockSE");
+
+		// 大砲発射SE
+		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)
