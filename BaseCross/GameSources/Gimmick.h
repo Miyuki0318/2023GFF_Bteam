@@ -19,6 +19,7 @@ namespace basecross
 			Uright,
 			Dleft,
 			Dright,
+			Invers,
 		};
 
 	protected:
@@ -28,14 +29,25 @@ namespace basecross
 
 	private:
 
-		const vector<float> m_angles;
+		const vector<Vec3> m_angles;
 
 	public:
 
 
 		Gimmick(const shared_ptr<Stage>& stagePtr) :
-			m_angles{ 0.0f, 180.0f, 90.0f, -90.0f, 0.0f, 45.0f, -45.0f, 225.0f, 135.0f },
-			CubeObject(stagePtr)
+			CubeObject(stagePtr),
+			m_angles{
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 180.0f),
+				Vec3(0.0f, 0.0f, 90.0f),
+				Vec3(0.0f, 0.0f, -90.0f),
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 0.0f, -45.0f),
+				Vec3(0.0f, 0.0f, 225.0f),
+				Vec3(0.0f, 0.0f, 135.0f),
+				Vec3(0.0f, 180.0f, 0.0f)
+			}
 		{
 			m_angle = Up;
 		}
@@ -43,9 +55,20 @@ namespace basecross
 		Gimmick(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position, const Vec3& scale, const eAngle& angle
 		) :
+			CubeObject(stagePtr, position, Vec3(0.0f, 0.0f, 0.0f), scale, true),
 			m_angle(angle),
-			m_angles{ 0.0f, 180.0f, 90.0f, -90.0f, 0.0f, 45.0f, -45.0f, 225.0f, 135.0f},
-			CubeObject(stagePtr, position, Vec3(0.0f, 0.0f, 0.0f), scale, true)
+			m_angles{
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 180.0f),
+				Vec3(0.0f, 0.0f, 90.0f),
+				Vec3(0.0f, 0.0f, -90.0f),
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 45.0f),
+				Vec3(0.0f, 0.0f, -45.0f),
+				Vec3(0.0f, 0.0f, 225.0f),
+				Vec3(0.0f, 0.0f, 135.0f),
+				Vec3(0.0f, 180.0f, 0.0f)
+			}
 		{
 		}
 

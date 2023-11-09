@@ -221,11 +221,11 @@ namespace basecross
 
 					if (checker.check)
 					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Down, Convayor::Side);
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Invers, Convayor::Side);
 					}
 					else
 					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Down, Convayor::Middle);
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Invers, Convayor::Middle);
 					}
 					break;
 
