@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp" />

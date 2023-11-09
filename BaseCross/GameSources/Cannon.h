@@ -17,7 +17,7 @@ namespace basecross
 	private:
 
 		bool m_isFire;
-		eType m_type;
+		const eType m_type;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 		weak_ptr<MultiParticle> m_particle;
 
@@ -49,16 +49,6 @@ namespace basecross
 		{
 			m_isFire = true;
 			m_ptrDraw->ChangeCurrentAnimation(L"FIRE", 0.0f);
-		}
-
-		bool GetIsFire() const
-		{
-			return m_isFire;
-		}
-
-		const eAngle GetAngle() const
-		{
-			return m_angle;
 		}
 	};
 }

@@ -40,6 +40,28 @@ namespace basecross
 		// マルチライトの作成
 		auto ptrMultiLight = CreateLight<MultiLight>();
 		ptrMultiLight->SetDefaultLighting();
+
+		const float scale = 45.0f;
+
+		// 背景の生成
+		for (size_t i = 0; i < 12; i++)
+		{
+			for (size_t j = 0; j < 18; j++)
+			{
+				auto ptrBack = AddGameObject<DebugObject>();
+				ptrBack->SetPosition(Vec3(-90.0f + (80.0f * j), 135.0f - (scale * i), 50.0f));
+				ptrBack->SetScale(Vec3(80.0f, scale, 5.0f));
+				ptrBack->SetAlphaActive(true);
+
+
+				VertexData vertex;
+				Utility::SimpleVerticesIndices(vertex);
+				auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
+				backDraw->SetOriginalMeshUse(true);
+				backDraw->CreateOriginalMesh(vertex);
+				backDraw->SetTextureResource(L"BACKGROUND_TX");
+			}
+		}
 	}
 
 	// BGMの再生
@@ -83,6 +105,7 @@ namespace basecross
 		const float left = -49.0f;
 		const float scale = 1.0f;
 		const Vec3 slopeScale = Vec3(scale) * 1.4f;
+		const Vec3 mConvayorScale = Vec3(scale * 2.0f, scale, scale * 1.15f);
 		const Vec2 slopeLeft = Vec2(0.5f, -0.5f);
 		const Vec2 slopeRight = Vec2(-0.5f, -0.5f);
 
@@ -183,11 +206,11 @@ namespace basecross
 
 					if (checker.check)
 					{
-						auto p = AddGameObject<DebugSphere>(Vec3(left + (j * scale), under + ((data.size() - i) * scale), 0.0f), Vec3(0.0f), Vec3(scale));
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Up, Convayor::Side);
 					}
 					else
 					{
-						AddGameObject<Block>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Block::DarkMetal, CubeObject::Normal, false);
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Up, Convayor::Middle);
 					}
 					break;
 
@@ -198,11 +221,11 @@ namespace basecross
 
 					if (checker.check)
 					{
-						auto p = AddGameObject<DebugSphere>(Vec3(left + (j * scale), under + ((data.size() - i) * scale), 0.0f), Vec3(0.0f), Vec3(scale));
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Down, Convayor::Side);
 					}
 					else
 					{
-						AddGameObject<Block>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Block::DarkMetal, CubeObject::Normal, false);
+						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Down, Convayor::Middle);
 					}
 					break;
 
@@ -240,22 +263,6 @@ namespace basecross
 
 				case 300:
 					ptr = AddGameObject<Bird>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
-					break;
-
-				case 30:
-					checker.count++;
-					checker.type = data.at(i).at(j);
-					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-
-					if (checker.check)
-					{
-						auto p = AddGameObject<DebugSphere>(Vec3(left + (j * scale), under + ((data.size() - i) * scale), 0.0f), Vec3(0.0f), Vec3(scale));
-						p->GetComponent<PNTStaticDraw>()->SetEmissive(checker.count > 1 ? COL_RED : COL_BLUE);
-					}
-					else
-					{
-						AddGameObject<Block>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Block::DarkMetal, CubeObject::Normal, false);
-					}
 					break;
 
 				default:

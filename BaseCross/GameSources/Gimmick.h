@@ -52,5 +52,10 @@ namespace basecross
 		virtual ~Gimmick() {}
 
 		void OnCreate() override;
+
+		const eAngle GetAngle() const
+		{
+			return m_angle;
+		}
 	};
 }

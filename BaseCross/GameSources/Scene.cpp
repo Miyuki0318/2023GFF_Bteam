@@ -35,6 +35,9 @@ namespace basecross{
 		// 石テクスチャ
 		app->RegisterTexture(L"STONE_TX", texturePath + L"Stone.png");
 
+		// 背景テクスチャ
+		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
+
 
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";
@@ -60,6 +63,9 @@ namespace basecross{
 		// 大砲モデル
 		RegisterSingleMesh(L"CANNON", modelPath + L"Cannon/", L"Cannon", true);
 
+		// ベルトコンベアモデル
+		RegisterMultiMesh(L"MCONVAYOR", modelPath + L"Convayor/", L"m_Convayor", true);
+		RegisterMultiMesh(L"SCONVAYOR", modelPath + L"Convayor/", L"s_Convayor", true);
 
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";

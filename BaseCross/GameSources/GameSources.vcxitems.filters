@@ -70,6 +70,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h">
       <Filter>Gimmick\Cannon</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h">
+      <Filter>Gimmick\Convayor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
@@ -132,6 +135,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp">
       <Filter>Gimmick\Cannon</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp">
+      <Filter>Gimmick\Convayor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -181,6 +187,9 @@
     </Filter>
     <Filter Include="Gimmick\Cannon">
       <UniqueIdentifier>{e6b3f459-05b1-4eb9-8e95-d21a3b35a582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Convayor">
+      <UniqueIdentifier>{05084afd-8087-4225-8a01-65777bf7660d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
