@@ -9,12 +9,12 @@ namespace basecross
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
 		switch (m_type)
 		{
-		case Convayor::Side:
-			m_ptrDraw->SetMultiMeshResource(L"SCONVAYOR");
-			break;
-
 		case Convayor::Middle:
 			m_ptrDraw->SetMultiMeshResource(L"MCONVAYOR");
+			break;
+
+		case Convayor::Side:
+			m_ptrDraw->SetMultiMeshResource(L"SCONVAYOR");
 			break;
 
 		default:

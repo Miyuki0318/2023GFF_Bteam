@@ -105,7 +105,6 @@ namespace basecross
 		const float left = -49.0f;
 		const float scale = 1.0f;
 		const Vec3 slopeScale = Vec3(scale) * 1.4f;
-		const Vec3 mConvayorScale = Vec3(scale * 2.0f, scale, scale * 1.15f);
 		const Vec2 slopeLeft = Vec2(0.5f, -0.5f);
 		const Vec2 slopeRight = Vec2(-0.5f, -0.5f);
 
@@ -203,30 +202,14 @@ namespace basecross
 					checker.count++;
 					checker.type = data.at(i).at(j);
 					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-
-					if (checker.check)
-					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Up, Convayor::Side);
-					}
-					else
-					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Up, Convayor::Middle);
-					}
+					ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Up, static_cast<Convayor::eType>(checker.check));
 					break;
 
 				case 211:
 					checker.count++;
 					checker.type = data.at(i).at(j);
 					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-
-					if (checker.check)
-					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale), Gimmick::Invers, Convayor::Side);
-					}
-					else
-					{
-						ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), mConvayorScale, Gimmick::Invers, Convayor::Middle);
-					}
+					ptr = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Invers, static_cast<Convayor::eType>(checker.check));
 					break;
 
 				case 220:

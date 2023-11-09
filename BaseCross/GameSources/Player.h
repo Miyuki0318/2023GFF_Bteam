@@ -180,6 +180,10 @@ namespace basecross
 
 		void CannonEnter(const shared_ptr<GameObject>& cannon);
 
+		void ConvayorEnter(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
+
+		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
+
 		void DamageKnockBack(const Vec2& velocity);
 
 		bool CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);

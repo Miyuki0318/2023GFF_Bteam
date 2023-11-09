@@ -10,8 +10,8 @@ namespace basecross
 
 		enum eType
 		{
-			Side = 1,
-			Middle = 2,
+			Middle,
+			Side,
 		};
 
 	private:
@@ -22,14 +22,14 @@ namespace basecross
 	public:
 
 		Convayor(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const Vec3& scale,
+			const Vec2& position, const float scale,
 			const eAngle& angle, const eType& type
 		) :
-			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), scale, angle),
+			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), angle),
 			m_type(type)
 		{
 			m_modelMat.affineTransformation(
-				Vec3(1.35f * (1.0f / m_type), 1.35f, 1.35f),
+				Vec3(1.35f, 1.35f, 1.35f),
 				Vec3(0.0f),
 				Vec3(0.0f),
 				Vec3(0.0f, -0.5f, 0.0f)			
