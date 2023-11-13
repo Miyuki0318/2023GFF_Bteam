@@ -24,6 +24,7 @@
 #include "Spike.h"
 #include "Cannon.h"
 #include "Convayor.h"
+#include "Ring.h"
 #include "Enemy.h"
 #include "Player.h"
 #include "Block.h"

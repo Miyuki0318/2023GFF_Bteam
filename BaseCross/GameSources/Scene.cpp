@@ -67,6 +67,10 @@ namespace basecross{
 		RegisterMultiMesh(L"MCONVAYOR", modelPath + L"Convayor/", L"m_Convayor", true);
 		RegisterMultiMesh(L"SCONVAYOR", modelPath + L"Convayor/", L"s_Convayor", true);
 
+		// リングモデル
+		RegisterSingleMesh(L"RING", modelPath + L"Ring/", L"Ring", true);
+
+
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";

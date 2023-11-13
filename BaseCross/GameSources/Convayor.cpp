@@ -22,8 +22,9 @@ namespace basecross
 		}
 
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
-		m_ptrDraw->AddAnimation(L"ROTATE", 0, 60, true);
-		m_ptrDraw->ChangeCurrentAnimation(L"ROTATE");
+		m_ptrDraw->AddAnimation(m_animeKey.at(LeftRot), 0, 60, true);
+		m_ptrDraw->AddAnimation(m_animeKey.at(RightRot), 70, 60, true);
+		m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(m_rotate));
 
 		auto ptrColl = GetComponent<CollisionObb>();
 		ptrColl->SetUpdateActive(true);

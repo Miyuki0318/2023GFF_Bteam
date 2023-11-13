@@ -50,11 +50,15 @@ namespace basecross
 			m_aligment.at(i).lock()->SetScale(0.15f);
 			m_aligment.at(i).lock()->SetDrawLayer(-1);
 			m_aligment.at(i).lock()->SetDrawActive(false);
+			m_aligment.at(i).lock()->GetComponent<PNTStaticDraw>()->SetEmissive(COL_RED);
 		}
 
 		// エフェクトオブジェクトの生成
 		m_effect = GetStage()->AddGameObject<Billboard>(L"EFFECT", Vec2(0.0f), Vec3(0.0f));
 		m_effect.lock()->SetDrawLayer(1);
+		m_shield = GetStage()->AddGameObject<DebugSphere>(m_position, Vec3(0.0f), Vec3(3.0f));
+		m_shield.lock()->SetDrawLayer(2);
+		m_shield.lock()->GetComponent<PNTStaticDraw>()->SetTextureResource(L"SHIELD");
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
@@ -95,6 +99,7 @@ namespace basecross
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
+		Debug::Log(L"シールド枚数 : ", m_shieldCount);
 	}
 
 	// Aボタンを離した時
@@ -146,6 +151,12 @@ namespace basecross
 		if (other->FindTag(L"Convayor"))
 		{
 			ConvayorEnter(other, hitPoint);
+		}
+		if (other->FindTag(L"Ring"))
+		{
+			const auto& ring = dynamic_pointer_cast<Ring>(other);
+			ring->IsGetRing();
+			AddShield();
 		}
 		if (other->FindTag(L"Death"))
 		{
@@ -317,16 +328,20 @@ namespace basecross
 	// エフェクトの更新
 	void Player::EffectUpdate()
 	{
-		// プレイヤーの座標に移動方向ベクトル×加速度を加算する
-		Vec3 pos = m_position + (Vec3(m_velocity.x, m_velocity.y, 0.0f).normalize() * (m_acsel * 1.15f));
-		pos.y += 0.5f;
-		pos.z = -1.0f;
+		// 更新
+		m_shield.lock()->SetPosition(m_position.x, m_position.y + 0.5f, -1.5f);
+		m_shield.lock()->SetDrawActive(m_shieldCount > 0);
+		m_shield.lock()->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.5f + (0.1f * m_shieldCount)));
 
 		m_effect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
 
-		// 更新
 		if (m_firePossible && !m_cannonFire)
 		{
+			// プレイヤーの座標に移動方向ベクトル×加速度を加算する
+			Vec3 pos = m_position + (Vec3(m_velocity.x, m_velocity.y, 0.0f).normalize() * (m_acsel * 1.15f));
+			pos.y += 0.5f;
+			pos.z = -1.0f;
+
 			m_effect.lock()->SetPosition(pos);
 			m_effect.lock()->SetRotation(0.0f, 0.0f, (atan2f(m_velocity.y, m_velocity.x) - XM_PIDIV2));
 			m_effect.lock()->SetScale(Vec2((m_acsel - 1.0f) * 3.0f));
@@ -398,6 +413,12 @@ namespace basecross
 			// エアショック使用可能にする
 			m_firePossible = true;
 			m_respawnPos = Vec3(objPos.x, objPos.y + (helf.y * 3.0f), 0.0f);
+
+			// 死亡判定があるなら
+			if (m_isDeath)
+			{
+				// コンティニュー画面へ遷移
+			}
 
 			// 移動量が下方向にあり
 			if (m_velocity.y > 0.0f)
@@ -709,14 +730,14 @@ namespace basecross
 			const auto& ptr = dynamic_pointer_cast<Convayor>(convayor);
 			if (!ptr) return;
 
-			const auto& angle = ptr->GetAngle();
+			const auto& angle = ptr->GetRotate();
 			switch (angle)
 			{
-			case Gimmick::Up:
+			case Convayor::LeftRot:
 				m_velocity.x = m_speed;
 				break;
 
-			case Gimmick::Invers:
+			case Convayor::RightRot:
 				m_velocity.x = -m_speed;
 				break;
 
@@ -770,6 +791,15 @@ namespace basecross
 		for (const auto& aligment : m_aligment)
 		{
 			aligment.lock()->SetDrawActive(false);
+		}
+
+		if (m_shieldCount > 0)
+		{
+			m_shieldCount--;
+		}
+		else
+		{
+			m_isDeath = true;
 		}
 	}
 

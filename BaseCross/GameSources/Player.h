@@ -26,6 +26,7 @@ namespace basecross
 
 		weak_ptr<DebugObject> m_arm;
 		weak_ptr<Billboard> m_effect;
+		weak_ptr<DebugSphere> m_shield;
 		weak_ptr<Cannon> m_activeCannon;
 		weak_ptr<MultiParticle> m_particle;
 		vector<weak_ptr<DebugSphere>> m_aligment;
@@ -35,11 +36,13 @@ namespace basecross
 		const float m_slowTime;
 		const float m_normalTime;
 
+		int m_shieldCount;
 		float m_timeSpeed;
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
 		bool m_isAir;
+		bool m_isDeath;
 		bool m_firePossible;
 		bool m_cannonFire;
 		bool m_cannonStandby;
@@ -64,10 +67,12 @@ namespace basecross
 			m_scale = Vec3(1.0f);
 			m_velocity = m_deffVelo;
 			m_timeSpeed = m_normalTime;
+			m_shieldCount = 1;
 			m_acsel = 1.0f;
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
+			m_isDeath = false;
 			m_firePossible = true;
 			m_cannonFire = false;
 			m_cannonStandby = false;
@@ -188,5 +193,15 @@ namespace basecross
 		bool CollHitLeft(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
 
 		bool CollHitRight(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
+
+		void AddShield()
+		{
+			m_shieldCount++;
+		}
+
+		int GetShieldCount() const
+		{
+			return m_shieldCount;
+		}
 	};
 }

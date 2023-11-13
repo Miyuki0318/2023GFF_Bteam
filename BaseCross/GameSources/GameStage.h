@@ -34,6 +34,8 @@ namespace basecross
 		// ステージの作成
 		void CreateStage();
 
+		void CreateInstanceBlock();
+
 	public:
 
 		/*!

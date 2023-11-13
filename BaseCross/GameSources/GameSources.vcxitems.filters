@@ -73,6 +73,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h">
       <Filter>Gimmick\Convayor</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h">
+      <Filter>Gimmick\Ring</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
@@ -138,6 +141,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp">
       <Filter>Gimmick\Convayor</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp">
+      <Filter>Gimmick\Ring</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -190,6 +196,9 @@
     </Filter>
     <Filter Include="Gimmick\Convayor">
       <UniqueIdentifier>{05084afd-8087-4225-8a01-65777bf7660d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Ring">
+      <UniqueIdentifier>{a2c5bbf5-c518-4f58-a370-62923cf3fbeb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
