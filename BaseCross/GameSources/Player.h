@@ -103,11 +103,6 @@ namespace basecross
 		void OnUpdate() override;
 
 		/*!
-		@brief Aボタンが押された時に呼び出される関数
-		*/
-		void OnPushA();
-
-		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
 		*/
 		void OnReleaseA();

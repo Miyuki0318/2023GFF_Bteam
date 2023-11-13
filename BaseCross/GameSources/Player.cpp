@@ -61,9 +61,9 @@ namespace basecross
 	void Player::OnUpdate()
 	{
 		// Aボタン入力有無での関数分岐
-		if (m_acsel <= 1.7f && m_firePossible)
+		if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
 		{
-			Input::GetPushA() == true ? OnPushA() : Input::GetReleaseA() == true ? OnReleaseA() : 0;
+			OnReleaseA();
 		}
 
 		if (m_cannonStandby)
@@ -95,19 +95,6 @@ namespace basecross
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
-	}
-
-	// Aボタン押した時
-	void Player::OnPushA()
-	{
-		//// 時間を遅くする
-		//m_timeSpeed = m_slowTime;
-
-		//// 照準を表示する
-		//for (const auto& aligment : m_aligment)
-		//{
-		//	aligment.lock()->SetDrawActive(true);
-		//}
 	}
 
 	// Aボタンを離した時
@@ -207,8 +194,7 @@ namespace basecross
 		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
 
 		// 現在の座標を取得
-		m_position.x = m_ptrTrans->GetPosition().x;
-		m_position.y = m_ptrTrans->GetPosition().y;
+		m_position = m_ptrTrans->GetPosition();
 
 		// ポジションに移動ベクトルと速度と加速度とデルタタイムで掛けた数を加算
 		m_position.x += -m_velocity.x * m_speed * m_acsel * deltaTime;
