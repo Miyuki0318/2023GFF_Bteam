@@ -110,14 +110,6 @@ namespace basecross
 
 				switch (stoi(data.at(i).at(j)))
 				{
-				case 0:
-				case 1:
-				case 2:
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 0;
-					break;
-
 				case 100:
 				case 105:
 					iron.count++;
@@ -143,6 +135,9 @@ namespace basecross
 					break;
 
 				default:
+					iron.num.at(j) = 0;
+					metal.num.at(j) = 0;
+					darkMetal.num.at(j) = 0;
 					break;
 				}
 			}
