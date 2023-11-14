@@ -97,9 +97,10 @@ namespace basecross
 		Debug::Log(L"pos : ", m_position);
 		Debug::Log(L"velo : ", m_velocity);
 		Debug::Log(L"acsel : ", m_acsel);
+		Debug::Log(L"shield : ", m_shieldCount);
+		Debug::Log(m_isDeath != false ? L"死亡" : L"生存");
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
-		Debug::Log(L"シールド枚数 : ", m_shieldCount);
 	}
 
 	// Aボタンを離した時
@@ -163,6 +164,7 @@ namespace basecross
 			m_ptrTrans->SetPosition(m_respawnPos);
 			m_acsel = 1.0f;
 			m_velocity = m_deffVelo;
+			m_firePossible = true;
 		}
 	}
 
@@ -179,6 +181,13 @@ namespace basecross
 		if (other->FindTag(L"Spike"))
 		{
 			SpikeExcute(other, hitPoint);
+		}
+		if (other->FindTag(L"Cannon"))
+		{
+			if (!m_cannonStandby)
+			{
+				CannonEnter(other);
+			}
 		}
 		if (other->FindTag(L"Convayor"))
 		{

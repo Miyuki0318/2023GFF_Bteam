@@ -9,6 +9,8 @@ namespace basecross
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 		bool m_isGet;
 		float m_rotSpeed;
+		float m_totalTime;
+		float m_deleteTime;
 
 	public:
 
@@ -19,6 +21,8 @@ namespace basecross
 		{
 			m_isGet = false;
 			m_rotSpeed = 3.0f;
+			m_totalTime = 0.0f;
+			m_deleteTime = 3.0f;
 			m_modelMat.affineTransformation(
 				Vec3(4.75f, 0.475f, 0.475f),
 				Vec3(0.0f),

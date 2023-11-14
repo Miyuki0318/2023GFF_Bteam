@@ -375,6 +375,8 @@ namespace basecross
 			{
 				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
 
+				if (!cubeObj) continue;
+
 				float length = (cubeObj->GetPosition() - pos).length();
 				cubeObj->SetUpdateActive(length <= 10.0f);
 				cubeObj->SetDrawActive(length <= 55.0f);
@@ -384,6 +386,8 @@ namespace basecross
 			for (const auto& weakObj : gimmickVec)
 			{
 				const auto& gimmickObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+
+				if (!gimmickObj) continue;
 
 				float length = (gimmickObj->GetPosition() - pos).length();
 				gimmickObj->SetUpdateActive(length <= 55.0f);
