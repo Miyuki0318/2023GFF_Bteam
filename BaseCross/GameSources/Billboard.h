@@ -23,7 +23,7 @@ namespace basecross
 		Col4 m_diffuseColor;			// ディヒューズ色
 		Col4 m_verticesColor;			// 頂点色
 		Col4 m_emissiveColor;			// エミッシブ色
-		Params::VertexData m_vertex;	// 頂点データ
+		VertexData m_vertex;	// 頂点データ
 
 	public:
 

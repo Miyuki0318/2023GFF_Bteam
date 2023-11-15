@@ -26,28 +26,63 @@ namespace basecross{
 		// 白塗りテクスチャ
 		app->RegisterTexture(L"WHITE", texturePath + L"White.png");
 
+		// 煙テクスチャ
+		app->RegisterTexture(L"SMOKE_TX", texturePath + L"Smoke.png");
+		
+		// 炎テクスチャ
+		app->RegisterTexture(L"FIRE_TX", texturePath + L"Fire.png");
+
+		// 石テクスチャ
+		app->RegisterTexture(L"STONE_TX", texturePath + L"Stone.png");
+
+		// 背景テクスチャ
+		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
+
 
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";
 
-		// 草ブロックモデル
-		RegisterSingleMesh(L"GRASS", modelPath + L"Grass/", L"Grass", false);
-
-		// 土ブロックモデル
-		RegisterSingleMesh(L"DIRT", modelPath + L"Dirt/", L"Dirt", false);
-
-		// 岩ブロックモデル
-		RegisterSingleMesh(L"ROCK", modelPath + L"Rock/", L"Rock", false);
-
-		// 砂岩ブロックモデル
-		RegisterSingleMesh(L"SANDSTONE", modelPath + L"SandStone/", L"Sandstone", false);
+		// ブロックモデル
+		RegisterSingleMesh(L"BLOCK", modelPath + L"Block/", L"Block", false);
+		RegisterSingleMesh(L"SLOPE", modelPath + L"Block/", L"Slope", false);
+		app->RegisterTexture(L"GRASS_TX", modelPath + L"Block/Grass.png");
+		app->RegisterTexture(L"DIRT_TX", modelPath + L"Block/Dirt.png");
+		app->RegisterTexture(L"ROCK_TX", modelPath + L"Block/Rock.png");
 
 		// スパイクモデル
 		RegisterSingleMesh(L"SPIKE", modelPath, L"Spike", false);
+		RegisterSingleMesh(L"SPIKE_BLOCK", modelPath, L"SpikeBlock", false);
 
 		// ロボットモデル
 		RegisterSingleMesh(L"ROBOT_BODY", modelPath + L"Robot/", L"Robot_Body", true);
 		RegisterMultiMesh(L"ROBOT_ARM", modelPath + L"Robot/", L"Robot_Arm", true);
+
+		// 鳥モデル
+		RegisterSingleMesh(L"BIRD", modelPath + L"Bird/", L"Bird", true);
+
+		// 大砲モデル
+		RegisterSingleMesh(L"CANNON", modelPath + L"Cannon/", L"Cannon", true);
+
+		// ベルトコンベアモデル
+		RegisterMultiMesh(L"MCONVAYOR", modelPath + L"Convayor/", L"m_Convayor", true);
+		RegisterMultiMesh(L"SCONVAYOR", modelPath + L"Convayor/", L"s_Convayor", true);
+
+		// リングモデル
+		RegisterSingleMesh(L"RING", modelPath + L"Ring/", L"Ring", true);
+
+
+		// サウンドディレクトリパス
+		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
+		const wstring SEPath = mediaPath + L"Sounds/SE/";
+
+		// ゲーム用BGM
+		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
+
+		// 衝撃波SE
+		app->RegisterWav(L"AIRSHOCK_SE", SEPath + L"AirShockSE");
+
+		// 大砲発射SE
+		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)

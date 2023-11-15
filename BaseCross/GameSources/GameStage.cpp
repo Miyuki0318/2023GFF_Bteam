@@ -28,6 +28,9 @@ namespace basecross
 
 		// 炎のテクスチャの読み込み
 		app->RegisterTexture(L"EFFECT", texturePath + L"Effect.png");
+
+		// シールドテクスチャの読み込み
+		app->RegisterTexture(L"SHIELD", texturePath + L"Shield.png");
 	}
 
 	void GameStage::CreateViewLight() 
@@ -40,6 +43,35 @@ namespace basecross
 		// マルチライトの作成
 		auto ptrMultiLight = CreateLight<MultiLight>();
 		ptrMultiLight->SetDefaultLighting();
+
+		const float scale = 45.0f;
+
+		// 背景の生成
+		for (size_t i = 0; i < 12; i++)
+		{
+			for (size_t j = 0; j < 18; j++)
+			{
+				auto ptrBack = AddGameObject<DebugObject>();
+				ptrBack->SetPosition(Vec3(-90.0f + (80.0f * j), 135.0f - (scale * i), 50.0f));
+				ptrBack->SetScale(Vec3(80.0f, scale, 5.0f));
+				ptrBack->SetAlphaActive(true);
+
+
+				VertexData vertex;
+				Utility::SimpleVerticesIndices(vertex);
+				auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
+				backDraw->SetOriginalMeshUse(true);
+				backDraw->CreateOriginalMesh(vertex);
+				backDraw->SetTextureResource(L"BACKGROUND_TX");
+			}
+		}
+	}
+
+	// BGMの再生
+	void GameStage::CreateBGM()
+	{
+		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+		m_bgm = audioPtr->Start(L"GAME_BGM", XAUDIO2_LOOP_INFINITE, 0.3f);
 	}
 
 	void GameStage::CreatePlayer()
@@ -51,59 +83,247 @@ namespace basecross
 		gameCamera->SetTargetObject(player);
 	}
 
+	void GameStage::CreateInstanceBlock()
+	{
+		struct Instance
+		{
+			vector<int> num;
+			int count = 0;
+		};
+
+		const auto& data = CSVLoader::LoadFile("Stage");
+		const int size = static_cast<int>(data.size());
+
+		for (int i = 0; i < data.size(); i++)
+		{
+			Instance iron;
+			Instance metal;
+			Instance darkMetal;
+
+			iron.num.resize(data.at(i).size());
+			metal.num.resize(data.at(i).size());
+			darkMetal.num.resize(data.at(i).size());
+
+			for (int j = 0; j < data.at(i).size(); j++)
+			{
+				if (data.at(i).at(j) == "") continue;
+
+				switch (stoi(data.at(i).at(j)))
+				{
+				case 100:
+				case 105:
+					iron.count++;
+					iron.num.at(j) = 1;
+					metal.num.at(j) = 0;
+					darkMetal.num.at(j) = 0;
+					break;
+
+				case 110:
+				case 115:
+					metal.count++;
+					iron.num.at(j) = 0;
+					metal.num.at(j) = 1;
+					darkMetal.num.at(j) = 0;
+					break;
+
+				case 120:
+				case 125:
+					darkMetal.count++;
+					iron.num.at(j) = 0;
+					metal.num.at(j) = 0;
+					darkMetal.num.at(j) = 1;
+					break;
+
+				default:
+					iron.num.at(j) = 0;
+					metal.num.at(j) = 0;
+					darkMetal.num.at(j) = 0;
+					break;
+				}
+			}
+
+			if (iron.count > 0)
+			{
+				AddGameObject<InstanceBlock>(iron.num, L"GRASS_TX", size, i);
+			}
+			if (metal.count > 0)
+			{
+				AddGameObject<InstanceBlock>(metal.num, L"DIRT_TX", size, i);
+			}
+			if (darkMetal.count > 0)
+			{
+				AddGameObject<InstanceBlock>(darkMetal.num, L"ROCK_TX", size, i);
+			}
+		}
+	}
+
 	void GameStage::CreateStage()
 	{
-		const auto& data = CSVLoader::LoadFile("Test");
+		CreateSharedObjectGroup(L"Stage");
+		CreateSharedObjectGroup(L"Gimmick");
 
-		const float up = 22.5f;
-		const float left = -22.0f;
+		const auto& data = CSVLoader::LoadFile("Stage");
+
+		struct Checker
+		{
+			string type = "";
+			int count = 0;
+			bool check = false;
+
+			void reset()
+			{
+				type = "";
+				count = 0;
+				check = false;
+			}
+		};
+
+		const float under = -7.5f;
+		const float left = -49.0f;
 		const float scale = 1.0f;
+		const Vec3 slopeScale = Vec3(scale) * 1.4f;
+		const Vec2 slopeLeft = Vec2(0.5f, -0.5f);
+		const Vec2 slopeRight = Vec2(-0.5f, -0.5f);
 
+		Checker checker;
 		for (size_t i = 0; i < data.size(); i++)
 		{
 			for (size_t j = 0; j < data.at(i).size(); j++)
 			{
-				shared_ptr<CubeObject> ptr;
-				if (data.at(i).at(j) == "-1")
+				if (data.at(i).at(j) == "") continue;
+
+				shared_ptr<CubeObject> block = nullptr;
+				shared_ptr<Gimmick> gimmick = nullptr;
+
+				switch (stoi(data.at(i).at(j)))
 				{
-					ptr = AddGameObject<Alpha>(Vec2(left + (j * scale), up - (i * scale)), scale);
-				}
-				if (data.at(i).at(j) == "1")
-				{
-					ptr = AddGameObject<Grass>(Vec2(left + (j * scale), up - (i * scale)), scale);
-				}
-				if (data.at(i).at(j) == "2")
-				{
-					ptr = AddGameObject<Dirt>(Vec2(left + (j * scale), up - (i * scale)), scale);
-				}
-				if (data.at(i).at(j) == "3")
-				{
-					ptr = AddGameObject<Rock>(Vec2(left + (j * scale), up - (i * scale)), scale);
-				}
-				if (data.at(i).at(j) == "4")
-				{
-					ptr = AddGameObject<SandStone>(Vec2(left + (j * scale), up - (i * scale)), scale);
-				}
-				if (data.at(i).at(j) == "20")
-				{
-					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Up);
-				}
-				if (data.at(i).at(j) == "21")
-				{
-					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Down);
-				}
-				if (data.at(i).at(j) == "22")
-				{
-					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Left);
-				}
-				if (data.at(i).at(j) == "23")
-				{
-					ptr = AddGameObject<Spike>(Vec2(left + (j * scale), up - (i * scale)), scale, Gimmick::Right);
+				case 0:
+					checker.reset();
+					break;
+
+				case 1:
+					block = AddGameObject<DeathColl>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					break;
+
+				case 2:
+				case 100:
+				case 110:
+				case 120:
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					break;
+
+				case 101:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Iron, CubeObject::SlopeL, true);
+					break;
+
+				case 102:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Iron, CubeObject::SlopeR, true);
+					break;
+
+				case 111:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Metal, CubeObject::SlopeL, true);
+					break;
+
+				case 112:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Metal, CubeObject::SlopeR, true);
+					break;
+
+				case 121:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::DarkMetal, CubeObject::SlopeL, true);
+					break;
+
+				case 122:
+					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::DarkMetal, CubeObject::SlopeR, true);
+					break;
+
+				case 200:
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::All);
+					break;
+
+				case 201:
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Up);
+					break;
+
+				case 202:
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Down);
+					break;
+
+				case 203:
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Left);
+					break;
+
+				case 204:
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Right);
+					break;
+
+				case 210:
+					checker.count++;
+					checker.type = data.at(i).at(j);
+					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
+					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Convayor::LeftRot, static_cast<Convayor::eType>(checker.check));
+					break;
+
+				case 211:
+					checker.count++;
+					checker.type = data.at(i).at(j);
+					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
+					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Convayor::RightRot, static_cast<Convayor::eType>(checker.check));
+					break;
+
+				case 220:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Up, Cannon::Rotate);
+					break;
+
+				case 221:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Down, Cannon::Normal);
+					break;
+
+				case 222:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Left, Cannon::Normal);
+					break;
+
+				case 223:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Right, Cannon::Normal);
+					break;
+
+				case 224:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Uleft, Cannon::Normal);
+					break;
+
+				case 225:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Dleft, Cannon::Normal);
+					break;
+
+				case 226:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Uright, Cannon::Normal);
+					break;
+
+				case 227:
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Dright, Cannon::Normal);
+					break;
+
+				case 230:
+					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
+					break;
+
+				case 300:
+					block = AddGameObject<Bird>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
+					break;
+
+				default:
+					break;
 				}
 
-				if (ptr)
+				if (block)
 				{
-					ptr->SetTarget(GetSharedGameObject<Player>(L"Player"));
+					block->SetTarget(GetSharedGameObject<Player>(L"Player"));
+					GetSharedObjectGroup(L"Stage")->IntoGroup(block);
+				}
+
+				if (gimmick)
+				{
+					gimmick->SetTarget(GetSharedGameObject<Player>(L"Player"));
+					GetSharedObjectGroup(L"Gimmick")->IntoGroup(gimmick);
 				}
 			}
 		}
@@ -124,11 +344,15 @@ namespace basecross
 			// ビューとライトの作成
 			CreateViewLight();
 
+			// BGMの再生
+			CreateBGM();
+
 			// 地面の作成
 			CreatePlayer();
 
 			// ステージ
 			CreateStage();
+			CreateInstanceBlock();
 		}
 		catch (...) 
 		{
@@ -138,8 +362,42 @@ namespace basecross
 
 	void GameStage::OnUpdate()
 	{
-		const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
-		Debug::Log(L"FPS : ", fps);
+		try
+		{
+			const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
+			Debug::Log(L"FPS : ", fps);
+
+			const auto& player = GetSharedGameObject<Player>(L"Player");
+			Vec3 pos = player->GetComponent<Transform>()->GetPosition();
+
+			const auto& cubeVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
+			for (const auto& weakObj : cubeVec)
+			{
+				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+
+				if (!cubeObj) continue;
+
+				float length = (cubeObj->GetPosition() - pos).length();
+				cubeObj->SetUpdateActive(length <= 10.0f);
+				cubeObj->SetDrawActive(length <= 55.0f);
+			}
+
+			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
+			for (const auto& weakObj : gimmickVec)
+			{
+				const auto& gimmickObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+
+				if (!gimmickObj) continue;
+
+				float length = (gimmickObj->GetPosition() - pos).length();
+				gimmickObj->SetUpdateActive(length <= 55.0f);
+				gimmickObj->SetDrawActive(length <= 55.0f);
+			}
+		}
+		catch (...)
+		{
+			throw;
+		}
 	}
 
 	void GameStage::OnDraw()

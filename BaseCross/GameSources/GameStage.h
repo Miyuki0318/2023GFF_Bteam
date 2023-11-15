@@ -16,19 +16,31 @@ namespace basecross
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
 
+		// BGM
+		weak_ptr<SoundItem> m_bgm;
+
 		// リソースの読み込み
 		void CreateResourses();
 
 		// ビューの作成
 		void CreateViewLight();
 
+		// BGMの再生
+		void CreateBGM();
+
 		// 地面の作成
 		void CreatePlayer();
 
+		// ステージの作成
 		void CreateStage();
+
+		void CreateInstanceBlock();
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		*/
 		GameStage() :Stage() {}
 
 		/*!

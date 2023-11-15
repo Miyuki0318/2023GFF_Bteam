@@ -56,11 +56,6 @@ namespace basecross
 			SetPosition(Vec2(x, y));
 		}
 
-		virtual void SetPosition(const float& size)
-		{
-			SetPosition(Vec3(size));
-		}
-
 		virtual Vec3 GetPosition() const
 		{
 			return m_position;

@@ -8,9 +8,8 @@ namespace basecross
 		SetPosition(m_position);
 		SetRotation(m_rotation);
 		SetScale(m_scale);
-
+		SetAlphaActive(true);
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetEmissive(COL_RED);
 	}
 }

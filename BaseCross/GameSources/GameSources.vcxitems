@@ -16,7 +16,10 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
@@ -32,6 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Params.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h" />
@@ -39,7 +43,10 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp" />
@@ -51,6 +58,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />

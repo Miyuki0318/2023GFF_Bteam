@@ -39,7 +39,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(Params::VertexData& vertex)
+	void SimpleVerticesIndices(basecross::VertexData& vertex)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -92,7 +92,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(Params::VertexData& vertex, const Col4& color)
+	void SimpleVerticesIndices(basecross::VertexData& vertex, const Col4& color)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -119,7 +119,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
+	void NumberVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -147,7 +147,7 @@ namespace Utility
 	@param (vertex) 頂点データと頂点インデックス構造体
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(Params::VertexData& vertex, const int number)
+	void NumberVerticesIndices(basecross::VertexData& vertex, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;

@@ -509,6 +509,7 @@ namespace basecross {
 				if (rParticleSprite.m_Active) {
 					//ˆÚ“®‘¬“x‚É]‚Á‚ÄˆÚ“®‚³‚¹‚é
 					rParticleSprite.m_LocalPos += rParticleSprite.m_Velocity * ElapsedTime;
+					rParticleSprite.m_Color = Col4(1.0f, 1.0f, 1.0f, 1.0f - (ParticlePtr->GetTotalTime() / ParticlePtr->GetMaxTime()));
 					if (ParticlePtr->GetTotalTime() >= ParticlePtr->GetMaxTime()) {
 						//§ŒÀŠÔ‚É‚È‚Á‚½‚ç
 						rParticleSprite.m_Active = false;

@@ -64,6 +64,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
       <Filter>Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h">
+      <Filter>Bird</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h">
+      <Filter>Gimmick\Cannon</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h">
+      <Filter>Gimmick\Convayor</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h">
+      <Filter>Gimmick\Ring</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
@@ -120,6 +132,18 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp">
       <Filter>Gimmick\Spike</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp">
+      <Filter>Bird</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp">
+      <Filter>Gimmick\Cannon</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp">
+      <Filter>Gimmick\Convayor</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp">
+      <Filter>Gimmick\Ring</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -163,6 +187,18 @@
     </Filter>
     <Filter Include="Enemy">
       <UniqueIdentifier>{a7bf6690-ecd5-4bdb-905e-112c1f6684f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bird">
+      <UniqueIdentifier>{3a9dbf15-8d60-4ba1-9c4c-ebaac0ba2577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Cannon">
+      <UniqueIdentifier>{e6b3f459-05b1-4eb9-8e95-d21a3b35a582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Convayor">
+      <UniqueIdentifier>{05084afd-8087-4225-8a01-65777bf7660d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Ring">
+      <UniqueIdentifier>{a2c5bbf5-c518-4f58-a370-62923cf3fbeb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

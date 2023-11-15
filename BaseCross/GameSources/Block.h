@@ -8,9 +8,9 @@ namespace basecross
 	public:
 
 		Alpha(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+			const Vec2& position, const float scale, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), coll)
 		{
 		}
 
@@ -19,98 +19,83 @@ namespace basecross
 		void OnCreate() override;
 	};
 
-	class Grass : public CubeObject
+	class DeathColl : public CubeObject
 	{
-		Mat4x4 m_bodyMat;
-
 	public:
 
-		Grass(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+		DeathColl(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), coll)
 		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
-				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
-			);
 		}
 
-		~Grass() {}
+		~DeathColl() {}
 
 		void OnCreate() override;
 	};
 
-	class Dirt : public CubeObject
+	class Slope : public CubeObject
 	{
-		Mat4x4 m_bodyMat;
+	public:
+
+		enum eBlock
+		{
+			Iron,
+			Metal,
+			DarkMetal,
+		};
+
+	private:
+
+		eBlock m_block;
+		Mat4x4 m_modelMat;
 
 	public:
 
-		Dirt(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+		Slope(const shared_ptr<Stage>& stagePtr, const Vec2& position,
+			const Vec3& scale, const eBlock block, const eType type, const bool coll
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), scale, type, coll),
+			m_block(block)
 		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
+			m_modelMat.affineTransformation(
+				Vec3(1.0f),
 				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
+				Vec3(0.0f, 0.0f, 0.0f),
+				Vec3(0.0f, 0.0f, 0.0f)
 			);
 		}
 
-		~Dirt() {}
+		~Slope() {}
 
 		void OnCreate() override;
 	};
 
-	class Rock : public CubeObject
+	class InstanceBlock : public GameObject
 	{
-		Mat4x4 m_bodyMat;
+		int m_size;
+		int m_rowNum;
+		wstring m_texture;
+		vector<int> m_data;
 
 	public:
 
-		Rock(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
+		InstanceBlock(const shared_ptr<Stage>& stagePtr,
+			const vector<int>& data,
+			const wstring& texture,
+			const int size,
+			const int rowNum
 		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
+			GameObject(stagePtr),
+			m_data(data),
+			m_texture(texture),
+			m_size(size),
+			m_rowNum(rowNum)
 		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
-				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
-			);
 		}
 
-		~Rock() {}
-
-		void OnCreate() override;
-	};
-
-	class SandStone : public CubeObject
-	{
-		Mat4x4 m_bodyMat;
-
-	public:
-
-		SandStone(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale
-		) :
-			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale))
-		{
-			m_bodyMat.affineTransformation(
-				Vec3(1.35f),
-				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
-			);
-		}
-
-		~SandStone() {}
+		virtual ~InstanceBlock() {}
 
 		void OnCreate() override;
 	};

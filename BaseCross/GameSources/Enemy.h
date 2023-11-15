@@ -1,22 +1,27 @@
 #pragma once
 #include "stdafx.h"
+#include "CubeObject.h"
 
 namespace basecross
 {
-	class Enemy : public GameObject
+	class Enemy : public CubeObject
 	{
-		Vec3 m_position;
-		Vec3 m_rotation;
+	protected:
+
 		Vec2 m_velocity;
+		Mat4x4 m_modelMat;
+		weak_ptr<GameObject> m_targetObj;
 
 		const float m_speed;
+		const float m_collRange;
 		float m_acsel;
 
 	public:
 
 		Enemy(const shared_ptr<Stage>& stagePtr) :
-			GameObject(stagePtr),
-			m_speed(0.0f)
+			CubeObject(stagePtr),
+			m_speed(0.0f),
+			m_collRange(4.0f)
 		{
 			m_position.zero();
 			m_rotation.zero();
@@ -25,22 +30,23 @@ namespace basecross
 		}
 
 		Enemy(const shared_ptr<Stage>& stagePtr,
-			const Vec3& position, const Vec3& rotation,
-			const Vec2& velocity, float speed, float acsel
+			const Vec3& position, const Vec3& rotation, 
+			const Vec3& scale, float speed
 		) :
-			GameObject(stagePtr),
-			m_position(position),
-			m_rotation(rotation),
-			m_velocity(velocity),
+			CubeObject(stagePtr, position, rotation, scale, true),
 			m_speed(speed),
-			m_acsel(acsel)
+			m_collRange(4.0f)
 		{
+			m_velocity.zero();
+			m_acsel = 1.0f;
 		}
 
 		virtual ~Enemy() {}
 
-		void OnCreate() override;
-
-		void OnUpdate() override;
+		void SetMoveValue(const Vec2& velocity, float acsel)
+		{
+			m_velocity = velocity;
+			m_acsel = acsel < 1.0f ? 1.0f : acsel;
+		}
 	};
 }

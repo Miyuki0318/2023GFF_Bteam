@@ -216,6 +216,17 @@ namespace basecross{
 		}
 	};
 
+	/*!
+	@brief 頂点データ
+	@param vertices
+	@param indices
+	*/
+	struct VertexData
+	{
+		vector<VertexPositionColorTexture> vertices; // 頂点
+		vector<uint16_t> indices; // インデックス
+	};
+
 	//--------------------------------------------------------------------------------------
 	/// 位置と法線と色を持つ入力レイアウトの定義
 	//--------------------------------------------------------------------------------------

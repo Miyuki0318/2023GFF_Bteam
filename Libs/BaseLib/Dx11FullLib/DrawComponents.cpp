@@ -1076,7 +1076,7 @@ namespace basecross {
 	}
 
 	PCTSpriteDraw::PCTSpriteDraw(const shared_ptr<GameObject>& GameObjectPtr,
-		Params::VertexData& Vertex) :
+		VertexData& Vertex) :
 		SpriteBaseDraw(GameObjectPtr)
 	{
 		//パイプラインステートをデフォルトの2D
@@ -1518,7 +1518,7 @@ namespace basecross {
 
 	}
 
-	void SmBaseDraw::CreateOriginalMesh(Params::VertexData& Vertex) {
+	void SmBaseDraw::CreateOriginalMesh(VertexData& Vertex) {
 		try {
 			auto MeshRes = MeshResource::CreateMeshResource(Vertex.vertices, Vertex.indices, true);
 			SetOriginalMeshResource(MeshRes);
