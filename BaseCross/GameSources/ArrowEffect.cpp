@@ -19,6 +19,8 @@ namespace basecross
 			m_ptrDraw->CreateOriginalMesh(tempVertex);
 			m_ptrDraw->SetTextureResource(L"ARROW_TX");
 			m_ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+			m_ptrDraw->SetEmissive(COL_WHITE);
+			m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.5f));
 
 			SetDrawActive(false);
 			SetAlphaActive(true);
