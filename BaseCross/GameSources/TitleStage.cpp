@@ -1,18 +1,9 @@
-/*!
-@file GameStage.cpp
-@brief ゲームステージ実体
-*/
-
 #include "stdafx.h"
 #include "Project.h"
 
-namespace basecross 
+namespace basecross
 {
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス実体
-	//--------------------------------------------------------------------------------------
-
-	void GameStage::CreateResourses()
+	void TitleStage::CreateResourses()
 	{
 		// アプリケーションの取得
 		const auto& app = App::GetApp();
@@ -25,12 +16,16 @@ namespace basecross
 
 		// サウンドディレクトリパスの取得
 		const wstring soundPath = mediaPath + L"Sounds/";
+
+		app->RegisterWav(L"TITLE_BGM", soundPath + L"BGM/TitleBGM");
 	}
 
-	void GameStage::CreateViewLight() 
+	void TitleStage::CreateViewLight()
 	{
 		// ビューのカメラの設定
-		auto ptrCamera = ObjectFactory::Create<GameCamera>();
+		auto ptrCamera = ObjectFactory::Create<Camera>();
+		ptrCamera->SetEye(Vec3(-20.0f, 9.0f, -33.0f));
+		ptrCamera->SetAt(Vec3(-20.0f, 9.0f, 0.0f));
 		m_gameView = CreateView<SingleView>();
 		m_gameView->SetCamera(ptrCamera);
 
@@ -39,46 +34,39 @@ namespace basecross
 		ptrMultiLight->SetDefaultLighting();
 
 		// 背景の生成
-		for (size_t i = 0; i < 12; i++)
-		{
-			for (size_t j = 0; j < 18; j++)
-			{
-				auto ptrBack = AddGameObject<DebugObject>();
-				float x, y;
-				x = 80.0f;
-				y = 45.0f;
-				ptrBack->SetPosition(Vec3(-90.0f + (x * j), 135.0f - (y * i), 50.0f));
-				ptrBack->SetScale(Vec3(x, y, 5.0f));
-				ptrBack->SetAlphaActive(true);
+		auto ptrBack = AddGameObject<DebugObject>();
+		float x, y;
+		x = 80.0f * 5;
+		y = 45.0f * 5;
+		ptrBack->SetPosition(Vec3(-90.0f, 0.0f, 50.0f));
+		ptrBack->SetScale(Vec3(x, y, 5.0f));
+		ptrBack->SetAlphaActive(true);
 
-
-				VertexData vertex;
-				Utility::SimpleVerticesIndices(vertex);
-				auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
-				backDraw->SetOriginalMeshUse(true);
-				backDraw->CreateOriginalMesh(vertex);
-				backDraw->SetTextureResource(L"BACKGROUND_TX");
-			}
-		}
+		VertexData vertex;
+		Utility::SimpleVerticesIndices(vertex);
+		vertex.vertices.at(1).textureCoordinate = Vec2(5.0f, 0.0f);
+		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, 5.0f);
+		vertex.vertices.at(3).textureCoordinate = Vec2(5.0f, 5.0f);
+		auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
+		backDraw->SetOriginalMeshUse(true);
+		backDraw->CreateOriginalMesh(vertex);
+		backDraw->SetTextureResource(L"BACKGROUND_TX");
+		backDraw->SetSamplerState(SamplerState::LinearWrap);
 	}
 
-	// BGMの再生
-	void GameStage::CreateBGM()
+	void TitleStage::CreateBGM()
 	{
 		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		m_bgm = audioPtr->Start(L"GAME_BGM", XAUDIO2_LOOP_INFINITE, 0.3f);
+		m_bgm = audioPtr->Start(L"TITLE_BGM", XAUDIO2_LOOP_INFINITE, 0.5f);
 	}
 
-	void GameStage::CreatePlayer()
+	void TitleStage::CreatePlayer()
 	{
 		auto player = AddGameObject<Player>();
 		SetSharedGameObject(L"Player", player);
-		
-		const auto& gameCamera = dynamic_pointer_cast<GameCamera>(m_gameView->GetCamera());
-		gameCamera->SetTargetObject(player);
 	}
 
-	void GameStage::CreateInstanceBlock()
+	void TitleStage::CreateInstanceBlock()
 	{
 		struct Instance
 		{
@@ -86,7 +74,7 @@ namespace basecross
 			int count = 0;
 		};
 
-		const auto& data = CSVLoader::LoadFile("Stage");
+		const auto& data = CSVLoader::LoadFile("Title");
 		const int size = static_cast<int>(data.size());
 
 		for (int i = 0; i < data.size(); i++)
@@ -152,12 +140,12 @@ namespace basecross
 		}
 	}
 
-	void GameStage::CreateStage()
+	void TitleStage::CreateStage()
 	{
 		CreateSharedObjectGroup(L"Stage");
 		CreateSharedObjectGroup(L"Gimmick");
 
-		const auto& data = CSVLoader::LoadFile("Stage");
+		const auto& data = CSVLoader::LoadFile("Title");
 
 		struct Checker
 		{
@@ -205,30 +193,6 @@ namespace basecross
 				case 110:
 				case 120:
 					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
-					break;
-
-				case 101:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Iron, CubeObject::SlopeL, true);
-					break;
-
-				case 102:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Iron, CubeObject::SlopeR, true);
-					break;
-
-				case 111:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Metal, CubeObject::SlopeL, true);
-					break;
-
-				case 112:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Metal, CubeObject::SlopeR, true);
-					break;
-
-				case 121:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::DarkMetal, CubeObject::SlopeL, true);
-					break;
-
-				case 122:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::DarkMetal, CubeObject::SlopeR, true);
 					break;
 
 				case 200:
@@ -301,10 +265,6 @@ namespace basecross
 					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
 					break;
 
-				case 300:
-					block = AddGameObject<Bird>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
-					break;
-
 				default:
 					break;
 				}
@@ -324,7 +284,7 @@ namespace basecross
 		}
 	}
 
-	void GameStage::OnCreate() 
+	void TitleStage::OnCreate()
 	{
 		try
 		{
@@ -349,45 +309,18 @@ namespace basecross
 			CreateStage();
 			CreateInstanceBlock();
 		}
-		catch (...) 
+		catch (...)
 		{
 			throw;
 		}
 	}
 
-	void GameStage::OnUpdate()
+	void TitleStage::OnUpdate()
 	{
 		try
 		{
 			const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
 			Debug::Log(L"FPS : ", fps);
-
-			const auto& player = GetSharedGameObject<Player>(L"Player");
-			Vec3 pos = player->GetComponent<Transform>()->GetPosition();
-
-			const auto& cubeVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
-			for (const auto& weakObj : cubeVec)
-			{
-				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
-
-				if (!cubeObj) continue;
-
-				float length = (cubeObj->GetPosition() - pos).length();
-				cubeObj->SetUpdateActive(length <= 10.0f);
-				cubeObj->SetDrawActive(length <= 55.0f);
-			}
-
-			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
-			for (const auto& weakObj : gimmickVec)
-			{
-				const auto& gimmickObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
-
-				if (!gimmickObj) continue;
-
-				float length = (gimmickObj->GetPosition() - pos).length();
-				gimmickObj->SetUpdateActive(length <= 55.0f);
-				gimmickObj->SetDrawActive(length <= 55.0f);
-			}
 		}
 		catch (...)
 		{
@@ -395,7 +328,7 @@ namespace basecross
 		}
 	}
 
-	void GameStage::OnDraw()
+	void TitleStage::OnDraw()
 	{
 		// デバッグ文字列を強制的に空にする
 		App::GetApp()->GetScene<Scene>()->SetDebugString(L"");

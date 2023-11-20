@@ -5,44 +5,50 @@
 
 #pragma once
 #include "stdafx.h"
-#include "DebugSphere.h"
+#include "DebugObject.h"
+#include "ArrowEffect.h"
+#include "AirJetEffect.h"
+#include "Cannon.h"
 
 namespace basecross
 {
-	class Player : public GameObject
+	class Player : public DebugObject
 	{
+	protected:
+
 		shared_ptr<Transform> m_ptrTrans;
 		shared_ptr<PNTBoneModelDraw> m_bodyDraw;
 		shared_ptr<PNTBoneModelDraw> m_armDraw;
 
-		Vec3 m_position;
 		Vec3 m_respawnPos;
-		Vec3 m_rotation;
-		Vec3 m_scale;
 		Vec2 m_velocity;
 		const Vec2 m_deffVelo;
 		Mat4x4 m_bodyMat;
 		Mat4x4 m_armMat;
 
 		weak_ptr<DebugObject> m_arm;
-		weak_ptr<Billboard> m_effect;
-		weak_ptr<DebugSphere> m_shield;
+		weak_ptr<AirJetEffect> m_jetEffect;
+		weak_ptr<ShieldEffect> m_shieldEffect;
 		weak_ptr<Cannon> m_activeCannon;
 		weak_ptr<MultiParticle> m_particle;
-		vector<weak_ptr<DebugSphere>> m_aligment;
+		weak_ptr<ArrowEffect> m_aligment;
 
 		const float m_maxAcsel;
 		const float m_damageAcsel;
 		const float m_slowTime;
 		const float m_normalTime;
+		const float m_invincibleTime;
 
 		int m_shieldCount;
 		float m_timeSpeed;
+		float m_damageTime;
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
+		
 		bool m_isAir;
 		bool m_isDeath;
+		bool m_isInvincible;
 		bool m_firePossible;
 		bool m_cannonFire;
 		bool m_cannonStandby;
@@ -54,11 +60,12 @@ namespace basecross
 		@param ステージポインタ
 		*/
 		Player(const shared_ptr<Stage>& stagePtr) :
-			GameObject(stagePtr),
+			DebugObject(stagePtr),
 			m_maxAcsel(4.5f),
 			m_damageAcsel(3.0f),
 			m_slowTime(0.1f),
 			m_normalTime(1.5f),
+			m_invincibleTime(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
 			m_position = Vec3(-22.0f, 10.0f, 0.0f);
@@ -68,11 +75,13 @@ namespace basecross
 			m_velocity = m_deffVelo;
 			m_timeSpeed = m_normalTime;
 			m_shieldCount = 1;
+			m_damageTime = 0.0f;
 			m_acsel = 1.0f;
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
 			m_isDeath = false;
+			m_isInvincible = false;
 			m_firePossible = true;
 			m_cannonFire = false;
 			m_cannonStandby = false;
@@ -160,7 +169,12 @@ namespace basecross
 		/*!
 		@brief 大砲待機関数
 		*/
-		void CannonStandby();
+		void CannonStandby(float acsel);
+
+		/*!
+		@brief 無敵時間経過
+		*/
+		void InvincibleTimer();
 
 		void BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos);
 
@@ -168,9 +182,7 @@ namespace basecross
 
 		void BlockExit(const shared_ptr<GameObject>& block);
 
-		bool BlockUpperCheck(const Vec3& upperPos);
-
-		bool BlockUnderCheck(const Vec3& underPos);
+		bool BlockCheck(const Vec3& upperPos);
 
 		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 
@@ -199,9 +211,19 @@ namespace basecross
 			m_shieldCount++;
 		}
 
-		int GetShieldCount() const
+		const int& GetShieldCount() const
 		{
 			return m_shieldCount;
+		}
+
+		const float& GetAcsel() const
+		{
+			return m_acsel;
+		}
+
+		const Vec2& GetVelocity() const
+		{
+			return m_velocity;
 		}
 	};
 }

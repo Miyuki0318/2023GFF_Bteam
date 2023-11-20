@@ -26,6 +26,12 @@ namespace basecross{
 		// 白塗りテクスチャ
 		app->RegisterTexture(L"WHITE", texturePath + L"White.png");
 
+		// 炎のテクスチャの読み込み
+		app->RegisterTexture(L"EFFECT_TX", texturePath + L"Effect.png");
+
+		// シールドテクスチャの読み込み
+		app->RegisterTexture(L"SHIELD_TX", texturePath + L"Shield.png");
+
 		// 煙テクスチャ
 		app->RegisterTexture(L"SMOKE_TX", texturePath + L"Smoke.png");
 		
@@ -38,6 +44,8 @@ namespace basecross{
 		// 背景テクスチャ
 		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
 
+		// 矢印テクスチャ
+		app->RegisterTexture(L"ARROW_TX", texturePath + L"Arrow.png");
 
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";
@@ -83,6 +91,10 @@ namespace basecross{
 
 		// 大砲発射SE
 		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
+
+		// シールドSE
+		app->RegisterWav(L"SHIELD_C_SE", SEPath + L"ShieldCreateSE");
+		app->RegisterWav(L"SHIELD_D_SE", SEPath + L"ShieldDestroySE");
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)
@@ -139,9 +151,12 @@ namespace basecross{
 
 	void Scene::OnEvent(const shared_ptr<Event>& event) 
 	{
+		if (event->m_MsgStr == L"TitleStage")
+		{
+			ResetActiveStage<TitleStage>();
+		}
 		if (event->m_MsgStr == L"GameStage")
 		{
-			//最初のアクティブステージの設定
 			ResetActiveStage<GameStage>();
 		}
 	}

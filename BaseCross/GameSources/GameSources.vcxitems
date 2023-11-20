@@ -14,6 +14,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AirJetEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ArrowEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
@@ -37,10 +39,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ShieldEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StagingPlayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AirJetEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ArrowEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />
@@ -60,8 +67,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h">
-      <Filter>Stage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -76,11 +73,26 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h">
       <Filter>Gimmick\Ring</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h">
+      <Filter>Stage\GameStage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h">
+      <Filter>Stage\TitleStage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StagingPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AirJetEffect.h">
+      <Filter>Player\Effect\AirJet</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ShieldEffect.h">
+      <Filter>Player\Effect\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ArrowEffect.h">
+      <Filter>Player\Effect\Arrow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
-      <Filter>Stage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -144,6 +156,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp">
       <Filter>Gimmick\Ring</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
+      <Filter>Stage\GameStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp">
+      <Filter>Stage\TitleStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AirJetEffect.cpp">
+      <Filter>Player\Effect\AirJet</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp">
+      <Filter>Player\Effect\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ArrowEffect.cpp">
+      <Filter>Player\Effect\Arrow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -199,6 +226,24 @@
     </Filter>
     <Filter Include="Gimmick\Ring">
       <UniqueIdentifier>{a2c5bbf5-c518-4f58-a370-62923cf3fbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage\GameStage">
+      <UniqueIdentifier>{3a52252a-b16b-45bc-8f2b-89c68212d4d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage\TitleStage">
+      <UniqueIdentifier>{e3bd28c4-39d5-49a8-a447-41af088b984d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Effect">
+      <UniqueIdentifier>{2620edfc-d12a-47b7-8d29-fa1c76c1f6ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Effect\AirJet">
+      <UniqueIdentifier>{ab852181-4827-46f8-809e-ef4c8b31b1c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Effect\Shield">
+      <UniqueIdentifier>{0a627ba8-9c73-4a7e-8ae4-470cfa78b7b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Effect\Arrow">
+      <UniqueIdentifier>{0cd1679c-b138-434a-ad93-98a913b243f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
