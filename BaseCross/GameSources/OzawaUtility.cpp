@@ -210,9 +210,9 @@ namespace Utility
 		}
 	}
 
-	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight)
+	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
 	{
-		RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight);
+		RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
 	}
 
 	/*!
