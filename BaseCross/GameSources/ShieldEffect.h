@@ -23,6 +23,8 @@ namespace basecross
 		void OnCreate() override;
 
 		void UpdateEffect();
+
+		void SetDrawShield(bool b);
 	};
 
 	class ShieldOutLine : public DebugObject

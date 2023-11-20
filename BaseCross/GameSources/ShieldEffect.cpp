@@ -46,16 +46,28 @@ namespace basecross
 						SetScale(scale);
 						outLine->SetScale(scale + Vec2(0.05f));
 
-						// 描画表示非表示
-						SetDrawActive(shieldCount > 0);
-						outLine->SetDrawActive(shieldCount > 0);
-
 						// 色の変更
 						m_ptrDraw->SetDiffuse(Col4(0.5f, 1.0f, 1.0f, 0.5f + (0.25f * shieldCount)));
 					}
 				}
 			}
 		}
+	}
+
+	void ShieldEffect::SetDrawShield(bool b)
+	{
+		// エラーチェック
+		if (!m_outLine.lock()) return;
+
+		// 型キャスト
+		const auto& outLine = dynamic_pointer_cast<ShieldOutLine>(m_outLine.lock());
+
+		// エラーチェック
+		if (!outLine) return;
+
+		// 描画表示非表示
+		SetDrawActive(b);
+		outLine->SetDrawActive(b);
 	}
 
 	void ShieldOutLine::OnCreate()
