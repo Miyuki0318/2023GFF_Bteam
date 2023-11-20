@@ -155,7 +155,7 @@ namespace basecross
 			ring->IsGetRing();
 
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-			audioPtr->Start(L"SHIELD_C_SE", 0, 0.5f);
+			audioPtr->Start(L"SHIELD_C_SE", 0, 0.75f);
 			
 			AddShield();
 		}
@@ -342,6 +342,7 @@ namespace basecross
 	{
 		// XV
 		m_shieldEffect.lock()->UpdateEffect();
+		m_shieldEffect.lock()->SetDrawShield(m_shieldCount > 0 && !m_cannonStandby);
 		m_jetEffect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
 
 		if (m_firePossible && !m_cannonFire)
