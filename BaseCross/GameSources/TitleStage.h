@@ -1,17 +1,9 @@
-/*!
-@file GameStage.h
-@brief ゲームステージ
-*/
-
 #pragma once
 #include "stdafx.h"
 
 namespace basecross
 {
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス
-	//--------------------------------------------------------------------------------------
-	class GameStage : public Stage 
+	class TitleStage : public Stage
 	{
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
@@ -40,12 +32,12 @@ namespace basecross
 		/*!
 		@brief コンストラクタ
 		*/
-		GameStage() :Stage() {}
+		TitleStage() : Stage() {}
 
 		/*!
 		@brief デストラクタ
 		*/
-		virtual ~GameStage() {}
+		virtual ~TitleStage() {}
 
 		/*!
 		@brief 生成時に一度だけ呼び出される関数
@@ -61,14 +53,5 @@ namespace basecross
 		@brief 描画更新関数
 		*/
 		virtual void OnDraw() override;
-
-		/*!
-		@brief ゲームビュー取得関数
-		@return const shared_ptr<SingleView>
-		*/
-		const shared_ptr<SingleView>& GetGameView() const
-		{
-			return m_gameView;
-		}
 	};
 }

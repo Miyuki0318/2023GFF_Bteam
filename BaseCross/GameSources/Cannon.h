@@ -34,7 +34,7 @@ namespace basecross
 			m_modelMat.affineTransformation(
 				Vec3(1.0f),
 				Vec3(0.0f),
-				Vec3(0.0f, 0.0f, 0.0f),
+				Vec3(0.0f, XM_PI, 0.0f),
 				Vec3(0.0f, -1.0f, 0.0f)
 			);
 		}
@@ -44,6 +44,8 @@ namespace basecross
 		void OnCreate() override;
 
 		void OnUpdate() override;
+
+		void EffectUpdate();
 
 		void OnFire()
 		{

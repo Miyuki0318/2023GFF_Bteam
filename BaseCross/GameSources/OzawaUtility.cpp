@@ -5,6 +5,7 @@
 */
 
 #include "stdafx.h"
+#include "OzawaUtility.h"
 
 namespace Utility
 {
@@ -13,7 +14,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices)
+	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -39,7 +40,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(basecross::VertexData& vertex)
+	void SimpleVerticesIndices(VertexData& vertex)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -66,7 +67,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (color) 固定色
 	*/
-	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color)
+	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HELF_SIZE = 0.5f;
@@ -92,7 +93,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(basecross::VertexData& vertex, const Col4& color)
+	void SimpleVerticesIndices(VertexData& vertex, const Col4& color)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -119,7 +120,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
+	void NumberVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -147,7 +148,7 @@ namespace Utility
 	@param (vertex) 頂点データと頂点インデックス構造体
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(basecross::VertexData& vertex, const int number)
+	void NumberVerticesIndices(VertexData& vertex, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -170,13 +171,57 @@ namespace Utility
 		};
 	}
 
+	void RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
+	{
+		if (point.size() == 0) return;
+
+		vertices.clear();
+
+		for (int i = 0; i < point.size(); i++)
+		{
+			const int loop = texLoop > 0 ? texLoop : 1;
+			int front = (i - 1) < 0 ? 0 : i - 1;
+			int rear = (i + 1) % point.size();
+			Vec3 dir = point.at(front) - point.at(rear);
+			Vec3 cross = dir.cross(axisVec).normalize();
+		
+			Vec3 pos = point.at(i) - cross * weight;
+			VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / point.size() * loop));
+			vertices.push_back(vertexLeft);
+
+			pos = point.at(i) + cross * weight;
+			VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / point.size() * loop));
+			vertices.push_back(vertexRight);
+		}
+
+		const vector<uint16_t> baseIndices = {
+			0, 1, 2,
+			2, 1, 3
+		};
+
+		indices.clear();
+
+		for (int i = 0; i < point.size() - 1; i++)
+		{
+			for (int j = 0; j < 6; j++)
+			{
+				indices.push_back(baseIndices.at(j) + (2 * i));
+			}
+		}
+	}
+
+	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight)
+	{
+		RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight);
+	}
+
 	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)
 	@param (viewPtr) viewのshared_ptr
 	@param (position) ワールド座標
 	@return 変換されたスクリーン座標
 	*/
-	Vec3 ConvertToWorldPosition(const shared_ptr<basecross::ViewBase>& viewPtr, const Vec3& position)
+	Vec3 ConvertToWorldPosition(const shared_ptr<ViewBase>& viewPtr, const Vec3& position)
 	{
 		// ビューからカメラとビューポートを取得
 		const auto& ptrCamera = viewPtr->GetTargetCamera();

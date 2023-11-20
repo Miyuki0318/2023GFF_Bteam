@@ -43,22 +43,10 @@ namespace basecross
 		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetDrawActive(false);
 
-		// 照準用オブジェクトの生成
-		for (size_t i = 0; i < 10; i++)
-		{
-			m_aligment.push_back(GetStage()->AddGameObject<DebugSphere>());
-			m_aligment.at(i).lock()->SetScale(0.15f);
-			m_aligment.at(i).lock()->SetDrawLayer(-1);
-			m_aligment.at(i).lock()->SetDrawActive(false);
-			m_aligment.at(i).lock()->GetComponent<PNTStaticDraw>()->SetEmissive(COL_RED);
-		}
-
 		// エフェクトオブジェクトの生成
-		m_effect = GetStage()->AddGameObject<Billboard>(L"EFFECT", Vec2(0.0f), Vec3(0.0f));
-		m_effect.lock()->SetDrawLayer(1);
-		m_shield = GetStage()->AddGameObject<DebugSphere>(m_position, Vec3(0.0f), Vec3(3.0f));
-		m_shield.lock()->SetDrawLayer(2);
-		m_shield.lock()->GetComponent<PNTStaticDraw>()->SetTextureResource(L"SHIELD");
+		m_jetEffect = GetStage()->AddGameObject<AirJetEffect>(GetThis<DebugObject>());
+		m_shieldEffect = GetStage()->AddGameObject<ShieldEffect>(GetThis<DebugObject>());
+		m_aligment = GetStage()->AddGameObject<ArrowEffect>(GetThis<DebugObject>());
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
@@ -70,9 +58,16 @@ namespace basecross
 			OnReleaseA();
 		}
 
+		// 大砲待機時
 		if (m_cannonStandby)
 		{
-			CannonStandby();
+			CannonStandby(10.0f);
+		}
+
+		// 無敵時間経過
+		if (m_isInvincible)
+		{
+			InvincibleTimer();
 		}
 
 		// 照準の回転処理
@@ -98,6 +93,7 @@ namespace basecross
 		Debug::Log(L"velo : ", m_velocity);
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(L"shield : ", m_shieldCount);
+		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
 		Debug::Log(m_isDeath != false ? L"死亡" : L"生存");
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
@@ -157,6 +153,10 @@ namespace basecross
 		{
 			const auto& ring = dynamic_pointer_cast<Ring>(other);
 			ring->IsGetRing();
+
+			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+			audioPtr->Start(L"SHIELD_C_SE", 0, 0.5f);
+			
 			AddShield();
 		}
 		if (other->FindTag(L"Death"))
@@ -300,17 +300,20 @@ namespace basecross
 		Vec2 velo = (stick.length() > 0.0f ? stick : m_deffVelo) / 10.0f;
 
 		// オブジェクトの数分ループ
-		float loopCount = 2.0f;
-		float deltaTime = App::GetApp()->GetElapsedTime();
-		for (const auto& aligment : m_aligment)
+		float loopCount = 1.0f;
+
+		vector<Vec3> points;
+
+		for (size_t i = 0; i < 40; i++)
 		{
-			Vec2 pos = Vec2(m_position.x, m_position.y);
-			pos += -velo * m_speed * m_maxAcsel * loopCount;
-			velo.y -= m_gravity * 0.016f / 20.0f;
-			aligment.lock()->SetPosition(pos);
-			aligment.lock()->SetDrawActive(Input::GetLStickValue().length() > 0.0f);
-			loopCount++;
+			Vec2 pos = -velo * m_speed * m_maxAcsel * loopCount;
+			velo.y -= m_gravity * 0.016f / 20.0f / 4.0f;
+			points.push_back(Vec3(pos.x, pos.y, 0.0f));
+			loopCount += 0.25f;
 		}
+
+		m_aligment.lock()->UpdateEffect(points);
+		m_aligment.lock()->SetDrawActive(stick.length() > 0.0f && m_firePossible);
 	}
 
 	// アニメーションの更新
@@ -338,22 +341,12 @@ namespace basecross
 	void Player::EffectUpdate()
 	{
 		// 更新
-		m_shield.lock()->SetPosition(m_position.x, m_position.y + 0.5f, -1.5f);
-		m_shield.lock()->SetDrawActive(m_shieldCount > 0);
-		m_shield.lock()->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.5f + (0.1f * m_shieldCount)));
-
-		m_effect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
+		m_shieldEffect.lock()->UpdateEffect();
+		m_jetEffect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
 
 		if (m_firePossible && !m_cannonFire)
 		{
-			// プレイヤーの座標に移動方向ベクトル×加速度を加算する
-			Vec3 pos = m_position + (Vec3(m_velocity.x, m_velocity.y, 0.0f).normalize() * (m_acsel * 1.15f));
-			pos.y += 0.5f;
-			pos.z = -1.0f;
-
-			m_effect.lock()->SetPosition(pos);
-			m_effect.lock()->SetRotation(0.0f, 0.0f, (atan2f(m_velocity.y, m_velocity.x) - XM_PIDIV2));
-			m_effect.lock()->SetScale(Vec2((m_acsel - 1.0f) * 3.0f));
+			m_jetEffect.lock()->UpdateEffect();
 		}
 		if (m_cannonFire)
 		{
@@ -376,14 +369,14 @@ namespace basecross
 	}
 
 	// 大砲発射待機時
-	void Player::CannonStandby()
+	void Player::CannonStandby(float acsel)
 	{
 		if (m_activeCannon.lock())
 		{
 			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
-			if (drawPtr->GetCurrentAnimationTime() > 0.4f)
+			if (drawPtr->GetCurrentAnimationTime() > 1.4f)
 			{
-				m_acsel = 10.0f;
+				m_acsel = acsel;
 				m_isAir = true;
 				m_firePossible = true;
 				m_cannonFire = true;
@@ -405,6 +398,20 @@ namespace basecross
 		}
 	}
 
+	// 無敵時間経過
+	void Player::InvincibleTimer()
+	{
+		float deltaTime = App::GetApp()->GetElapsedTime();
+
+		m_damageTime += deltaTime;
+
+		if (m_invincibleTime <= m_damageTime)
+		{
+			m_damageTime = 0.0f;
+			m_isInvincible = false;
+		}
+	}
+
 	// ブロックに衝突した瞬間
 	void Player::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
@@ -417,7 +424,7 @@ namespace basecross
 		if (CollHitUpper(hitPos, objPos, helf))
 		{
 			// 上にブロックがあるかのチェック
-			if (!BlockUpperCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+			if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
 			// エアショック使用可能にする
 			m_firePossible = true;
@@ -446,7 +453,7 @@ namespace basecross
 		if (CollHitUnder(hitPos, objPos, helf))
 		{
 			// 下にブロックがあるかのチェック
-			if (!BlockUnderCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
+			if (!BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
 
 			// 移動量が上方向なら
 			if (m_velocity.y < 0.0f)
@@ -457,9 +464,23 @@ namespace basecross
 			return;
 		}
 
-		// 横から衝突
-		if (CollHitLeft(hitPos, objPos, helf) || CollHitRight(hitPos, objPos, helf))
+		// 左から衝突
+		if (CollHitLeft(hitPos, objPos, helf))
 		{
+			// 左にブロックがあるかのチェック
+			if (!BlockCheck(Vec3(objPos.x - (helf.x * 2.0f), objPos.y, 0.0f))) return;
+
+			// 移動量を半減しつつ反転させる
+			m_velocity.x *= -0.5f;
+			return;
+		}
+
+		// 右から衝突
+		if (CollHitRight(hitPos, objPos, helf))
+		{
+			// 右にブロックがあるかのチェック
+			if (!BlockCheck(Vec3(objPos.x + (helf.x * 2.0f), objPos.y, 0.0f))) return;
+
 			// 移動量を半減しつつ反転させる
 			m_velocity.x *= -0.5f;
 			return;
@@ -492,7 +513,7 @@ namespace basecross
 	}
 
 	// 衝突したブロックの上にブロックがあるかの検証
-	bool Player::BlockUpperCheck(const Vec3& upperPos)
+	bool Player::BlockCheck(const Vec3& upperPos)
 	{
 		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
 
@@ -516,31 +537,6 @@ namespace basecross
 		return check;
 	}
 
-	// 衝突したブロックの下にブロックがあるかの検証
-	bool Player::BlockUnderCheck(const Vec3& underPos)
-	{
-		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
-
-		bool check = true;
-
-		for (const auto& ptr : blockVec)
-		{
-			if (!ptr.lock()) continue;
-
-			const auto& block = dynamic_pointer_cast<CubeObject>(ptr.lock());
-			if (!block) continue;
-
-			Vec3 pos = block->GetPosition();
-
-			if (pos == underPos)
-			{
-				check = false;
-			}
-		}
-
-		return check;
-	}
-
 	// スパイクと衝突した瞬間
 	void Player::SpikeEnter(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
@@ -551,17 +547,25 @@ namespace basecross
 		Vec3 spikePos = spike->GetPosition();
 		Vec3 helfScale = spike->GetScale() / 2.0f;
 
+		// 衝突可否
+		bool upper, under, left, right;
+		upper = CollHitUpper(hitPos, spikePos, helfScale);
+		under = CollHitUnder(hitPos, spikePos, helfScale);
+		left = CollHitLeft(hitPos, spikePos, helfScale);
+		right = CollHitRight(hitPos, spikePos, helfScale);
+
+
 		// スパイクの方向に応じて処理
 		const auto& angle = spike->GetAngle();
 		switch (angle)
 		{
 		case Gimmick::Up:
-			if (CollHitUpper(hitPos ,spikePos, helfScale) || CollHitLeft(hitPos, spikePos, helfScale) || CollHitRight(hitPos, spikePos, helfScale))
+			if (upper || left || right)
 			{
 				DamageKnockBack(Vec2(0.9f, -1.0f));
 				return;
 			}
-			if (CollHitUnder(hitPos, spikePos, helfScale))
+			if (under)
 			{
 				BlockEnter(obj, hitPos);
 				return;
@@ -569,12 +573,12 @@ namespace basecross
 			break;
 
 		case Gimmick::Down:
-			if (CollHitUnder(hitPos, spikePos, helfScale) || CollHitLeft(hitPos, spikePos, helfScale) || CollHitRight(hitPos, spikePos, helfScale))
+			if (under || left || right)
 			{
 				DamageKnockBack(Vec2(0.9f, 1.0f));
 				return;
 			}
-			if (CollHitUpper(hitPos, spikePos, helfScale))
+			if (upper)
 			{
 				BlockEnter(obj, hitPos);
 				return;
@@ -582,12 +586,12 @@ namespace basecross
 			break;
 
 		case Gimmick::Left:
-			if (CollHitLeft(hitPos, spikePos, helfScale) || CollHitUpper(hitPos, spikePos, helfScale) || CollHitUnder(hitPos, spikePos, helfScale))
+			if (upper || under || left)
 			{
 				DamageKnockBack(Vec2(1.5f, -0.5f));
 				return;
 			}
-			if (CollHitRight(hitPos, spikePos, helfScale))
+			if (right)
 			{
 				BlockEnter(obj, hitPos);
 				return;
@@ -595,12 +599,12 @@ namespace basecross
 			break;
 
 		case Gimmick::Right:
-			if (CollHitRight(hitPos, spikePos, helfScale) || CollHitUpper(hitPos, spikePos, helfScale) || CollHitUnder(hitPos, spikePos, helfScale))
+			if (upper || under || right)
 			{
 				DamageKnockBack(Vec2(-1.5f, -0.5f));
 				return;
 			}
-			if (CollHitLeft(hitPos, spikePos, helfScale))
+			if (left)
 			{
 				BlockEnter(obj, hitPos);
 				return;
@@ -608,22 +612,22 @@ namespace basecross
 			break;
 
 		case Gimmick::All:
-			if (CollHitUpper(hitPos, spikePos, helfScale))
+			if (upper)
 			{
 				DamageKnockBack(Vec2(0.9f, -1.0f));
 				return;
 			}
-			if (CollHitUnder(hitPos, spikePos, helfScale))
+			if (under)
 			{
 				DamageKnockBack(Vec2(0.9f, 1.0f));
 				return;
 			}
-			if (CollHitLeft(hitPos, spikePos, helfScale))
+			if (left)
 			{
 				DamageKnockBack(Vec2(1.5f, -0.5f));
 				return;
 			}
-			if (CollHitRight(hitPos, spikePos, helfScale))
+			if (right)
 			{
 				DamageKnockBack(Vec2(-1.5f, -0.5f));
 				return;
@@ -724,7 +728,7 @@ namespace basecross
 		if (CollHitUpper(hitPos, objPos, helf))
 		{
 			// 上にブロックがあるかのチェック
-			if (!BlockUpperCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+			if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
 			// エアショック使用可能にする
 			m_firePossible = true;
@@ -797,18 +801,22 @@ namespace basecross
 		m_bodyDraw->ChangeCurrentAnimation(L"DAMAGE");
 
 		// 軌道の表示をオフ
-		for (const auto& aligment : m_aligment)
-		{
-			aligment.lock()->SetDrawActive(false);
-		}
+		m_aligment.lock()->SetDrawActive(false);
 
-		if (m_shieldCount > 0)
+		if (!m_isInvincible)
 		{
-			m_shieldCount--;
-		}
-		else
-		{
-			m_isDeath = true;
+			if (m_shieldCount > 0)
+			{
+				m_shieldCount--;
+				m_isInvincible = true;
+
+				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+				audioPtr->Start(L"SHIELD_D_SE", 0, 0.75f);
+			}
+			else
+			{
+				m_isDeath = true;
+			}
 		}
 	}
 

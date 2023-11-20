@@ -10,6 +10,8 @@ namespace basecross
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
 		m_ptrDraw->SetMeshResource(L"RING");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
+		m_ptrDraw->AddAnimation(L"ROTATE", 0, 30, true);
+		m_ptrDraw->ChangeCurrentAnimation(L"ROTATE");
 
 		auto ptrColl = GetComponent<CollisionObb>();
 		ptrColl->SetUpdateActive(true);
@@ -28,6 +30,8 @@ namespace basecross
 
 		auto ptrColl = GetComponent<CollisionObb>();
 		ptrColl->SetUpdateActive(!m_isGet);
+
+		m_ptrDraw->UpdateAnimation(deltaTime);
 
 		if (m_isGet)
 		{
