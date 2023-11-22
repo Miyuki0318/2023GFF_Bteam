@@ -22,7 +22,7 @@ namespace basecross
 
 	void Ring::OnUpdate()
 	{
-		float deltaTime = App::GetApp()->GetElapsedTime();
+		float deltaTime = DELTA_TIME;
 		
 		Vec3 rot = GetRotation();
 		rot.y -= deltaTime * m_rotSpeed;

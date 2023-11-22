@@ -8,7 +8,7 @@ namespace basecross
 		DebugSphere::OnCreate();
 		m_ptrDraw = GetComponent<PNTStaticDraw>();
 		m_ptrDraw->SetTextureResource(L"SHIELD_TX");
-		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.25f));
+		m_ptrDraw->SetDiffuse(Col4(0.5f, 1.0f, 1.0f, 0.75f));
 
 		m_outLine = GetStage()->AddGameObject<ShieldOutLine>(GetThis<DebugSphere>());
 
@@ -45,9 +45,6 @@ namespace basecross
 						Vec2 scale = Vec2(1.5f + (0.5f * shieldCount));
 						SetScale(scale);
 						outLine->SetScale(scale + Vec2(0.05f));
-
-						// F‚Ì•ÏX
-						m_ptrDraw->SetDiffuse(Col4(0.5f, 1.0f, 1.0f, 0.5f + (0.25f * shieldCount)));
 					}
 				}
 			}

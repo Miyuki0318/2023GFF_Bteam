@@ -73,6 +73,9 @@ namespace basecross
 		// 照準の回転処理
 		RotateAligment();
 
+		// 送風機のチェック
+		BlowerBetweenCheck();
+
 		// プレイヤーの移動関数
 		MovePlayer();
 
@@ -91,6 +94,7 @@ namespace basecross
 		// デバッグ文字列
 		Debug::Log(L"pos : ", m_position);
 		Debug::Log(L"velo : ", m_velocity);
+		Debug::Log(L"addVelo : ", m_meddleVelo);
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(L"shield : ", m_shieldCount);
 		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
@@ -114,6 +118,7 @@ namespace basecross
 		m_isAir = true;
 		m_acsel = m_maxAcsel;
 		m_cannonFire = false;
+		m_meddleVelo.zero();
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
@@ -211,14 +216,14 @@ namespace basecross
 	void Player::MovePlayer()
 	{
 		// 前フレームからのデルタタイムを取得
-		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
+		float deltaTime = DELTA_TIME * m_timeSpeed;
 
 		// 現在の座標を取得
 		m_position = m_ptrTrans->GetPosition();
 
 		// ポジションに移動ベクトルと速度と加速度とデルタタイムで掛けた数を加算
-		m_position.x += -m_velocity.x * m_speed * m_acsel * deltaTime;
-		m_position.y += -m_velocity.y * m_speed * m_acsel * deltaTime;
+		m_position.x += -(m_velocity.x + m_meddleVelo.x) * m_speed * m_acsel * deltaTime;
+		m_position.y += -(m_velocity.y + m_meddleVelo.y) * m_speed * m_acsel * deltaTime;
 
 		// 座標の更新
 		m_ptrTrans->SetPosition(m_position);
@@ -234,7 +239,7 @@ namespace basecross
 	void Player::MoveReduction()
 	{
 		// デルタタイムを取得
-		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
+		float deltaTime = DELTA_TIME * m_timeSpeed;
 
 		// 空中なら
 		if (m_isAir)
@@ -243,7 +248,12 @@ namespace basecross
 			m_acsel > 1.0f ? m_acsel -= deltaTime * (m_acsel * 2.0f) : m_acsel = 1.0f;
 
 			// Y軸移動ベクトルを重力とデルタタイムで掛けた数で減算
-			m_velocity.y -= m_gravity * deltaTime;
+			Vec2 tempVelo = m_meddleVelo;
+			tempVelo.x = 0.0f;
+			if (!m_isBlower && !(tempVelo.length() > 0.0f))
+			{
+				m_velocity.y -= m_gravity * deltaTime;
+			}
 		}
 		else
 		{
@@ -284,8 +294,8 @@ namespace basecross
 		else
 		{
 			Vec2 velo = stick.length() > 0.0f ? stick : m_velocity != Vec2(0.0f) ? m_velocity : m_deffVelo;
-			arm = atan2f(velo.y, velo.x) + XM_PIDIV2;
-		}
+			arm = stick.length() > 0.0f ? atan2f(velo.y, velo.x) + XM_PIDIV2 : atan2f(m_deffVelo.x, -m_deffVelo.y);
+		} 
 
 		// ローテーションの更新
 		m_ptrTrans->SetRotation(Vec3(0.0f, body, 0.0f));
@@ -320,7 +330,7 @@ namespace basecross
 	void Player::AnimationUpdate()
 	{
 		// 前フレームからのデルタタイムにゲームスピードを掛けた数を取得
-		float deltaTime = App::GetApp()->GetElapsedTime() * m_timeSpeed;
+		float deltaTime = DELTA_TIME * m_timeSpeed;
 
 		// アニメーションが終わってたら待機状態にする
 		if (m_bodyDraw->IsTargetAnimeEnd())
@@ -382,6 +392,7 @@ namespace basecross
 				m_firePossible = true;
 				m_cannonFire = true;
 				m_cannonStandby = false;
+				m_meddleVelo.zero();
 
 				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
@@ -402,14 +413,134 @@ namespace basecross
 	// 無敵時間経過
 	void Player::InvincibleTimer()
 	{
-		float deltaTime = App::GetApp()->GetElapsedTime();
-
-		m_damageTime += deltaTime;
+		m_damageTime += DELTA_TIME;
 
 		if (m_invincibleTime <= m_damageTime)
 		{
 			m_damageTime = 0.0f;
 			m_isInvincible = false;
+		}
+	}
+
+	// 送風機のチェック
+	void Player::BlowerBetweenCheck()
+	{
+		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Update")->GetGroupVector();
+
+		Gimmick::eAngle angle = Gimmick::Up;
+		bool check = false;
+
+		for (const auto& ptr : groupVec)
+		{
+			const auto& blower = dynamic_pointer_cast<Blower>(ptr.lock());
+			if (blower)
+			{
+				check = blower->CheckBetween(GetPosition());
+				if (check)
+				{
+					angle = blower->GetAngle();
+					break;
+				}
+			}
+		}
+
+		if (check)
+		{
+			switch (angle)
+			{
+			case Gimmick::Up:
+				UpMeddleVelocity();
+				break;
+
+			case Gimmick::Down:
+				DownMeddleVelocity();
+				break;
+
+			case Gimmick::Left:
+				LeftMeddleVelocity();
+				break;
+
+			case Gimmick::Right:
+				RightMeddleVelocity();
+				break;
+
+			default:
+				break;
+			}
+		}	
+		else
+		{
+			m_isBlower = false;
+			ReductionMeddleVelocity();
+		}
+	}
+
+
+	void Player::UpMeddleVelocity()
+	{
+		m_isBlower = true;
+
+		float decrease = DELTA_TIME;
+		decrease *= m_velocity.y > 0.0f ? 1.0f : -1.0f;
+
+		if (m_velocity.y > decrease || m_velocity.y < decrease)
+		{
+			m_velocity.y -= decrease * m_maxAcsel;
+		}
+		else
+		{
+			m_velocity.y = decrease;
+		}
+
+		if (m_meddleVelo.y > -m_speed)
+		{
+			m_meddleVelo.y -= DELTA_TIME * m_maxAcsel;
+		}
+	}
+
+
+	void Player::DownMeddleVelocity()
+	{
+		m_velocity.y += DELTA_TIME * m_maxAcsel;
+	}
+
+
+	void Player::LeftMeddleVelocity()
+	{
+		m_meddleVelo.x += DELTA_TIME * m_maxAcsel * m_speed;
+	}
+
+
+	void Player::RightMeddleVelocity()
+	{
+		m_meddleVelo.x -= DELTA_TIME * m_maxAcsel * m_speed;
+	}
+
+
+	void Player::ReductionMeddleVelocity()
+	{
+		float decrease = DELTA_TIME;
+		decrease *= m_meddleVelo.x > 0.0f ? 1.0f : -1.0f;
+
+		if (m_meddleVelo.x > 0.1f || m_meddleVelo.x < -0.1f)
+		{
+			m_meddleVelo.x -= decrease;
+		}
+		else
+		{
+			m_meddleVelo.x = 0.0f;
+		}
+
+		decrease = DELTA_TIME;
+		decrease *= m_meddleVelo.y > 0.0f ? 1.0f : -1.0f;
+
+		if (m_meddleVelo.y > 0.1f || m_meddleVelo.y < -0.1f)
+		{
+			m_meddleVelo.y -= decrease * 5.0f;
+		}
+		else
+		{
+			m_meddleVelo.y = 0.0f;
 		}
 	}
 
@@ -492,18 +623,32 @@ namespace basecross
 	void Player::BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
-		auto objTrans = block->GetComponent<Transform>();
-		Vec3 objPos = objTrans->GetPosition();
-		Vec3 helf = objTrans->GetScale() / 2.0f;
+		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
+		Vec3 objPos = cube->GetPosition();
+		Vec3 helf = cube->GetScale() / 2.0f;
 
-		// コリジョンに対して上から衝突
-		if (CollHitUpper(hitPos, objPos, helf))
+		// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
+		m_velocity.y = 0.001f;
+		m_acsel = 1.0f;
+		m_isAir = false;
+
+		const float& deg = cube->GetDegreeAngle().z;
+		if (deg == 0.0f)
 		{
-			// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
-			m_velocity.y = 0.0f;
-			m_acsel = 1.0f;
-			m_isAir = false;
+			if (CollHitUpper(hitPos, objPos, helf))
+			{
+				SetPosition(Vec3(GetPosition().x, objPos.y + helf.y + (m_scale.y / 2.0f), 0.0f));
+			}
 		}
+		else
+		{
+			if (!CollHitUnder(hitPos, objPos, helf))
+			{
+				float length = hitPos.y - objPos.y;
+				SetPosition(Vec3(GetPosition().x, objPos.y + length + (m_scale.y / 2.0f), 0.0f));
+			}
+		}
+
 	}
 
 	// ブロックとの衝突が無くなったら
@@ -514,7 +659,7 @@ namespace basecross
 	}
 
 	// 衝突したブロックの上にブロックがあるかの検証
-	bool Player::BlockCheck(const Vec3& upperPos)
+	bool Player::BlockCheck(const Vec3& checkPos)
 	{
 		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
 
@@ -529,7 +674,7 @@ namespace basecross
 
 			Vec3 pos = block->GetPosition();
 
-			if (pos == upperPos)
+			if (pos == checkPos)
 			{
 				check = false;
 			}

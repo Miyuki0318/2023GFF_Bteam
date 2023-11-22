@@ -68,24 +68,36 @@ namespace basecross
 
 	void TitleStage::CreateInstanceBlock()
 	{
+		enum eTypes
+		{
+			Iron,
+			Metal,
+			Dark,
+			Size,
+		};
+
 		struct Instance
 		{
 			vector<int> num;
 			int count = 0;
 		};
 
-		const auto& data = CSVLoader::LoadFile("Title");
+		const auto& data = CSVLoader::LoadFile("Stage");
 		const int size = static_cast<int>(data.size());
 
 		for (int i = 0; i < data.size(); i++)
 		{
-			Instance iron;
-			Instance metal;
-			Instance darkMetal;
+			vector<Instance> block;
+			vector<Instance> slope;
 
-			iron.num.resize(data.at(i).size());
-			metal.num.resize(data.at(i).size());
-			darkMetal.num.resize(data.at(i).size());
+			block.resize(eTypes::Size);
+			slope.resize(eTypes::Size);
+
+			for (int j = 0; j < eTypes::Size; j++)
+			{
+				block.at(j).num.resize(data.at(i).size());
+				slope.at(j).num.resize(data.at(i).size());
+			}
 
 			for (int j = 0; j < data.at(i).size(); j++)
 			{
@@ -95,47 +107,86 @@ namespace basecross
 				{
 				case 100:
 				case 105:
-					iron.count++;
-					iron.num.at(j) = 1;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 0;
+					block.at(Iron).count++;
+					block.at(Iron).num.at(j) = 1;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 0;
 					break;
 
 				case 110:
 				case 115:
-					metal.count++;
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 1;
-					darkMetal.num.at(j) = 0;
+					block.at(Metal).count++;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 1;
+					block.at(Dark).num.at(j) = 0;
 					break;
 
 				case 120:
 				case 125:
-					darkMetal.count++;
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 1;
+					block.at(Dark).count++;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 1;
 					break;
 
 				default:
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 0;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 0;
 					break;
 				}
+
+				switch (stoi(data.at(i).at(j)))
+				{
+				case 101:
+				case 102:
+				case 103:
+				case 104:
+					slope.at(Iron).count++;
+					slope.at(Iron).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = 0;
+					break;
+
+				case 111:
+				case 112:
+				case 113:
+				case 114:
+					slope.at(Metal).count++;
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					slope.at(Dark).num.at(j) = 0;
+					break;
+
+				case 121:
+				case 122:
+				case 123:
+				case 124:
+					slope.at(Dark).count++;
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					break;
+
+				default:
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = 0;
+					break;
+				}
+
 			}
 
-			if (iron.count > 0)
+			for (int k = 0; k < eTypes::Size; k++)
 			{
-				AddGameObject<InstanceBlock>(iron.num, L"GRASS_TX", size, i);
-			}
-			if (metal.count > 0)
-			{
-				AddGameObject<InstanceBlock>(metal.num, L"DIRT_TX", size, i);
-			}
-			if (darkMetal.count > 0)
-			{
-				AddGameObject<InstanceBlock>(darkMetal.num, L"ROCK_TX", size, i);
+				if (block.at(k).count > 0)
+				{
+					AddGameObject<InstanceBlock>(block.at(k).num, k, size, i);
+				}
+				if (slope.at(k).count > 0)
+				{
+					AddGameObject<InstanceSlope>(slope.at(k).num, k, size, i);
+				}
 			}
 		}
 	}

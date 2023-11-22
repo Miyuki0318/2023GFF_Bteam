@@ -61,6 +61,12 @@ namespace Utility
 */
 #define COL_GRAY	Col4(0.5f, 0.5f, 0.5f, 1.0f)
 
+/*!
+@brief デルタタイム
+@return App::GetApp()->GetElapsedTime()
+*/
+#define DELTA_TIME App::GetApp()->GetElapsedTime()
+
 	/*!
 	@brief 線形補間を行う関数
 	@param (start) 線形補間の始点の値
@@ -262,11 +268,6 @@ namespace Utility
 	@param (deg) ディグリー角
 	@return ラジアン角に変換されたディグリー角
 	*/
-	template<class T>
-	T DegToRad(const T& deg)
-	{
-		return deg * (XM_PI / 180.0f);
-	}
 	float DegToRad(const float& deg);
 	Vec2 DegToRad(const Vec2& deg);
 	Vec3 DegToRad(const Vec3& deg);
@@ -278,11 +279,6 @@ namespace Utility
 	@param (rad) ラジアン角
 	@return ディグリー角に変換されたラジアン角
 	*/
-	template<class T>
-	T RadToDeg(const T& deg)
-	{
-		return rad * (180.0f / XM_PI);
-	}
 	float RadToDeg(const float& rad);
 	Vec2 RadToDeg(const Vec2& rad);
 	Vec3 RadToDeg(const Vec3& rad);
@@ -294,4 +290,16 @@ namespace Utility
 	@return 作成されたクォータニオン
 	*/
 	Quat Billboard(const Vec3& Line);
+
+	/*!
+	@brief 値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
+	bool GetBetween(int value, int a, int b);
+	bool GetBetween(float value, float a, float b);
+	bool GetBetween(const Vec2& value, const Vec2& a, const Vec2& b);
+	bool GetBetween(const Vec3& value, const Vec3& a, const Vec3& b);
 }

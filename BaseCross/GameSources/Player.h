@@ -22,6 +22,7 @@ namespace basecross
 
 		Vec3 m_respawnPos;
 		Vec2 m_velocity;
+		Vec2 m_meddleVelo;
 		const Vec2 m_deffVelo;
 		Mat4x4 m_bodyMat;
 		Mat4x4 m_armMat;
@@ -48,6 +49,7 @@ namespace basecross
 		
 		bool m_isAir;
 		bool m_isDeath;
+		bool m_isBlower;
 		bool m_isInvincible;
 		bool m_firePossible;
 		bool m_cannonFire;
@@ -68,11 +70,12 @@ namespace basecross
 			m_invincibleTime(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
-			m_position = Vec3(-22.0f, 10.0f, 0.0f);
-			m_respawnPos = Vec3(-22.0f, 10.0f, 0.0f);
+			m_position = Vec3(-22.0f, -80.0f, 0.0f);
+			m_respawnPos = Vec3(-22.0f, -80.0f, 0.0f);
 			m_rotation.zero();
 			m_scale = Vec3(1.0f);
 			m_velocity = m_deffVelo;
+			m_meddleVelo.zero();
 			m_timeSpeed = m_normalTime;
 			m_shieldCount = 1;
 			m_damageTime = 0.0f;
@@ -81,6 +84,7 @@ namespace basecross
 			m_gravity = -5.0f;
 			m_isAir = true;
 			m_isDeath = false;
+			m_isBlower = false;
 			m_isInvincible = false;
 			m_firePossible = true;
 			m_cannonFire = false;
@@ -175,6 +179,18 @@ namespace basecross
 		@brief –³“GŽžŠÔŒo‰ß
 		*/
 		void InvincibleTimer();
+
+		void BlowerBetweenCheck();
+
+		void UpMeddleVelocity();
+
+		void DownMeddleVelocity();
+
+		void LeftMeddleVelocity();
+
+		void RightMeddleVelocity();
+
+		void ReductionMeddleVelocity();
 
 		void BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos);
 

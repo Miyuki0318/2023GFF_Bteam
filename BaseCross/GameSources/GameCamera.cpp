@@ -34,8 +34,6 @@ namespace basecross
 				m_currentAt += Vec3(left != false ? vec.normalize().x * move : 0.0f, vec.normalize().y * move, 0.0f);
 			}
 
-
-
 			m_currentPos = targetPos;
 			SetEye(m_currentEye);
 			SetAt(m_currentAt);

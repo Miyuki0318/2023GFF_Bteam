@@ -24,7 +24,7 @@ namespace basecross
 
 	void Cannon::OnUpdate()
 	{
-		float deltaTime = App::GetApp()->GetElapsedTime() * 1.5f;
+		float deltaTime = DELTA_TIME * 1.5f;
 
 		if (m_type == Rotate)
 		{

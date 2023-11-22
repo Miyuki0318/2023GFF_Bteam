@@ -34,7 +34,6 @@ namespace basecross
 
 	void Convayor::OnUpdate()
 	{
-		float deltaTime = App::GetApp()->GetElapsedTime();
-		m_ptrDraw->UpdateAnimation(deltaTime);
+		m_ptrDraw->UpdateAnimation(DELTA_TIME);
 	}
 }
