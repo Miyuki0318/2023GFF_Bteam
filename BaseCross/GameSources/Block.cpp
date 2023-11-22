@@ -15,42 +15,13 @@ namespace basecross
 		AddTag(L"Death");
 	}
 
-	void Slope::OnCreate()
-	{
-		CubeObject::OnCreate();
-		AddTag(L"Block");
-
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"SLOPE");
-		ptrDraw->SetMeshToTransformMatrix(m_modelMat);
-
-		// テクスチャの設定
-		switch (m_block)
-		{
-		case Slope::Iron:
-			ptrDraw->SetTextureResource(L"GRASS_TX");
-			break;
-
-		case Slope::Metal:
-			ptrDraw->SetTextureResource(L"DIRT_TX");
-			break;
-
-		case Slope::DarkMetal:
-			ptrDraw->SetTextureResource(L"ROCK_TX");
-			break;
-
-		default:
-			break;
-		}
-	}
-
 	void InstanceBlock::OnCreate()
 	{
 		auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
 		ptrDraw->SetMeshResource(L"BLOCK");
-		ptrDraw->SetTextureResource(m_texture);
+		ptrDraw->SetTextureResource(m_textures.at(m_type));
 
-		const float under = -8.0f;
+		const float under = -98.0f;
 		const float left = -49.0f;
 		const float scale = 1.0f;
 		const float modelScale = 1.35f;
@@ -68,7 +39,67 @@ namespace basecross
 				q.rotationRollPitchYawFromVector(Vec3(0.0f, 0.0f, 0.0f));
 				mtxR.rotation(q);
 				mtxS.scale(Vec3(modelScale));
-				mtxR.translation(Vec3(x, y, 0.0f));
+				mtxT.translation(Vec3(x, y, 0.0f));
+
+				matrix = mtxS * mtxR * mtxT;
+				ptrDraw->AddMatrix(matrix);
+			}
+		}
+	}
+
+	void InstanceSlope::OnCreate()
+	{
+		auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
+		ptrDraw->SetMeshResource(L"SLOPE");
+		ptrDraw->SetTextureResource(m_textures.at(m_type));
+
+		const float under = -98.0f;
+		const float left = -49.0f;
+		const float scale = 1.0f;
+		const float slopeScale = scale * 1.4f;
+		const Vec3 slopeULeft = Vec3(0.5f, 0.0f, 0.0f);
+		const Vec3 slopeURight = Vec3(-0.5f, 0.0f, 0.0f);
+		const Vec3 slopeDLeft = Vec3(0.5f, 1.0f, 0.0f);
+		const Vec3 slopeDRight = Vec3(-0.5f, 1.0f, 0.0f);
+
+		for (size_t i = 0; i < m_data.size(); i++)
+		{
+			if (m_data.at(i) != 0)
+			{
+				float x = left + i;
+				float y = under + (m_size - m_rowNum);
+
+				Mat4x4 matrix, mtxT, mtxR, mtxS;
+				Quat q;
+
+				switch (m_data.at(i))
+				{
+				case 1:
+					q.rotationRollPitchYawFromVector(Utility::DegToRad(Vec3(0.0f, 0.0f, 45.0f)));
+					mtxT.translation(Vec3(x, y, 0.0f) + slopeULeft);
+					break;
+
+				case 2:
+					q.rotationRollPitchYawFromVector(Utility::DegToRad(Vec3(0.0f, 180.0f, 45.0f)));
+					mtxT.translation(Vec3(x, y, 0.0f) + slopeURight);
+					break;
+
+				case 3:
+					q.rotationRollPitchYawFromVector(Utility::DegToRad(Vec3(0.0f, 0.0f, 135.0f)));
+					mtxT.translation(Vec3(x, y, 0.0f) + slopeDLeft);
+					break;
+
+				case 4:
+					q.rotationRollPitchYawFromVector(Utility::DegToRad(Vec3(0.0f, 180.0f, 135.0f)));
+					mtxT.translation(Vec3(x, y, 0.0f) + slopeDRight);
+					break;
+
+				default:
+					break;
+				}
+
+				mtxR.rotation(q);
+				mtxS.scale(Vec3(slopeScale));
 
 				matrix = mtxS * mtxR * mtxT;
 				ptrDraw->AddMatrix(matrix);

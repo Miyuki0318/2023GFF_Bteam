@@ -80,6 +80,14 @@ namespace basecross
 
 	void GameStage::CreateInstanceBlock()
 	{
+		enum eTypes
+		{
+			Iron,
+			Metal,
+			Dark,
+			Size,
+		};
+
 		struct Instance
 		{
 			vector<int> num;
@@ -87,17 +95,21 @@ namespace basecross
 		};
 
 		const auto& data = CSVLoader::LoadFile("Stage");
-		const int size = static_cast<int>(data.size());
+		const int rowSize = static_cast<int>(data.size());
 
 		for (int i = 0; i < data.size(); i++)
 		{
-			Instance iron;
-			Instance metal;
-			Instance darkMetal;
+			vector<Instance> block;
+			vector<Instance> slope;
 
-			iron.num.resize(data.at(i).size());
-			metal.num.resize(data.at(i).size());
-			darkMetal.num.resize(data.at(i).size());
+			block.resize(eTypes::Size);
+			slope.resize(eTypes::Size);
+
+			for (int j = 0; j < eTypes::Size; j++)
+			{
+				block.at(j).num.resize(data.at(i).size());
+				slope.at(j).num.resize(data.at(i).size());
+			}
 
 			for (int j = 0; j < data.at(i).size(); j++)
 			{
@@ -107,47 +119,86 @@ namespace basecross
 				{
 				case 100:
 				case 105:
-					iron.count++;
-					iron.num.at(j) = 1;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 0;
+					block.at(Iron).count++;
+					block.at(Iron).num.at(j) = 1;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 0;
 					break;
 
 				case 110:
 				case 115:
-					metal.count++;
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 1;
-					darkMetal.num.at(j) = 0;
+					block.at(Metal).count++;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 1;
+					block.at(Dark).num.at(j) = 0;
 					break;
 
 				case 120:
 				case 125:
-					darkMetal.count++;
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 1;
+					block.at(Dark).count++;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 1;
 					break;
 
 				default:
-					iron.num.at(j) = 0;
-					metal.num.at(j) = 0;
-					darkMetal.num.at(j) = 0;
+					block.at(Iron).num.at(j) = 0;
+					block.at(Metal).num.at(j) = 0;
+					block.at(Dark).num.at(j) = 0;
 					break;
 				}
+
+				switch (stoi(data.at(i).at(j)))
+				{
+				case 101:
+				case 102:
+				case 103:
+				case 104:
+					slope.at(Iron).count++;
+					slope.at(Iron).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = 0;
+					break;
+
+				case 111:
+				case 112:
+				case 113:
+				case 114:
+					slope.at(Metal).count++;
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					slope.at(Dark).num.at(j) = 0;
+					break;
+
+				case 121:
+				case 122:
+				case 123:
+				case 124:
+					slope.at(Dark).count++;
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = atoi(&data.at(i).at(j).at(2));
+					break;
+
+				default:
+					slope.at(Iron).num.at(j) = 0;
+					slope.at(Metal).num.at(j) = 0;
+					slope.at(Dark).num.at(j) = 0;
+					break;
+				}
+
 			}
 
-			if (iron.count > 0)
+			for (int k = 0; k < eTypes::Size; k++)
 			{
-				AddGameObject<InstanceBlock>(iron.num, L"GRASS_TX", size, i);
-			}
-			if (metal.count > 0)
-			{
-				AddGameObject<InstanceBlock>(metal.num, L"DIRT_TX", size, i);
-			}
-			if (darkMetal.count > 0)
-			{
-				AddGameObject<InstanceBlock>(darkMetal.num, L"ROCK_TX", size, i);
+				if (block.at(k).count > 0)
+				{
+					AddGameObject<InstanceBlock>(block.at(k).num, k, rowSize, i);
+				}
+				if (slope.at(k).count > 0)
+				{
+					AddGameObject<InstanceSlope>(slope.at(k).num, k, rowSize, i);
+				}
 			}
 		}
 	}
@@ -156,6 +207,7 @@ namespace basecross
 	{
 		CreateSharedObjectGroup(L"Stage");
 		CreateSharedObjectGroup(L"Gimmick");
+		CreateSharedObjectGroup(L"Update");
 
 		const auto& data = CSVLoader::LoadFile("Stage");
 
@@ -173,12 +225,14 @@ namespace basecross
 			}
 		};
 
-		const float under = -7.5f;
+		const float under = -97.5f;
 		const float left = -49.0f;
 		const float scale = 1.0f;
 		const Vec3 slopeScale = Vec3(scale) * 1.4f;
-		const Vec2 slopeLeft = Vec2(0.5f, -0.5f);
-		const Vec2 slopeRight = Vec2(-0.5f, -0.5f);
+		const Vec2 slopeULeft = Vec2(0.5f, -0.5f);
+		const Vec2 slopeURight = Vec2(-0.5f, -0.5f);
+		const Vec2 slopeDLeft = Vec2(0.5f, 0.5f);
+		const Vec2 slopeDRight = Vec2(-0.5f, 0.5f);
 
 		Checker checker;
 		for (size_t i = 0; i < data.size(); i++)
@@ -189,6 +243,7 @@ namespace basecross
 
 				shared_ptr<CubeObject> block = nullptr;
 				shared_ptr<Gimmick> gimmick = nullptr;
+				shared_ptr<Gimmick> update = nullptr;
 
 				switch (stoi(data.at(i).at(j)))
 				{
@@ -208,27 +263,27 @@ namespace basecross
 					break;
 
 				case 101:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Iron, CubeObject::SlopeL, true);
+				case 111:
+				case 121:
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeULeft, slopeScale, true);
 					break;
 
 				case 102:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Iron, CubeObject::SlopeR, true);
-					break;
-
-				case 111:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::Metal, CubeObject::SlopeL, true);
-					break;
-
 				case 112:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::Metal, CubeObject::SlopeR, true);
-					break;
-
-				case 121:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeLeft, slopeScale, Slope::DarkMetal, CubeObject::SlopeL, true);
-					break;
-
 				case 122:
-					block = AddGameObject<Slope>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeRight, slopeScale, Slope::DarkMetal, CubeObject::SlopeR, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeURight, slopeScale, true);
+					break;
+
+				case 103:
+				case 113:
+				case 123:
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDLeft, slopeScale, true);
+					break;
+
+				case 104:
+				case 114:
+				case 124:
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDRight, slopeScale, true);
 					break;
 
 				case 200:
@@ -301,6 +356,26 @@ namespace basecross
 					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
 					break;
 
+				case 240:
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Up, 30.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					break;
+
+				case 241:
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Down, 30.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
+					break;
+
+				case 242:
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Left, 30.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
+					break;
+
+				case 243:
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Right, 30.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
+					break;
+
 				case 300:
 					block = AddGameObject<Bird>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
 					break;
@@ -319,6 +394,12 @@ namespace basecross
 				{
 					gimmick->SetTarget(GetSharedGameObject<Player>(L"Player"));
 					GetSharedObjectGroup(L"Gimmick")->IntoGroup(gimmick);
+				}
+
+				if (update)
+				{
+					update->SetTarget(GetSharedGameObject<Player>(L"Player"));
+					GetSharedObjectGroup(L"Update")->IntoGroup(update);
 				}
 			}
 		}
@@ -344,7 +425,6 @@ namespace basecross
 
 			// プレイヤーの作成
 			CreatePlayer();
-
 			// ステージ
 			CreateStage();
 			CreateInstanceBlock();

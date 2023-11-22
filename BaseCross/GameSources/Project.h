@@ -26,6 +26,7 @@
 #include "Cannon.h"
 #include "Convayor.h"
 #include "Ring.h"
+#include "Blower.h"
 #include "Enemy.h"
 #include "ArrowEffect.h"
 #include "AirJetEffect.h"

@@ -16,8 +16,8 @@ namespace basecross
 	public:
 
 		GameCamera() :
-			m_startEye(Vec3(0.0f, 8.0f, -33.0f)),
-			m_startAt(Vec3(0.0f, 8.0f, 0.0f))
+			m_startEye(Vec3(0.0f, -72.0f, -33.0f)),
+			m_startAt(Vec3(0.0f, -72.0f, 0.0f))
 		{
 			m_currentPos.zero();
 			m_currentEye = m_startEye;

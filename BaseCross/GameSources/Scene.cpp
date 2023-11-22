@@ -24,7 +24,8 @@ namespace basecross{
 		const wstring texturePath = mediaPath + L"Textures/";
 
 		// 白塗りテクスチャ
-		app->RegisterTexture(L"WHITE", texturePath + L"White.png");
+		app->RegisterTexture(L"WHITE_TX", texturePath + L"White.png");
+		app->RegisterTexture(L"WHITE_BAR_TX", texturePath + L"WhiteBar.png");
 
 		// 炎のテクスチャの読み込み
 		app->RegisterTexture(L"EFFECT_TX", texturePath + L"Effect.png");
@@ -77,6 +78,9 @@ namespace basecross{
 
 		// リングモデル
 		RegisterSingleMesh(L"RING", modelPath + L"Ring/", L"Ring", true);
+
+		// 送風機モデル
+		RegisterMultiMesh(L"BLOWER", modelPath + L"Blower/", L"Blower", true);
 
 
 		// サウンドディレクトリパス

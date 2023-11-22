@@ -171,6 +171,15 @@ namespace Utility
 		};
 	}
 
+	/*!
+	@brief リボン型頂点データと頂点インデックスを作成
+	@param (point) 節目の座標配列
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (axisVec) 直行軸ベクトル
+	@param (weight) 幅
+	@param (texLoop) テクスチャループ
+	*/
 	void RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
 	{
 		if (point.size() == 0) return;
@@ -180,7 +189,7 @@ namespace Utility
 		for (int i = 0; i < point.size(); i++)
 		{
 			const int loop = texLoop > 0 ? texLoop : 1;
-			int front = (i - 1) < 0 ? 0 : i - 1;
+			int front = (i - 1) < 0 ? point.size() - 1 : i - 1;
 			int rear = (i + 1) % point.size();
 			Vec3 dir = point.at(front) - point.at(rear);
 			Vec3 cross = dir.cross(axisVec).normalize();
@@ -210,6 +219,14 @@ namespace Utility
 		}
 	}
 
+	/*!
+	@brief リボン型頂点データと頂点インデックスを作成
+	@param (point) 節目の座標配列
+	@param (vertex) 頂点データと頂点インデックス
+	@param (axisVec) 直行軸ベクトル
+	@param (weight) 幅
+	@param (texLoop) テクスチャループ
+	*/
 	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
 	{
 		RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
@@ -349,5 +366,32 @@ namespace Utility
 		Quat qt = rotMatrix.quatInMatrix();
 		qt.normalize();
 		return qt;
+	}
+
+	/*!
+	@brief 値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
+	bool GetBetween(int value, int a, int b)
+	{
+		return a > b ? value <= a && value >= b : value <= b && value >= a;
+	}
+
+	bool GetBetween(float value, float a, float b)
+	{
+		return a > b ? value <= a && value >= b : value <= b && value >= a;
+	}
+
+	bool GetBetween(const Vec2& value, const Vec2& a, const Vec2& b)
+	{
+		return GetBetween(value.x, a.x, b.x) && GetBetween(value.y, a.y, b.y);
+	}
+
+	bool GetBetween(const Vec3& value, const Vec3& a, const Vec3& b)
+	{
+		return GetBetween(value.x, a.x, b.x) && GetBetween(value.y, a.y, b.y) && GetBetween(value.z, a.z, b.z);
 	}
 }

@@ -91,6 +91,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ArrowEffect.h">
       <Filter>Player\Effect\Arrow</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Blower.h">
+      <Filter>Gimmick\Blower</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -171,6 +174,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ArrowEffect.cpp">
       <Filter>Player\Effect\Arrow</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Blower.cpp">
+      <Filter>Gimmick\Blower</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -244,6 +250,9 @@
     </Filter>
     <Filter Include="Player\Effect\Arrow">
       <UniqueIdentifier>{0cd1679c-b138-434a-ad93-98a913b243f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Blower">
+      <UniqueIdentifier>{c80725ca-6810-4465-93b9-d233712d0709}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
