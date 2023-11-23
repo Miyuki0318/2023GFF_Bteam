@@ -44,8 +44,8 @@ namespace basecross
 				Vec3(0.0f),
 				Vec3(0.0f, 0.0f, 45.0f),
 				Vec3(0.0f, 0.0f, -45.0f),
-				Vec3(0.0f, 0.0f, 225.0f),
 				Vec3(0.0f, 0.0f, 135.0f),
+				Vec3(0.0f, 0.0f, 225.0f),
 				Vec3(0.0f, 180.0f, 0.0f)
 			}
 		{
@@ -65,8 +65,8 @@ namespace basecross
 				Vec3(0.0f),
 				Vec3(0.0f, 0.0f, 45.0f),
 				Vec3(0.0f, 0.0f, -45.0f),
-				Vec3(0.0f, 0.0f, 225.0f),
 				Vec3(0.0f, 0.0f, 135.0f),
+				Vec3(0.0f, 0.0f, 225.0f),
 				Vec3(0.0f, 180.0f, 0.0f)
 			}
 		{

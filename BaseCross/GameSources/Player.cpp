@@ -384,8 +384,9 @@ namespace basecross
 	{
 		if (m_activeCannon.lock())
 		{
+			const float& fireTime = m_activeCannon.lock()->GetFireTime();
 			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
-			if (drawPtr->GetCurrentAnimationTime() > 1.4f)
+			if (drawPtr->GetCurrentAnimationTime() > fireTime)
 			{
 				m_acsel = acsel;
 				m_isAir = true;

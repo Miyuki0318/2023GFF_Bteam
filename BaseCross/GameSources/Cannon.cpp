@@ -10,6 +10,7 @@ namespace basecross
 		m_ptrDraw->SetMeshResource(L"CANNON");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 		m_ptrDraw->AddAnimation(L"FIRE", 0, 60, false);
+		m_ptrDraw->AddAnimation(L"RAPID", 30, 30, false);
 
 		auto ptrColl = GetComponent<CollisionObb>();
 		ptrColl->SetUpdateActive(true);
@@ -26,7 +27,7 @@ namespace basecross
 	{
 		float deltaTime = DELTA_TIME * 1.5f;
 
-		if (m_type == Rotate)
+		if (m_fireType >= eFireType::NRotate)
 		{
 			Vec3 rot = GetRotation();
 			rot.z -= deltaTime;
@@ -35,13 +36,19 @@ namespace basecross
 
 		if (m_isFire)
 		{
-			if (m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == L"FIRE")
+			int type = static_cast<int>(m_fireType) % 2;
+			bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(type);
+			bool fireEffect = m_ptrDraw->GetCurrentAnimationTime() > GetFireTime() && m_ptrDraw->GetCurrentAnimationTime() < GetFireTime() + m_particleTime;;
+
+			if (animaEnd)
 			{
 				m_isFire = false;
 			}
-			if (m_ptrDraw->GetCurrentAnimationTime() > 1.4f && m_ptrDraw->GetCurrentAnimationTime() < 1.44f)
+			if (fireEffect)
 			{
+				EffectUpdate();
 			}
+
 			m_ptrDraw->UpdateAnimation(deltaTime);
 		}
 	}

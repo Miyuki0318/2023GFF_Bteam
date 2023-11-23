@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "Project.h"
 
+using namespace Utility;
 namespace basecross 
 {
 	//--------------------------------------------------------------------------------------
@@ -53,7 +54,7 @@ namespace basecross
 
 
 				VertexData vertex;
-				Utility::SimpleVerticesIndices(vertex);
+				SimpleVerticesIndices(vertex);
 				auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
 				backDraw->SetOriginalMeshUse(true);
 				backDraw->CreateOriginalMesh(vertex);
@@ -78,119 +79,98 @@ namespace basecross
 		gameCamera->SetTargetObject(player);
 	}
 
+	// インスタンス描画オブジェクトの生成
 	void GameStage::CreateInstanceBlock()
 	{
+		// テクスチャタイプ
 		enum eTypes
 		{
 			Iron,
 			Metal,
 			Dark,
-			Size,
+			Size, // enumのサイズ指定子
 		};
 
+		// インスタンス用構造体
 		struct Instance
 		{
-			vector<int> num;
-			int count = 0;
+			vector<int> num; // データ配列
+			int count = 0;   // カウンタ
 		};
 
+		// CSVの読み込み(ストリング型の2次元配列)
 		const auto& data = CSVLoader::LoadFile("Stage");
+
+		// CSVの行の数
 		const int rowSize = static_cast<int>(data.size());
 
-		for (int i = 0; i < data.size(); i++)
+		// 行の数でループ
+		for (int i = 0; i < rowSize; i++)
 		{
+			// ブロックとスロープのインスタンス構造体
 			vector<Instance> block;
 			vector<Instance> slope;
 
+			// タイプの数でリサイズ
 			block.resize(eTypes::Size);
 			slope.resize(eTypes::Size);
 
+			// タイプの数ループ
 			for (int j = 0; j < eTypes::Size; j++)
 			{
+				// i行目の列の数でリサイズ
 				block.at(j).num.resize(data.at(i).size());
 				slope.at(j).num.resize(data.at(i).size());
 			}
 
+			// 列の数でループ
 			for (int j = 0; j < data.at(i).size(); j++)
 			{
+				// 空白が読み込まれた時用のエラーチェック
 				if (data.at(i).at(j) == "") continue;
 
-				switch (stoi(data.at(i).at(j)))
+				// 文字列を整数に変換
+				const int& num = stoi(data.at(i).at(j));
+
+				// インスタンス描画している数値の範囲で指定(ID参照)
+				if (GetBetween(num, 100, 125))
 				{
-				case 100:
-				case 105:
-					block.at(Iron).count++;
-					block.at(Iron).num.at(j) = 1;
-					block.at(Metal).num.at(j) = 0;
-					block.at(Dark).num.at(j) = 0;
-					break;
+					// 10の位を求める
+					// 例：文字列の中身が121だった場合.at(1)で21を取得し、10で割る事で求められている
+					int tensPlace = atoi(&data.at(i).at(j).at(1)) / 10;
 
-				case 110:
-				case 115:
-					block.at(Metal).count++;
-					block.at(Iron).num.at(j) = 0;
-					block.at(Metal).num.at(j) = 1;
-					block.at(Dark).num.at(j) = 0;
-					break;
+					// 数値が5で割り切れる時(例：100,105)
+					if (num % 5 == 0)
+					{
+						// 10の位をタイプの添え字としてカウンタを増やす
+						block.at(tensPlace).count++;
 
-				case 120:
-				case 125:
-					block.at(Dark).count++;
-					block.at(Iron).num.at(j) = 0;
-					block.at(Metal).num.at(j) = 0;
-					block.at(Dark).num.at(j) = 1;
-					break;
+						// タイプの数でループ
+						for (int k = 0; k < eTypes::Size; k++)
+						{
+							// 10の位がタイプ(ループのK)と一致したら1、不一致なら0
+							block.at(k).num.at(j) = static_cast<int>(tensPlace == k);
+						}
+					}
+					else // 割り切れない時(例：101,102,103,104)
+					{
+						// 10の位をタイプの添え字としてカウンタを増やす
+						slope.at(tensPlace).count++;
 
-				default:
-					block.at(Iron).num.at(j) = 0;
-					block.at(Metal).num.at(j) = 0;
-					block.at(Dark).num.at(j) = 0;
-					break;
+						// タイプの数でループ
+						for (int k = 0; k < eTypes::Size; k++)
+						{
+							// 10の位がタイプ(ループのK)と一致したら数値の1の位の値を、不一致なら0
+							slope.at(k).num.at(j) = tensPlace == k ? atoi(&data.at(i).at(j).at(2)) : 0;
+						}
+					}
 				}
-
-				switch (stoi(data.at(i).at(j)))
-				{
-				case 101:
-				case 102:
-				case 103:
-				case 104:
-					slope.at(Iron).count++;
-					slope.at(Iron).num.at(j) = atoi(&data.at(i).at(j).at(2));
-					slope.at(Metal).num.at(j) = 0;
-					slope.at(Dark).num.at(j) = 0;
-					break;
-
-				case 111:
-				case 112:
-				case 113:
-				case 114:
-					slope.at(Metal).count++;
-					slope.at(Iron).num.at(j) = 0;
-					slope.at(Metal).num.at(j) = atoi(&data.at(i).at(j).at(2));
-					slope.at(Dark).num.at(j) = 0;
-					break;
-
-				case 121:
-				case 122:
-				case 123:
-				case 124:
-					slope.at(Dark).count++;
-					slope.at(Iron).num.at(j) = 0;
-					slope.at(Metal).num.at(j) = 0;
-					slope.at(Dark).num.at(j) = atoi(&data.at(i).at(j).at(2));
-					break;
-
-				default:
-					slope.at(Iron).num.at(j) = 0;
-					slope.at(Metal).num.at(j) = 0;
-					slope.at(Dark).num.at(j) = 0;
-					break;
-				}
-
 			}
 
+			// タイプの数でループ
 			for (int k = 0; k < eTypes::Size; k++)
 			{
+				// カウンタが0より大きかったら生成
 				if (block.at(k).count > 0)
 				{
 					AddGameObject<InstanceBlock>(block.at(k).num, k, rowSize, i);
@@ -245,7 +225,9 @@ namespace basecross
 				shared_ptr<Gimmick> gimmick = nullptr;
 				shared_ptr<Gimmick> update = nullptr;
 
-				switch (stoi(data.at(i).at(j)))
+				const int& num = stoi(data.at(i).at(j));
+
+				switch (num)
 				{
 				case 0:
 					checker.reset();
@@ -286,94 +268,8 @@ namespace basecross
 					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDRight, slopeScale, true);
 					break;
 
-				case 200:
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::All);
-					break;
-
-				case 201:
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Up);
-					break;
-
-				case 202:
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Down);
-					break;
-
-				case 203:
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Left);
-					break;
-
-				case 204:
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Gimmick::Right);
-					break;
-
-				case 210:
-					checker.count++;
-					checker.type = data.at(i).at(j);
-					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Convayor::LeftRot, static_cast<Convayor::eType>(checker.check));
-					break;
-
-				case 211:
-					checker.count++;
-					checker.type = data.at(i).at(j);
-					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Convayor::RightRot, static_cast<Convayor::eType>(checker.check));
-					break;
-
-				case 220:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Up, Cannon::Normal);
-					break;
-
-				case 221:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Down, Cannon::Normal);
-					break;
-
-				case 222:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Left, Cannon::Normal);
-					break;
-
-				case 223:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Right, Cannon::Normal);
-					break;
-
-				case 224:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Uleft, Cannon::Normal);
-					break;
-
-				case 225:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Dleft, Cannon::Normal);
-					break;
-
-				case 226:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Uright, Cannon::Normal);
-					break;
-
-				case 227:
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, Gimmick::Dright, Cannon::Normal);
-					break;
-
 				case 230:
 					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
-					break;
-
-				case 240:
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Up, 30.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
-					break;
-
-				case 241:
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Down, 30.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
-					break;
-
-				case 242:
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Left, 30.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
-					break;
-
-				case 243:
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), Gimmick::Right, 30.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), Vec3(scale * 5.0f, scale, scale * 5.0f), true);
 					break;
 
 				case 300:
@@ -382,6 +278,43 @@ namespace basecross
 
 				default:
 					break;
+				}
+
+				// 特殊なブロックやギミック用
+
+				// 棘
+				if (GetBetween(num, 200, 204))
+				{
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, angle);
+				}
+				
+				// ベルトコンベア
+				if (GetBetween(num, 210, 211))
+				{
+					checker.count++;
+					checker.type = data.at(i).at(j);
+					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
+					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&data.at(i).at(j).at(2)));
+					const auto& beltType = static_cast<Convayor::eType>(checker.check);
+					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType);
+				}
+
+				// 大砲
+				if (GetBetween(num, 2200, 2283))
+				{
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)) / 10);
+					const auto& fireType = static_cast<Cannon::eFireType> (atoi(&data.at(i).at(j).at(3)));
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, angle, fireType);
+				}
+
+				// 送風機
+				if (GetBetween(num, 240, 243))
+				{
+					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), blowerScale, angle, 15.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), update->GetRotation(), blowerScale, true);
 				}
 
 				if (block)
