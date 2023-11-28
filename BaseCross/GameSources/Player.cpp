@@ -200,18 +200,6 @@ namespace basecross
 		}
 	}
 
-	// コリジョンから離れたら
-	void Player::OnCollisionExit(const CollisionPair& Pair)
-	{
-		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
-		const Vec3& hitPoint = Pair.m_CalcHitPoint;
-
-		if (other->FindTag(L"Block") || other->FindTag(L"Spike") || other->FindTag(L"Covayor"))
-		{
-			BlockExit(other);
-		}
-	}
-
 	// 移動関数
 	void Player::MovePlayer()
 	{
@@ -549,114 +537,150 @@ namespace basecross
 	void Player::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
-		auto objTrans = block->GetComponent<Transform>();
-		Vec3 objPos = objTrans->GetPosition();
-		Vec3 helf = objTrans->GetScale() / 2.0f;
+		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
+		Vec3 objPos = cube->GetSlopePos();
+		Vec3 helf = cube->GetScale() / 2.0f;
 
-		// コリジョンに対して上から衝突
-		if (CollHitUpper(hitPos, objPos, helf))
+		bool upper, under, left, right;
+		upper = CollHitUpper(hitPos, objPos, helf);
+		under = CollHitUnder(hitPos, objPos, helf);
+		left = CollHitLeft(hitPos, objPos, helf);
+		right = CollHitRight(hitPos, objPos, helf);
+
+		const float& deg = cube->GetDegreeAngle().z;
+		if (deg != 0.0f)
 		{
-			// 上にブロックがあるかのチェック
-			if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
-
-			// エアショック使用可能にする
-			m_firePossible = true;
-			m_respawnPos = Vec3(objPos.x, objPos.y + (helf.y * 3.0f), 0.0f);
-
-			// 死亡判定があるなら
-			if (m_isDeath)
+			if (Utility::GetBetween<CubeObject::eType>(cube->GetAngleType(), CubeObject::SlopeUL, CubeObject::SlopeUR))
 			{
-				// コンティニュー画面へ遷移
+				BlockUpperHit(objPos, helf);
 			}
-
-			// 移動量が下方向にあり
-			if (m_velocity.y > 0.0f)
+			if (Utility::GetBetween<CubeObject::eType>(cube->GetAngleType(), CubeObject::SlopeDL, CubeObject::SlopeDR))
 			{
-				// 加速度が半分より大きかったら
-				if (m_acsel > 2.5f || m_velocity.y > 5.0f)
-				{
-					// 移動量を反転させ、半分にする
-					m_velocity.y *= -0.5f;
-				}
+				BlockUnderHit(objPos, helf);
 			}
-			return;
 		}
-
-		// 下から衝突
-		if (CollHitUnder(hitPos, objPos, helf))
+		else
 		{
-			// 下にブロックがあるかのチェック
-			if (!BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
-
-			// 移動量が上方向なら
-			if (m_velocity.y < 0.0f)
+			// コリジョンに対して上から衝突
+			if (upper)
 			{
-				// 反転させ、落下させる
-				m_velocity.y *= -1.0f;
+				BlockUpperHit(objPos, helf);
+				return;
 			}
-			return;
+
+			// 下から衝突
+			if (under)
+			{
+				BlockUnderHit(objPos, helf);
+				return;
+			}
 		}
 
 		// 左から衝突
-		if (CollHitLeft(hitPos, objPos, helf))
+		if (left)
 		{
-			// 左にブロックがあるかのチェック
-			if (!BlockCheck(Vec3(objPos.x - (helf.x * 2.0f), objPos.y, 0.0f))) return;
-
-			// 移動量を半減しつつ反転させる
-			m_velocity.x *= -0.5f;
+			BlockLeftHit(objPos, helf);
 			return;
 		}
 
 		// 右から衝突
-		if (CollHitRight(hitPos, objPos, helf))
+		if (right)
 		{
-			// 右にブロックがあるかのチェック
-			if (!BlockCheck(Vec3(objPos.x + (helf.x * 2.0f), objPos.y, 0.0f))) return;
-
-			// 移動量を半減しつつ反転させる
-			m_velocity.x *= -0.5f;
+			BlockRightHit(objPos, helf);
 			return;
 		}
 	}
+
+	void Player::BlockUpperHit(const Vec3& objPos, const Vec3& helf)
+	{
+		// 上にブロックがあるかのチェック
+		if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+
+		// エアショック使用可能にする
+		m_firePossible = true;
+		m_respawnPos = Vec3(objPos.x, objPos.y + (helf.y * 3.0f), 0.0f);
+
+		// 死亡判定があるなら
+		if (m_isDeath)
+		{
+			// コンティニュー画面へ遷移
+		}
+
+		// 移動量が下方向にあり
+		if (m_velocity.y > 0.0f)
+		{
+			// 加速度が半分より大きかったら
+			if (m_acsel > 2.5f || m_velocity.y > 2.5f)
+			{
+				// 移動量を反転させ、半分にする
+				m_velocity.y *= -0.5f;
+			}
+		}
+	}
+
+	void Player::BlockUnderHit(const Vec3& objPos, const Vec3& helf)
+	{
+		// 下にブロックがあるかのチェック
+		if (!BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
+
+		// 移動量が上方向なら
+		if (m_velocity.y < 0.0f)
+		{
+			// 反転させ、落下させる
+			m_velocity.y *= -1.0f;
+		}
+	}
+
+	void Player::BlockLeftHit(const Vec3& objPos, const Vec3& helf)
+	{
+		// 左にブロックがあるかのチェック
+		if (!BlockCheck(Vec3(objPos.x - (helf.x * 2.0f), objPos.y, 0.0f))) return;
+
+		// 移動量を半減しつつ反転させる
+		m_velocity.x *= -0.5f;
+	}
+
+	void Player::BlockRightHit(const Vec3& objPos, const Vec3& helf)
+	{
+		// 右にブロックがあるかのチェック
+		if (!BlockCheck(Vec3(objPos.x + (helf.x * 2.0f), objPos.y, 0.0f))) return;
+
+		// 移動量を半減しつつ反転させる
+		m_velocity.x *= -0.5f;
+	}
+
 
 	// ブロックに衝突し続けたら
 	void Player::BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
 		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
-		Vec3 objPos = cube->GetPosition();
+		Vec3 objPos = cube->GetSlopePos();
 		Vec3 helf = cube->GetScale() / 2.0f;
 
 		// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
-		m_velocity.y = 0.001f;
+		m_velocity.y = 0.0f;
 		m_acsel = 1.0f;
 		m_isAir = false;
 
-		const float& deg = cube->GetDegreeAngle().z;
-		if (deg == 0.0f)
+		const auto& angle = cube->GetAngleType();
+		if (angle == CubeObject::SlopeUL)
 		{
-			if (CollHitUpper(hitPos, objPos, helf))
+			if (m_velocity.length() <= 0.25f)
 			{
-				SetPosition(Vec3(GetPosition().x, objPos.y + helf.y + (m_scale.y / 2.0f), 0.0f));
-			}
-		}
-		else
-		{
-			if (!CollHitUnder(hitPos, objPos, helf))
-			{
-				float length = hitPos.y - objPos.y;
-				SetPosition(Vec3(GetPosition().x, objPos.y + length + (m_scale.y / 2.0f), 0.0f));
+				m_velocity.y = 0.175f;
+				m_velocity.x = 0.175f;
 			}
 		}
 
-	}
-
-	// ブロックとの衝突が無くなったら
-	void Player::BlockExit(const shared_ptr<GameObject>& block)
-	{
-		// 接地フラグを解除
-		m_isAir = true;
+		if (angle == CubeObject::SlopeUR)
+		{
+			if (m_velocity.length() <= 0.25f)
+			{
+				m_velocity.y = 0.175f;
+				m_velocity.x = -0.175f;
+			}
+		}
 	}
 
 	// 衝突したブロックの上にブロックがあるかの検証

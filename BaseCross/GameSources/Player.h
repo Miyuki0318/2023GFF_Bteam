@@ -125,7 +125,7 @@ namespace basecross
 		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
 		*/
-		void OnReleaseA();
+		virtual void OnReleaseA();
 
 		/*!
 		@brief 衝突した瞬間に呼び出される関数
@@ -136,11 +136,6 @@ namespace basecross
 		@brief 衝突している間呼び出される関数
 		*/
 		void OnCollisionExcute(const CollisionPair& Pair) override;
-
-		/*!
-		@brief 衝突されなくなったら呼び出される関数
-		*/
-		void OnCollisionExit(const CollisionPair& Pair) override;
 
 		/*!
 		@brief プレイヤーの移動関数
@@ -196,13 +191,19 @@ namespace basecross
 
 		void BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos);
 
-		void BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos);
+		void BlockUpperHit(const Vec3& objPos, const Vec3& helf);
 
-		void BlockExit(const shared_ptr<GameObject>& block);
+		void BlockUnderHit(const Vec3& objPos, const Vec3& helf);
+
+		void BlockLeftHit(const Vec3& objPos, const Vec3& helf);
+
+		void BlockRightHit(const Vec3& objPos, const Vec3& helf);
+
+		void BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos);
 
 		bool BlockCheck(const Vec3& upperPos);
 
-		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
+		virtual void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 
 		void SpikeExcute(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 

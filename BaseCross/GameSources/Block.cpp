@@ -6,6 +6,7 @@ namespace basecross
 	void Alpha::OnCreate()
 	{
 		CubeObject::OnCreate();
+		GetComponent<CollisionObb>()->SetDrawActive(true);
 		AddTag(L"Block");
 	}
 
@@ -52,11 +53,11 @@ namespace basecross
 		auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
 		ptrDraw->SetMeshResource(L"SLOPE");
 		ptrDraw->SetTextureResource(m_textures.at(m_type));
+		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.3f));
 
 		const float under = -98.0f;
 		const float left = -49.0f;
-		const float scale = 1.0f;
-		const float slopeScale = scale * 1.4f;
+		const Vec3 slopeScale = Vec3(1.37f);
 		const Vec3 slopeULeft = Vec3(0.5f, 0.0f, 0.0f);
 		const Vec3 slopeURight = Vec3(-0.5f, 0.0f, 0.0f);
 		const Vec3 slopeDLeft = Vec3(0.5f, 1.0f, 0.0f);
@@ -99,7 +100,7 @@ namespace basecross
 				}
 
 				mtxR.rotation(q);
-				mtxS.scale(Vec3(slopeScale));
+				mtxS.scale(slopeScale);
 
 				matrix = mtxS * mtxR * mtxT;
 				ptrDraw->AddMatrix(matrix);

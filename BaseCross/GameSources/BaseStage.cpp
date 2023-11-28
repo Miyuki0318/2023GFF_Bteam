@@ -92,7 +92,7 @@ namespace basecross
 		const float under = -97.5f;
 		const float left = -49.0f;
 		const float scale = 1.0f;
-		const Vec3 slopeScale = Vec3(scale) * 1.4f;
+		const Vec3 slopeScale = Vec3(scale * 1.45f, scale * 1.45f, scale);
 		const Vec2 slopeULeft = Vec2(0.5f, -0.5f);
 		const Vec2 slopeURight = Vec2(-0.5f, -0.5f);
 		const Vec2 slopeDLeft = Vec2(0.5f, 0.5f);
@@ -131,25 +131,25 @@ namespace basecross
 				case 101:
 				case 111:
 				case 121:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeULeft, slopeScale, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeULeft, slopeScale, CubeObject::SlopeUL, true);
 					break;
 
 				case 102:
 				case 112:
 				case 122:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeURight, slopeScale, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeURight, slopeScale, CubeObject::SlopeUR, true);
 					break;
 
 				case 103:
 				case 113:
 				case 123:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDLeft, slopeScale, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDLeft, slopeScale, CubeObject::SlopeDL, true);
 					break;
 
 				case 104:
 				case 114:
 				case 124:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDRight, slopeScale, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDRight, slopeScale, CubeObject::SlopeDR, true);
 					break;
 
 				case 230:

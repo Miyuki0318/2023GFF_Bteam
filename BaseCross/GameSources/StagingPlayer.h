@@ -11,13 +11,16 @@ namespace basecross
 		StagingPlayer(const shared_ptr<Stage>& stagePtr) :
 			Player(stagePtr)
 		{
-
 		}
 
 		virtual ~StagingPlayer() {}
 
-		void OnCreate() override;
+		/*!
+		@brief Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚È‚­‚È‚Á‚½‚ÉŒÄ‚Ño‚³‚ê‚éŠÖ”
+		*/
+		void OnReleaseA() override;
 
-		void OnUpdate() override;
+
+		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos) override;
 	};
 }

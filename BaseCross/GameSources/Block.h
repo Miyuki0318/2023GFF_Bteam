@@ -28,6 +28,13 @@ namespace basecross
 		{
 		}
 
+		Alpha(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const Vec3& scale, const eType& type, const bool coll
+		) :
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), scale, type, coll)
+		{
+		}
+
 		~Alpha() {}
 
 		void OnCreate() override;

@@ -302,4 +302,15 @@ namespace Utility
 	bool GetBetween(float value, float a, float b);
 	bool GetBetween(const Vec2& value, const Vec2& a, const Vec2& b);
 	bool GetBetween(const Vec3& value, const Vec3& a, const Vec3& b);
+
+	template <class T>
+	bool GetBetween(T value, T a, T b)
+	{
+		int iv, ia, ib;
+		iv = static_cast<int>(value);
+		ia = static_cast<int>(a);
+		ib = static_cast<int>(b);
+
+		return GetBetween(iv, ia, ib);
+	}
 }

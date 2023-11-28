@@ -90,6 +90,11 @@ namespace basecross
 
 		void OnUpdate() override;
 
+		const eType& GetAngleType() const
+		{
+			return m_type;
+		}
+
 		void SetTarget(const shared_ptr<GameObject>& objPtr)
 		{
 			m_targetObj = objPtr;
@@ -98,6 +103,42 @@ namespace basecross
 		const shared_ptr<GameObject>& GetTarget() const
 		{
 			return m_targetObj.lock();
+		}
+
+		const Vec3& GetSlopePos() const
+		{
+			if (Utility::GetBetween(m_type, SlopeUL, SlopeDR))
+			{
+				Vec3 slope;
+
+				switch (m_type)
+				{
+				case SlopeUL:
+					slope = Vec3(0.5f, -0.5f, 0.0f);
+					break;
+
+				case SlopeUR:
+					slope = Vec3(-0.5f, -0.5f, 0.0f);
+					break;
+
+				case SlopeDL:
+					slope = Vec3(0.5f, 0.5f, 0.0f);
+					break;
+
+				case SlopeDR:
+					slope = Vec3(-0.5f, 0.5f, 0.0f);
+					break;
+
+				default:
+					break;
+				}
+
+				return m_position + slope;
+			}
+			else
+			{
+				return m_position;
+			}
 		}
 	};
 }

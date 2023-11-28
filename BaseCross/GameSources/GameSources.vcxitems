@@ -74,6 +74,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StagingPlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>

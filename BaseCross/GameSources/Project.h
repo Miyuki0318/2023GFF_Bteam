@@ -33,5 +33,6 @@
 #include "AirJetEffect.h"
 #include "ShieldEffect.h"
 #include "Player.h"
+#include "StagingPlayer.h"
 #include "Block.h"
 #include "Bird.h"
