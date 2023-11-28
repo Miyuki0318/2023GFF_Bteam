@@ -94,6 +94,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Blower.h">
       <Filter>Gimmick\Blower</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BaseStage.h">
+      <Filter>Stage\BaseStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -177,6 +180,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Blower.cpp">
       <Filter>Gimmick\Blower</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)BaseStage.cpp">
+      <Filter>Stage\BaseStage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -253,6 +259,9 @@
     </Filter>
     <Filter Include="Gimmick\Blower">
       <UniqueIdentifier>{c80725ca-6810-4465-93b9-d233712d0709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage\BaseStage">
+      <UniqueIdentifier>{773332b0-7863-4867-a20d-17618d677504}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

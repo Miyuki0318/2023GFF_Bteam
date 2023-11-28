@@ -894,11 +894,11 @@ namespace basecross
 			switch (angle)
 			{
 			case Convayor::LeftRot:
-				m_velocity.x = m_speed;
+				m_velocity.x = m_convayorVelo;
 				break;
 
 			case Convayor::RightRot:
-				m_velocity.x = -m_speed;
+				m_velocity.x = -m_convayorVelo;
 				break;
 
 			default:

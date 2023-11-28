@@ -18,6 +18,7 @@ namespace basecross
 
 	private:
 
+		int m_select;
 		bool m_isFire;
 		const float m_particleTime;
 		const eFireType m_fireType;
@@ -36,6 +37,7 @@ namespace basecross
 			m_fireType(fire),
 			m_particleTime(0.04f)
 		{
+			m_select = static_cast<int>(m_fireType) % 2;
 			m_isFire = false;
 
 			m_fireTime = {
@@ -67,14 +69,12 @@ namespace basecross
 		void OnFire()
 		{
 			m_isFire = true;
-			int type = static_cast<int>(m_fireType) % 2;
-			m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(type), 0.0f);
+			m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(m_select), 0.0f);
 		}
 
 		const float& GetFireTime() const
 		{
-			int type = static_cast<int>(m_fireType) % 2;
-			return m_fireTime.at(type);
+			return m_fireTime.at(m_select);
 		}
 	};
 }

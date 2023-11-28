@@ -1,38 +1,32 @@
 #pragma once
 #include "stdafx.h"
+#include "BaseStage.h"
 
 namespace basecross
 {
-	class TitleStage : public Stage
+	class TitleStage : public BaseStage
 	{
-		// ビュー
-		shared_ptr<SingleView> m_gameView;
+		/*!
+		@brief リソース読み込み関数
+		*/
+		void CreateResourses() override;
 
-		// BGM
-		weak_ptr<SoundItem> m_bgm;
+		/*!
+		@brief ビューとライトの生成関数
+		*/
+		void CreateViewLight() override;
 
-		// リソースの読み込み
-		void CreateResourses();
-
-		// ビューの作成
-		void CreateViewLight();
-
-		// BGMの再生
-		void CreateBGM();
-
-		// 地面の作成
-		void CreatePlayer();
-
-		// ステージの作成
-		void CreateStage();
-		void CreateInstanceBlock();
+		/*!
+		@brief BGMの再生関数
+		*/
+		void CreateBGM() override;
 
 	public:
 
 		/*!
 		@brief コンストラクタ
 		*/
-		TitleStage() : Stage() {}
+		TitleStage() : BaseStage() {}
 
 		/*!
 		@brief デストラクタ
@@ -48,10 +42,5 @@ namespace basecross
 		@brief 毎フレーム度に呼び出される関数
 		*/
 		virtual void OnUpdate() override;
-
-		/*!
-		@brief 描画更新関数
-		*/
-		virtual void OnDraw() override;
 	};
 }

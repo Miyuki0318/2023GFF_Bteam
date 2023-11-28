@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)AirJetEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ArrowEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)BaseStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
@@ -49,6 +50,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AirJetEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ArrowEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)BaseStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />

@@ -36,8 +36,7 @@ namespace basecross
 
 		if (m_isFire)
 		{
-			int type = static_cast<int>(m_fireType) % 2;
-			bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(type);
+			bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(m_select);
 			bool fireEffect = m_ptrDraw->GetCurrentAnimationTime() > GetFireTime() && m_ptrDraw->GetCurrentAnimationTime() < GetFireTime() + m_particleTime;;
 
 			if (animaEnd)

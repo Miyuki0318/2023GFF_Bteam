@@ -11,6 +11,7 @@
 #include "CSVLoader.h"
 #include "Input.h"
 #include "Scene.h"
+#include "BaseStage.h"
 #include "GameStage.h"
 #include "TitleStage.h"
 #include "Sprite.h"

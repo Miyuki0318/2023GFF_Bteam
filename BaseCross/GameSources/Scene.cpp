@@ -20,34 +20,6 @@ namespace basecross{
 		// ディレクトリパスの設定
 		const wstring mediaPath = app->GetDataDirWString();
 
-		// テクスチャディレクトリパス
-		const wstring texturePath = mediaPath + L"Textures/";
-
-		// 白塗りテクスチャ
-		app->RegisterTexture(L"WHITE_TX", texturePath + L"White.png");
-		app->RegisterTexture(L"WHITE_BAR_TX", texturePath + L"WhiteBar.png");
-
-		// 炎のテクスチャの読み込み
-		app->RegisterTexture(L"EFFECT_TX", texturePath + L"Effect.png");
-
-		// シールドテクスチャの読み込み
-		app->RegisterTexture(L"SHIELD_TX", texturePath + L"Shield.png");
-
-		// 煙テクスチャ
-		app->RegisterTexture(L"SMOKE_TX", texturePath + L"Smoke.png");
-		
-		// 炎テクスチャ
-		app->RegisterTexture(L"FIRE_TX", texturePath + L"Fire.png");
-
-		// 石テクスチャ
-		app->RegisterTexture(L"STONE_TX", texturePath + L"Stone.png");
-
-		// 背景テクスチャ
-		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
-
-		// 矢印テクスチャ
-		app->RegisterTexture(L"ARROW_TX", texturePath + L"Arrow.png");
-
 		// モデルディレクトリパス
 		const wstring modelPath = mediaPath + L"Models/";
 
@@ -81,24 +53,6 @@ namespace basecross{
 
 		// 送風機モデル
 		RegisterMultiMesh(L"BLOWER", modelPath + L"Blower/", L"Blower", true);
-
-
-		// サウンドディレクトリパス
-		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
-		const wstring SEPath = mediaPath + L"Sounds/SE/";
-
-		// ゲーム用BGM
-		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
-
-		// 衝撃波SE
-		app->RegisterWav(L"AIRSHOCK_SE", SEPath + L"AirShockSE");
-
-		// 大砲発射SE
-		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
-
-		// シールドSE
-		app->RegisterWav(L"SHIELD_C_SE", SEPath + L"ShieldCreateSE");
-		app->RegisterWav(L"SHIELD_D_SE", SEPath + L"ShieldDestroySE");
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)
