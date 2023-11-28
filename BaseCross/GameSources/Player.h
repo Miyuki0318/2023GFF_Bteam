@@ -155,7 +155,7 @@ namespace basecross
 		/*!
 		@brief エアショックの軌道描画関数
 		*/
-		void RotateAligment();
+		virtual void RotateAligment();
 
 		/*!
 		@brief アニメーション更新関数
@@ -203,7 +203,7 @@ namespace basecross
 
 		bool BlockCheck(const Vec3& upperPos);
 
-		virtual void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
+		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 
 		void SpikeExcute(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 

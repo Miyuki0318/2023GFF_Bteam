@@ -20,7 +20,6 @@ namespace basecross
 		*/
 		void OnReleaseA() override;
 
-
-		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos) override;
+		void RotateAligment() override;
 	};
 }
