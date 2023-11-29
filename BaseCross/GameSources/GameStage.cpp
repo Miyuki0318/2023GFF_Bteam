@@ -73,7 +73,7 @@ namespace basecross
 
 	void GameStage::CreatePlayer()
 	{
-		auto player = AddGameObject<StagingPlayer>();
+		auto player = AddGameObject<Player>();
 		SetSharedGameObject(L"Player", player);
 		
 		const auto& gameCamera = dynamic_pointer_cast<GameCamera>(m_gameView->GetCamera());

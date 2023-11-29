@@ -200,6 +200,24 @@ namespace basecross
 		}
 	}
 
+	void Player::OnCollisionExit(const CollisionPair& Pair)
+	{
+		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
+		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+		if (other->FindTag(L"Block"))
+		{
+			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
+			if (cube)
+			{
+				const auto& type = cube->GetAngleType();
+				if (type == CubeObject::Normal)
+				{
+					m_isAir = true;
+				}
+			}
+		}
+	}
+
 	// 移動関数
 	void Player::MovePlayer()
 	{
@@ -259,6 +277,15 @@ namespace basecross
 			{
 				// 0.01より小さかったら0.0で修正
 				m_velocity.x = 0.0f;
+			}
+
+			if (m_velocity.y > 0.1f)
+			{
+				m_velocity.y -= DELTA_TIME;
+			}
+			else
+			{
+				m_velocity.y = 0.0f;
 			}
 		}
 	}
@@ -659,11 +686,19 @@ namespace basecross
 		Vec3 helf = cube->GetScale() / 2.0f;
 
 		// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
-		m_velocity.y = 0.0f;
+		m_velocity.y = 0.001f;
 		m_acsel = 1.0f;
 		m_isAir = false;
 
 		const auto& angle = cube->GetAngleType();
+		if (angle == CubeObject::Normal)
+		{
+			if (CollHitUpper(hitPos, objPos, helf))
+			{
+				SetPosition(GetPosition().x, objPos.y + helf.y + (GetScale().y / 2.0f), 0.0f);
+			}
+		}
+
 		if (angle == CubeObject::SlopeUL)
 		{
 			if (m_velocity.length() <= 0.25f)

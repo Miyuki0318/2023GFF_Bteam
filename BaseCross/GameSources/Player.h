@@ -138,6 +138,11 @@ namespace basecross
 		void OnCollisionExcute(const CollisionPair& Pair) override;
 
 		/*!
+		@brief 衝突している間呼び出される関数
+		*/
+		void OnCollisionExit(const CollisionPair& Pair) override;
+
+		/*!
 		@brief プレイヤーの移動関数
 		*/
 		void MovePlayer();
