@@ -61,8 +61,11 @@ namespace basecross
 		@brief コンストラクタ
 		@param ステージポインタ
 		*/
-		Player(const shared_ptr<Stage>& stagePtr) :
+		Player(const shared_ptr<Stage>& stagePtr,
+			const Vec3& position
+		) :
 			DebugObject(stagePtr),
+			m_respawnPos(position),
 			m_maxAcsel(4.5f),
 			m_damageAcsel(2.5f),
 			m_slowTime(0.1f),
@@ -70,8 +73,7 @@ namespace basecross
 			m_invincibleTime(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
-			m_position = Vec3(-22.0f, -80.0f, 0.0f);
-			m_respawnPos = Vec3(-22.0f, -80.0f, 0.0f);
+			m_position = position;
 			m_rotation.zero();
 			m_scale = Vec3(1.0f);
 			m_velocity = m_deffVelo;

@@ -29,7 +29,13 @@ vector<vector<string>> CSVLoader::LoadFile(const string& filePath)
 			istringstream iss(buffer);
 			string col;
 
-			while (getline(iss, col, ',')) row.push_back(col);
+			while (getline(iss, col, ','))
+			{
+				if (col != "")
+				{
+					row.push_back(col);
+				}
+			}
 
 			if (row.size() != 0 && row.size() != 1) data.push_back(row);
 		}

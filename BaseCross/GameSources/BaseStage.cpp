@@ -63,7 +63,7 @@ namespace basecross
 
 	void BaseStage::CreatePlayer()
 	{
-		auto player = AddGameObject<Player>();
+		auto player = AddGameObject<Player>(Vec3(-20.0f, -80.0f, 0.0f));
 		SetSharedGameObject(L"Player", player);
 	}
 
@@ -242,7 +242,7 @@ namespace basecross
 		};
 
 		// CSVの読み込み(ストリング型の2次元配列)
-		const auto& data = CSVLoader::LoadFile("Stage");
+		const auto& data = CSVLoader::LoadFile(fileName);
 
 		// CSVの行の数
 		const int rowSize = static_cast<int>(data.size());

@@ -1020,7 +1020,7 @@ namespace basecross
 				m_isInvincible = true;
 
 				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-				audioPtr->Start(L"SHIELD_D_SE", 0, 0.75f);
+				audioPtr->Start(L"SHIELD_D_SE", 0, 1.5f);
 			}
 			else
 			{

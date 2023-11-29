@@ -52,7 +52,6 @@ namespace basecross
 		auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
 		ptrDraw->SetMeshResource(L"SLOPE");
 		ptrDraw->SetTextureResource(m_textures.at(m_type));
-		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.3f));
 
 		const float under = -98.0f;
 		const float left = -49.0f;

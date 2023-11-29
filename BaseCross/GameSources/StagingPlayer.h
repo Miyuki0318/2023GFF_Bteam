@@ -8,8 +8,10 @@ namespace basecross
 	{
 	public:
 
-		StagingPlayer(const shared_ptr<Stage>& stagePtr) :
-			Player(stagePtr)
+		StagingPlayer(const shared_ptr<Stage>& stagePtr,
+			const Vec3& position
+		) :
+			Player(stagePtr, position)
 		{
 		}
 

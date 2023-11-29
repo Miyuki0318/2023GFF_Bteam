@@ -21,6 +21,11 @@ namespace basecross
 		*/
 		void CreateBGM() override;
 
+		/*!
+		@brief ƒvƒŒƒCƒ„[‚Ì¶¬ŠÖ”
+		*/
+		void CreatePlayer() override;
+
 	public:
 
 		/*!

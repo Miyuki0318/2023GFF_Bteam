@@ -28,8 +28,8 @@ namespace basecross
 	{
 		// ƒrƒ…[‚ÌƒJƒƒ‰‚Ìİ’è
 		auto ptrCamera = ObjectFactory::Create<Camera>();
-		ptrCamera->SetEye(Vec3(-20.0f, 9.0f, -33.0f));
-		ptrCamera->SetAt(Vec3(-20.0f, 9.0f, 0.0f));
+		ptrCamera->SetEye(Vec3(-20.0f, 15.0f, -40.0f));
+		ptrCamera->SetAt(Vec3(-20.0f, 15.0f, 0.0f));
 		m_gameView = CreateView<SingleView>();
 		m_gameView->SetCamera(ptrCamera);
 
@@ -61,7 +61,13 @@ namespace basecross
 	void TitleStage::CreateBGM()
 	{
 		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		m_bgm = audioPtr->Start(L"TITLE_BGM", XAUDIO2_LOOP_INFINITE, 0.5f);
+		m_bgm = audioPtr->Start(L"TITLE_BGM", XAUDIO2_LOOP_INFINITE, 0.25f);
+	}
+
+	void TitleStage::CreatePlayer()
+	{
+		const auto& player = AddGameObject<StagingPlayer>(Vec3(-50.0f, 60.0f, 0.0f));
+		SetSharedGameObject(L"Player", player);
 	}
 
 	void TitleStage::OnCreate()
@@ -99,7 +105,7 @@ namespace basecross
 	{
 		try
 		{
-			BaseStage::OnUpdate();
+			//BaseStage::OnUpdate();
 		}
 		catch (...)
 		{
