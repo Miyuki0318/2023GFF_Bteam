@@ -831,7 +831,7 @@ namespace basecross
 			}
 			if (left)
 			{
-				DamageKnockBack(Vec2(1.5f, -0.5f));
+				DamageKnockBack(Vec2(1.0f, 0.5f));
 				return;
 			}
 			if (right)
@@ -950,15 +950,16 @@ namespace basecross
 			const auto& ptr = dynamic_pointer_cast<Convayor>(convayor);
 			if (!ptr) return;
 
+			const float& speed = ptr->GetConvayorSpeed();
 			const auto& angle = ptr->GetRotate();
 			switch (angle)
 			{
 			case Convayor::LeftRot:
-				m_velocity.x = m_convayorVelo;
+				m_velocity.x = speed;
 				break;
 
 			case Convayor::RightRot:
-				m_velocity.x = -m_convayorVelo;
+				m_velocity.x = -speed;
 				break;
 
 			default:

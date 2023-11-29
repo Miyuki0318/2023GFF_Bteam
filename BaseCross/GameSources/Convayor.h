@@ -24,6 +24,7 @@ namespace basecross
 
 		eRotate m_rotate;
 		const eType m_type;
+		const float m_speed;
 		vector<wstring> m_animeKey;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 
@@ -31,11 +32,12 @@ namespace basecross
 
 		Convayor(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, const float scale,
-			const eRotate& rotate, const eType& type
+			const eRotate& rotate, const eType& type, float speed
 		) :
 			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), Up),
 			m_type(type),
-			m_rotate(rotate)
+			m_rotate(rotate),
+			m_speed(speed)
 		{
 			m_animeKey = {
 				L"LEFT",
@@ -68,6 +70,11 @@ namespace basecross
 		eRotate GetRotate() const
 		{
 			return m_rotate;
+		}
+
+		const float& GetConvayorSpeed() const
+		{
+			return m_speed;
 		}
 	};
 }

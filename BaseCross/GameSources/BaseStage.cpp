@@ -174,14 +174,15 @@ namespace basecross
 				}
 
 				// ベルトコンベア
-				if (GetBetween(num, 210, 211))
+				if (GetBetween(num, 2101, 2119))
 				{
 					checker.count++;
 					checker.type = data.at(i).at(j);
 					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&data.at(i).at(j).at(2)));
+					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&data.at(i).at(j).at(2)) / 10);
 					const auto& beltType = static_cast<Convayor::eType>(checker.check);
-					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType);
+					const float& speed = static_cast<float>(atof(&data.at(i).at(j).at(3)));
+					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType, speed);
 				}
 
 				// 大砲

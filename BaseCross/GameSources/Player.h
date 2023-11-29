@@ -46,7 +46,6 @@ namespace basecross
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
-		float m_convayorVelo;
 		
 		bool m_isAir;
 		bool m_isDeath;
@@ -65,7 +64,7 @@ namespace basecross
 		Player(const shared_ptr<Stage>& stagePtr) :
 			DebugObject(stagePtr),
 			m_maxAcsel(4.5f),
-			m_damageAcsel(3.0f),
+			m_damageAcsel(2.5f),
 			m_slowTime(0.1f),
 			m_normalTime(1.5f),
 			m_invincibleTime(0.5f),
@@ -83,7 +82,6 @@ namespace basecross
 			m_acsel = 1.0f;
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
-			m_convayorVelo = 4.0f;
 			m_isAir = true;
 			m_isDeath = false;
 			m_isBlower = false;
