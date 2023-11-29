@@ -6,7 +6,6 @@ namespace basecross
 	void Alpha::OnCreate()
 	{
 		CubeObject::OnCreate();
-		GetComponent<CollisionObb>()->SetDrawActive(true);
 		AddTag(L"Block");
 	}
 

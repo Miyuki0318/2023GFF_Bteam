@@ -83,7 +83,7 @@ namespace basecross
 			m_acsel = 1.0f;
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
-			m_convayorVelo = 2.0f;
+			m_convayorVelo = 4.0f;
 			m_isAir = true;
 			m_isDeath = false;
 			m_isBlower = false;

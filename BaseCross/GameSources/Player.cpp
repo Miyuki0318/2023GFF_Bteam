@@ -50,6 +50,7 @@ namespace basecross
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
+
 	void Player::OnUpdate()
 	{
 		// Aボタン入力有無での関数分岐
@@ -200,6 +201,7 @@ namespace basecross
 		}
 	}
 
+
 	void Player::OnCollisionExit(const CollisionPair& Pair)
 	{
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
@@ -279,13 +281,13 @@ namespace basecross
 				m_velocity.x = 0.0f;
 			}
 
-			if (m_velocity.y > 0.1f)
+			if (m_velocity.y > 0.25f)
 			{
 				m_velocity.y -= DELTA_TIME;
 			}
 			else
 			{
-				m_velocity.y = 0.0f;
+				m_velocity.y = 0.25f;
 			}
 		}
 	}
@@ -618,6 +620,7 @@ namespace basecross
 		}
 	}
 
+
 	void Player::BlockUpperHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 上にブロックがあるかのチェック
@@ -645,6 +648,7 @@ namespace basecross
 		}
 	}
 
+
 	void Player::BlockUnderHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 下にブロックがあるかのチェック
@@ -658,6 +662,7 @@ namespace basecross
 		}
 	}
 
+
 	void Player::BlockLeftHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 左にブロックがあるかのチェック
@@ -666,6 +671,7 @@ namespace basecross
 		// 移動量を半減しつつ反転させる
 		m_velocity.x *= -0.5f;
 	}
+
 
 	void Player::BlockRightHit(const Vec3& objPos, const Vec3& helf)
 	{
@@ -686,33 +692,28 @@ namespace basecross
 		Vec3 helf = cube->GetScale() / 2.0f;
 
 		// Y軸移動ベクトルを0.0にし、空中かの真偽をfalse
-		m_velocity.y = 0.001f;
-		m_acsel = 1.0f;
-		m_isAir = false;
-
-		const auto& angle = cube->GetAngleType();
-		if (angle == CubeObject::Normal)
+		if (CollHitUpper(hitPos, objPos, helf))
 		{
-			if (CollHitUpper(hitPos, objPos, helf))
+			m_velocity.y = 0.25f;
+			m_acsel = 1.0f;
+			m_isAir = false;
+
+			const auto& angle = cube->GetAngleType();
+			if (angle == CubeObject::Normal)
 			{
-				SetPosition(GetPosition().x, objPos.y + helf.y + (GetScale().y / 2.0f), 0.0f);
+				if (CollHitUpper(hitPos, objPos, helf))
+				{
+					SetPosition(GetPosition().x, objPos.y + helf.y + (GetScale().y / 2.0f), 0.0f);
+				}
 			}
-		}
 
-		if (angle == CubeObject::SlopeUL)
-		{
-			if (m_velocity.length() <= 0.25f)
+			if (angle == CubeObject::SlopeUL)
 			{
-				m_velocity.y = 0.175f;
 				m_velocity.x = 0.175f;
 			}
-		}
 
-		if (angle == CubeObject::SlopeUR)
-		{
-			if (m_velocity.length() <= 0.25f)
+			if (angle == CubeObject::SlopeUR)
 			{
-				m_velocity.y = 0.175f;
 				m_velocity.x = -0.175f;
 			}
 		}
@@ -1002,6 +1003,7 @@ namespace basecross
 		m_firePossible = false;
 		m_velocity = velocity;
 		m_acsel = m_damageAcsel;
+		m_isAir = true;
 
 		// アニメーションをダメージ状態にする
 		m_bodyDraw->ChangeCurrentAnimation(L"DAMAGE");
