@@ -5,7 +5,6 @@ namespace basecross
 {
 	void Bird::OnCreate()
 	{
-		CubeObject::OnCreate();
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
 		m_ptrDraw->SetMeshResource(L"BIRD");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
@@ -17,7 +16,6 @@ namespace basecross
 
 	void Bird::OnUpdate()
 	{
-		CubeObject::OnUpdate();
 		GetComponent<CollisionObb>()->SetDrawActive(true);
 
 		float deltaTime = App::GetApp()->GetElapsedTime();

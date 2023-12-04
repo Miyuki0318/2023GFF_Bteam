@@ -25,11 +25,6 @@ namespace basecross
 		void CreateViewLight() override;
 
 		/*!
-		@brief BGM‚ÌÄ¶ŠÖ”
-		*/
-		void CreateBGM() override;
-
-		/*!
 		@brief ƒvƒŒƒCƒ„[‚Ì¶¬ŠÖ”
 		*/
 		void CreatePlayer() override;

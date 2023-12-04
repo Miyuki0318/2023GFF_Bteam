@@ -25,7 +25,7 @@ namespace basecross
 		vector<Vec3> m_angle;
 		const float m_collRange;
 		const bool m_collActive;
-		weak_ptr<GameObject> m_targetObj;
+		vector<weak_ptr<GameObject>> m_targetObj;
 
 	public:
 
@@ -50,7 +50,7 @@ namespace basecross
 			const Vec3& position, const Vec3& rotation, const Vec3& scale, const bool active
 		) :
 			DebugObject(stagePtr, position, rotation, scale),
-			m_collRange(4.0f),
+			m_collRange(5.0f),
 			m_collActive(active)
 		{
 			m_type = Normal;
@@ -70,7 +70,7 @@ namespace basecross
 		) :
 			DebugObject(stagePtr, position, Vec3(0.0f), scale),
 			m_type(type),
-			m_collRange(4.0f),
+			m_collRange(5.0f),
 			m_collActive(active)
 		{
 			m_angle = {
@@ -95,17 +95,25 @@ namespace basecross
 			return m_type;
 		}
 
-		void SetTarget(const shared_ptr<GameObject>& objPtr)
+		void AddTarget(const shared_ptr<GameObject>& objPtr)
 		{
-			m_targetObj = objPtr;
+			m_targetObj.push_back(objPtr);
 		}
 
-		const shared_ptr<GameObject>& GetTarget() const
+		void AddTarget(const vector<weak_ptr<GameObject>>& objVec)
 		{
-			return m_targetObj.lock();
+			for (const auto& ptr : objVec)
+			{
+				m_targetObj.push_back(ptr.lock());
+			}
 		}
 
-		const Vec3& GetSlopePos() const
+		const vector<weak_ptr<GameObject>>& GetTargetVec() const
+		{
+			return m_targetObj;
+		}
+
+		const Vec3 GetSlopePos() const
 		{
 			if (Utility::GetBetween(m_type, SlopeUL, SlopeDR))
 			{
@@ -133,7 +141,7 @@ namespace basecross
 					break;
 				}
 
-				return m_position + slope;
+				return (m_position + slope);
 			}
 			else
 			{

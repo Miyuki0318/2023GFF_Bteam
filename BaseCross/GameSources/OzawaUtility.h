@@ -67,6 +67,24 @@ namespace Utility
 */
 #define DELTA_TIME App::GetApp()->GetElapsedTime()
 
+/*!
+@brief ウィンドウの幅
+@return App::GetApp()->GetGameWidth()
+*/
+#define WINDOW_WIDTH static_cast<float>(App::GetApp()->GetGameWidth())
+
+/*!
+@brief ウィンドウの高さ
+@return App::GetApp()->GetGameHeight()
+*/
+#define WINDOW_HEIGHT static_cast<float>(App::GetApp()->GetGameHeight())
+
+/*!
+@brief ウィンドウのサイズ
+@return Vec2(WINDOW_WIDTH, WINDOW_HEIGHT)
+*/
+#define WINDOW_SIZE Vec2(WINDOW_WIDTH, WINDOW_HEIGHT)
+
 	/*!
 	@brief 線形補間を行う関数
 	@param (start) 線形補間の始点の値
@@ -137,7 +155,7 @@ namespace Utility
 		if (integer == 0)
 		{
 			// 小数点以下を返すカウンタは0にする
-			decimal = 0;
+			decimal = 1;
 		}
 		else
 		{
@@ -289,7 +307,7 @@ namespace Utility
 	@param (Line)　カメラの注視点 - カメラの位置
 	@return 作成されたクォータニオン
 	*/
-	Quat Billboard(const Vec3& Line);
+	Quat GetBillboardQuat(const Vec3& Line);
 
 	/*!
 	@brief 値が範囲内かを返す
@@ -303,14 +321,37 @@ namespace Utility
 	bool GetBetween(const Vec2& value, const Vec2& a, const Vec2& b);
 	bool GetBetween(const Vec3& value, const Vec3& a, const Vec3& b);
 
+	/*!
+	@brief 列挙型の値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
 	template <class T>
 	bool GetBetween(T value, T a, T b)
 	{
-		int iv, ia, ib;
-		iv = static_cast<int>(value);
-		ia = static_cast<int>(a);
-		ib = static_cast<int>(b);
+		// 列挙型かどうかのチェック
+		if (is_enum<T>())
+		{
+			// 列挙型なのでint型にキャストする
+			int iv, ia, ib;
+			iv = static_cast<int>(value);
+			ia = static_cast<int>(a);
+			ib = static_cast<int>(b);
 
-		return GetBetween(iv, ia, ib);
+			// int型でのGetBetween()を実行する
+			return GetBetween(iv, ia, ib);
+		}
+		else
+		{
+			// エラーメッセージを送る
+			throw BaseException(
+				L"列挙型以外は指定できません",
+				L"列挙型が指定されてるか確認してください",
+				L"bool GetBetween(T value, T a, T b)"
+			);
+			return false;
+		}
 	}
 }

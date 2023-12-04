@@ -182,24 +182,25 @@ namespace Utility
 	*/
 	void RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
 	{
-		if (point.size() == 0) return;
+		const int& size = static_cast<int>(point.size());
+		if (size == 0) return;
 
 		vertices.clear();
 
-		for (int i = 0; i < point.size(); i++)
+		for (int i = 0; i < size; i++)
 		{
 			const int loop = texLoop > 0 ? texLoop : 1;
-			int front = (i - 1) < 0 ? point.size() - 1 : i - 1;
-			int rear = (i + 1) % point.size();
+			int front = (i - 1) < 0 ? size - 1 : i - 1;
+			int rear = (i + 1) % size;
 			Vec3 dir = point.at(front) - point.at(rear);
 			Vec3 cross = dir.cross(axisVec).normalize();
 		
 			Vec3 pos = point.at(i) - cross * weight;
-			VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / point.size() * loop));
+			VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexLeft);
 
 			pos = point.at(i) + cross * weight;
-			VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / point.size() * loop));
+			VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexRight);
 		}
 
@@ -334,7 +335,7 @@ namespace Utility
 	@param (Line)　カメラの注視点 - カメラの位置
 	@return 作成されたクォータニオン
 	*/
-	Quat Billboard(const Vec3& Line)
+	Quat GetBillboardQuat(const Vec3& Line)
 	{
 		// 線分のコピー
 		Vec3 temp = Line;

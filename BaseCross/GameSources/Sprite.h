@@ -55,24 +55,60 @@ namespace basecross
 		@brief 生成時に一度だけ呼び出される関数
 		*/
 		virtual void OnCreate() override;
+		
+		/*!
+		@brief 色の範囲が0.0f～1.0fの間になってるかの修正関数
+		@param 色
+		*/
+		void CorrectionColor(Col4& color);
 
 		/*!
 		@brief ディフューズ色を使って色を変更する関数
 		@param 色
 		*/
-		void SetDiffuseColor(const Col4& color);
+		void SetDiffuseColor(Col4& color);
 
 		/*!
 		@brief 頂点色を使って色を変更する関数
 		@param 色
 		*/
-		void SetVerticesColor(const Col4& color);
+		void SetVerticesColor(Col4& color);
 
 		/*!
 		@brief エミッシブ色を使って色を変更する関数
 		@param 色
 		*/
-		void SetEmissiveColor(const Col4& color);
+		void SetEmissiveColor(Col4& color);
+
+		/*!
+		@brief フェードイン処理する関数
+		@param フェードに掛かる時間
+		@return フェードが完了したかの真偽
+		*/
+		bool FadeInColor(const float time);
+
+		/*!
+		@brief フェードイン処理する関数
+		@param フェードに掛かる時間
+		@param フェードの終了値
+		@return フェードが完了したかの真偽
+		*/
+		bool FadeInColor(const float time, const float alpha);
+
+		/*!
+		@brief フェードイン処理する関数
+		@param フェードに掛かる時間
+		@return フェードが完了したかの真偽
+		*/
+		bool FadeOutColor(const float time);
+
+		/*!
+		@brief フェードイン処理する関数
+		@param フェードに掛かる時間
+		@param フェードの終了値
+		@return フェードが完了したかの真偽
+		*/
+		bool FadeOutColor(const float time, const float alpha);
 
 		/*!
 		@brief スケールを変更する関数

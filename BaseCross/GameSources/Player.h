@@ -16,7 +16,6 @@ namespace basecross
 	{
 	protected:
 
-		shared_ptr<Transform> m_ptrTrans;
 		shared_ptr<PNTBoneModelDraw> m_bodyDraw;
 		shared_ptr<PNTBoneModelDraw> m_armDraw;
 
@@ -120,7 +119,7 @@ namespace basecross
 		/*!
 		@brief 毎フレーム度に呼び出される関数
 		*/
-		void OnUpdate() override;
+		virtual void OnUpdate() override;
 
 		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
@@ -175,7 +174,7 @@ namespace basecross
 		/*!
 		@brief 大砲待機関数
 		*/
-		void CannonStandby(float acsel);
+		virtual void CannonStandby(float acsel);
 
 		/*!
 		@brief 無敵時間経過
@@ -206,13 +205,9 @@ namespace basecross
 
 		void BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos);
 
-		bool BlockCheck(const Vec3& upperPos);
-
 		void SpikeEnter(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
 
 		void SpikeExcute(const shared_ptr<GameObject>& spike, const Vec3& hitPos);
-
-		void BirdEnter(const shared_ptr<GameObject>& enemy, const Vec3& hitPos);
 
 		void CannonEnter(const shared_ptr<GameObject>& cannon);
 
@@ -221,14 +216,6 @@ namespace basecross
 		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
 
 		void DamageKnockBack(const Vec2& velocity);
-
-		bool CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
-
-		bool CollHitUnder(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
-
-		bool CollHitLeft(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
-
-		bool CollHitRight(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale);
 
 		void AddShield()
 		{

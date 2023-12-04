@@ -18,39 +18,73 @@ namespace basecross
 		// テクスチャディレクトリパスの取得
 		const wstring texturePath = mediaPath + L"Textures/";
 
-		// サウンドディレクトリパスの取得
-		const wstring soundPath = mediaPath + L"Sounds/";
+		// テクスチャの取得
+		// タイトルロゴの読み込み
+		app->RegisterTexture(L"TITLE_LOGO", texturePath + L"TitleLogo.tga");
 
-		app->RegisterWav(L"TITLE_BGM", soundPath + L"BGM/TitleBGM");
+		// メタルの背景の読み込み
+		app->RegisterTexture(L"METAL_LEFT", texturePath + L"MetalLeft.png");
+		app->RegisterTexture(L"METAL_RIGHT", texturePath + L"MetalRight.png");
+
+		// スタートボタンの読み込み
+		app->RegisterTexture(L"PUSH_BUTTON", texturePath + L"PushButton.png");
+
+		//// イージーボタンの読み込み
+		//app->RegisterTexture(L"EASY_BUTTON", texturePath + L"Easy.png");
+
+		//// ノーマルボタンの読み込み
+		//app->RegisterTexture(L"NORMAL_BUTTON", texturePath + L"Normal.png");
+
+		//// ハードボタンの読み込み
+		//app->RegisterTexture(L"HARD_BUTTON", texturePath + L"Hard.png");
+
+
+		// サウンドディレクトリパス
+		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
+		const wstring SEPath = mediaPath + L"Sounds/SE/";
+
+		// サウンドの取得
+		// タイトル画面BGMの読み込み
+		app->RegisterWav(L"TITLE_BGM", BGMPath + L"TitleBGM");
+
+		// メタルシャッターの開閉SE
+		app->RegisterWav(L"METAL_SE", SEPath + L"MetalDoorSE");
+		app->RegisterWav(L"METAL_STOP_SE", SEPath + L"MetalStopSE");
 	}
 
 	void TitleStage::CreateViewLight()
 	{
 		// ビューのカメラの設定
 		auto ptrCamera = ObjectFactory::Create<Camera>();
-		ptrCamera->SetEye(Vec3(-20.0f, 15.0f, -40.0f));
-		ptrCamera->SetAt(Vec3(-20.0f, 15.0f, 0.0f));
+		ptrCamera->SetEye(Vec3(-20.0f, -75.0f, -40.0f));
+		ptrCamera->SetAt(Vec3(-20.0f, -75.0f, 0.0f));
 		m_gameView = CreateView<SingleView>();
 		m_gameView->SetCamera(ptrCamera);
 
 		// マルチライトの作成
 		auto ptrMultiLight = CreateLight<MultiLight>();
 		ptrMultiLight->SetDefaultLighting();
+	}
 
-		// 背景の生成
+	// 背景の生成
+	void TitleStage::CreateBackGround()
+	{
+		// オブジェクトの生成と配置
 		auto ptrBack = AddGameObject<DebugObject>();
-		float x, y;
-		x = 80.0f * 5;
-		y = 45.0f * 5;
+		float loop, x, y;
+		loop = 5.0f;
+		x = 80.0f * loop;
+		y = 45.0f * loop;
 		ptrBack->SetPosition(Vec3(-90.0f, 0.0f, 50.0f));
 		ptrBack->SetScale(Vec3(x, y, 5.0f));
 		ptrBack->SetAlphaActive(true);
 
+		// メッシュの生成と設定
 		VertexData vertex;
 		SimpleVerticesIndices(vertex);
-		vertex.vertices.at(1).textureCoordinate = Vec2(5.0f, 0.0f);
-		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, 5.0f);
-		vertex.vertices.at(3).textureCoordinate = Vec2(5.0f, 5.0f);
+		vertex.vertices.at(1).textureCoordinate = Vec2(loop, 0.0f);
+		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, loop);
+		vertex.vertices.at(3).textureCoordinate = Vec2(5.0f, loop);
 		auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
 		backDraw->SetOriginalMeshUse(true);
 		backDraw->CreateOriginalMesh(vertex);
@@ -58,16 +92,69 @@ namespace basecross
 		backDraw->SetSamplerState(SamplerState::LinearWrap);
 	}
 
-	void TitleStage::CreateBGM()
-	{
-		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		m_bgm = audioPtr->Start(L"TITLE_BGM", XAUDIO2_LOOP_INFINITE, 0.25f);
-	}
-
 	void TitleStage::CreatePlayer()
 	{
-		const auto& player = AddGameObject<StagingPlayer>(Vec3(-50.0f, 60.0f, 0.0f));
-		SetSharedGameObject(L"Player", player);
+		m_player = AddGameObject<StagingPlayer>(Vec3(-50.0f, -45.0f, 0.0f));
+		SetSharedGameObject(L"Player", m_player.lock());
+	}
+
+	void TitleStage::CreateSprites()
+	{
+		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
+		m_titleLogo = AddGameObject<Sprite>(L"TITLE_LOGO", WINDOW_SIZE, Vec3(0.0f, 50.0f, 0.1f));
+		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(0.0f, 0.0f, 0.2f));
+		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(0.0f, 0.0f, 0.2f));
+		m_pushButton = AddGameObject<Sprite>(L"PUSH_BUTTON", WINDOW_SIZE / 2.0f, Vec3(0.0f, -200.0f, 0.2f));
+	}
+
+	void TitleStage::BackFadeState()
+	{
+		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
+		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		const Vec3& logoPos = m_titleLogo.lock()->GetPosition();
+		const Vec3& pushPos = m_pushButton.lock()->GetPosition();
+		if (mLPos.x > -WINDOW_WIDTH / 1.9f)
+		{
+			m_metalLeft.lock()->SetPosition(mLPos + Vec3(-DELTA_TIME * 250.0f, 0.0f, 0.0f));
+			m_metalRight.lock()->SetPosition(mRPos + Vec3(DELTA_TIME * 250.0f, 0.0f, 0.0f));
+			m_titleLogo.lock()->SetPosition(logoPos + Vec3(0.0f, DELTA_TIME * 200.0f, 0.0f));
+			m_pushButton.lock()->SetPosition(pushPos + Vec3(0.0f, -DELTA_TIME * 100.0f, 0.0f));
+		}
+		else
+		{
+			StopSE(L"METAL_SE");
+			CreateSE(L"METAL_STOP_SE", 1.5f);
+			m_stageState = StartMove;
+		}
+	}
+
+	void TitleStage::PushButtonState()
+	{
+		if (Input::GetPushA())
+		{
+			m_stageState = BackFadeOut;
+			CreateSE(L"METAL_SE", 0.75f);
+		}
+	}
+
+	void TitleStage::StartMoveState()
+	{
+		const Vec3& playerPos = m_player.lock()->GetPosition();
+		const Vec3 leftUnder = Vec3(-22.0f, -89.0f, 0.0f);
+		const Vec3 rightUpper = Vec3(-20.0f, -88.0f, 0.0f);
+		if (GetBetween(playerPos, leftUnder, rightUpper))
+		{
+			m_stageState = ModeSelect;
+		}
+	}
+
+	void TitleStage::FadeOutState()
+	{
+		const auto& scene = App::GetApp()->GetScene<Scene>();
+		if (m_fade.lock()->FadeInColor(2.0f))
+		{
+			PostEvent(0.0f, GetThis<ObjectInterface>(), scene, L"GameStage");
+		}
 	}
 
 	void TitleStage::OnCreate()
@@ -85,15 +172,22 @@ namespace basecross
 			// ビューとライトの作成
 			CreateViewLight();
 
+			// 背景の作成
+			CreateBackGround();
+
 			// BGMの再生
-			CreateBGM();
+			CreateBGM(L"TITLE_BGM", 0.25f);
 
 			// プレイヤーの作成
 			CreatePlayer();
 
+			// スプライトの作成
+			CreateSprites();
+
 			// ステージ
 			CreateStage("Title");
 			CreateInstanceBlock("Title");
+
 		}
 		catch (...)
 		{
@@ -105,7 +199,44 @@ namespace basecross
 	{
 		try
 		{
-			//BaseStage::OnUpdate();
+			switch (m_stageState)
+			{
+			case TitleStage::FadeIn:
+				Debug::Log(L"フェードインステート");
+				if (m_fade.lock()->FadeOutColor(2.0f)) m_stageState = PushButton;
+				break;
+
+			case TitleStage::PushButton:
+				Debug::Log(L"プッシュボタンステート");
+				PushButtonState();
+				break;
+
+			case TitleStage::BackFadeOut:
+				Debug::Log(L"バックフェードアウトステート");
+				BackFadeState();
+				break;
+
+			case TitleStage::StartMove:
+				Debug::Log(L"スタートムーブステート");
+				StartMoveState();
+				break;
+
+			case TitleStage::ModeSelect:
+				Debug::Log(L"モードセレクトステート");
+				break;
+
+			case TitleStage::CannonStanby:
+				Debug::Log(L"キャノンスタンバイステート");
+				break;
+
+			case TitleStage::FadeOut:
+				Debug::Log(L"フェードアウトステート");
+				FadeOutState();
+				break;
+
+			default:
+				break;
+			}
 		}
 		catch (...)
 		{

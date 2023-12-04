@@ -3,16 +3,69 @@
 
 namespace basecross
 {
+	void StagingPlayer::OnUpdate()
+	{
+		// ステージステートの取得
+		const auto& stageState = GetTypeStage<TitleStage>()->GetStageState();
+
+		// ステージステートがスタートムーブ以上なら
+		if (stageState >= TitleStage::StartMove)
+		{
+			// 大砲待機時
+			if (m_cannonStandby)
+			{
+				CannonStandby(10.0f);
+			}
+
+			// モードセレクト時なら
+			if (stageState == TitleStage::ModeSelect)
+			{
+				// Aボタン入力有無での関数分岐
+				if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
+				{
+					OnReleaseA();
+				}
+			}
+
+			// プレイヤーの移動関数
+			MovePlayer();
+
+			// 移動時の減少量
+			MoveReduction();
+
+			// プレイヤーの回転関数
+			RotatePlayer();
+			
+			// 照準の回転処理
+			RotateAligment();
+
+			// アニメーションの再生
+			AnimationUpdate();
+
+			// エフェクト描画関数
+			EffectUpdate();
+		}
+
+		// デバッグ文字列
+		Debug::Log(L"pos : ", m_position);
+		Debug::Log(L"velo : ", m_velocity);
+		Debug::Log(L"acsel : ", m_acsel);
+		Debug::Log(m_isAir != false ? L"空中" : L"接地");
+		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
+	}
+
 	void StagingPlayer::OnReleaseA()
 	{
 		Vec2 stick = Input::GetLStickValue().round(1);
 
 		if (Input::GetLStickValue().length() > 0.0f)
 		{
+			// 移動量の設定
 			stick.y = 0.0f;
 			m_velocity = m_deffVelo * 3.0f;
 			m_velocity.x = stick.length() > 0.5f ? stick.x > 0.0f ? 2.25f : -2.25f : 0.0f;
 
+			// メンバ変数の設定
 			m_isAir = true;
 			m_acsel = m_maxAcsel;
 			m_cannonFire = false;
@@ -24,6 +77,9 @@ namespace basecross
 			// SEの再生
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
 			audioPtr->Start(L"AIRSHOCK_SE", 0, 0.5f);
+
+			// ステージステートを大砲待機に設定
+			GetTypeStage<TitleStage>()->SetStageState(TitleStage::CannonStanby);
 		}
 	}
 
@@ -48,6 +104,46 @@ namespace basecross
 		}
 
 		m_aligment.lock()->UpdateEffect(points);
-		m_aligment.lock()->SetDrawActive(Input::GetLStickValue().length() > 0.0f);
+
+		bool input = Input::GetLStickValue().length() > 0.0f;
+		bool state = GetTypeStage<TitleStage>()->GetStageState() == TitleStage::ModeSelect;
+		m_aligment.lock()->SetDrawActive(input && state && m_firePossible);
+	}
+
+	void StagingPlayer::CannonStandby(float acsel)
+	{
+		if (m_activeCannon.lock())
+		{
+			const float& fireTime = m_activeCannon.lock()->GetFireTime();
+			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
+			if (drawPtr->GetCurrentAnimationTime() > fireTime)
+			{
+				m_acsel = m_activeCannon.lock()->GetAngle() == Gimmick::Up ? acsel * 2.0f : acsel;
+				m_isAir = true;
+				m_firePossible = true;
+				m_cannonFire = true;
+				m_cannonStandby = false;
+				m_meddleVelo.zero();
+
+				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
+				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
+
+				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+				audioPtr->Start(L"CANNON_SE", 0, 0.75f);
+
+				m_activeCannon.reset();
+
+				const auto& titleStage = GetTypeStage<TitleStage>();
+				if (titleStage->GetStageState() == TitleStage::CannonStanby)
+				{
+					titleStage->SetStageState(TitleStage::FadeOut);
+				}
+			}
+			else
+			{
+				m_position = m_activeCannon.lock()->GetPosition();
+				SetPosition(m_position);
+			}
+		}
 	}
 }

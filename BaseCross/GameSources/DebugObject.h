@@ -58,7 +58,8 @@ namespace basecross
 
 		virtual Vec3 GetPosition() const
 		{
-			return m_position;
+			auto ptrTrans = GetComponent<Transform>();
+			return ptrTrans->GetPosition();
 		}
 
 		virtual void SetRotation(const Vec3& rotation)
@@ -103,6 +104,57 @@ namespace basecross
 		virtual Vec3 GetScale() const
 		{
 			return m_scale;
+		}
+
+		// 衝突したブロックの上にブロックがあるかの検証
+		virtual bool BlockCheck(const Vec3& checkPos)
+		{
+			const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
+
+			bool check = false;
+
+			for (const auto& ptr : blockVec)
+			{
+				if (!ptr.lock()) continue;
+
+				const auto& block = dynamic_pointer_cast<DebugObject>(ptr.lock());
+				if (!block) continue;
+
+				Vec3 pos = block->GetPosition();
+
+				if (pos == checkPos)
+				{
+					check = true;
+				}
+			}
+
+			return check;
+		}
+
+		// 上から衝突したかの検証
+		virtual bool CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
+		{
+			return hitPos.y > hitObjPos.y && ((hitPos.y - hitObjPos.y) >= helfScale.y);
+		}
+
+		// 下から衝突したかの検証
+		virtual bool CollHitUnder(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
+		{
+			return hitPos.y < hitObjPos.y && ((hitPos.y - hitObjPos.y) <= -helfScale.y);
+		}
+
+		// 左から衝突したかの検証
+		virtual bool CollHitLeft(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
+		{
+			return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
+				&& ((hitPos.x - hitObjPos.x) < helfScale.x);
+		}
+
+		// 右から衝突したかの検証
+		virtual bool CollHitRight(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
+		{
+			return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
+				&& ((hitPos.x - hitObjPos.x) > -helfScale.x);
 		}
 	};
 }

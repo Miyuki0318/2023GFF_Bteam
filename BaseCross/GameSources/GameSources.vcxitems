@@ -19,7 +19,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)BaseStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Bird.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Blower.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h" />
@@ -39,6 +38,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Params.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Rabbit.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Ring.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldEffect.h" />
@@ -53,7 +53,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)BaseStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Bird.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Blower.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp" />
@@ -69,6 +68,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Rabbit.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />

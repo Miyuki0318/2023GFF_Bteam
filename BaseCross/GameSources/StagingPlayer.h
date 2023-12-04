@@ -18,10 +18,23 @@ namespace basecross
 		virtual ~StagingPlayer() {}
 
 		/*!
+		@brief 毎フレーム度に呼び出される関数
+		*/
+		virtual void OnUpdate() override;
+
+		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
 		*/
 		void OnReleaseA() override;
 
+		/*!
+		@brief エアショックの軌道描画関数
+		*/
 		void RotateAligment() override;
+
+		/*!
+		@brief 大砲待機関数
+		*/
+		virtual void CannonStandby(float acsel);
 	};
 }

@@ -21,14 +21,23 @@ namespace basecross
 
 	void CubeObject::OnUpdate()
 	{
-		if (m_targetObj.lock() && m_collActive)
+		if (m_collActive)
 		{
-			auto targetTrans = m_targetObj.lock()->GetComponent<Transform>();
-			Vec3 targetPos = targetTrans->GetPosition();
-			Vec3 pos = GetPosition();
-			float length = (targetPos - pos).length();
+			bool achieve = false;
+			for (size_t i = 0; i < m_targetObj.size(); i++)
+			{
+				if (m_targetObj.at(i).lock())
+				{
+					auto targetTrans = m_targetObj.at(i).lock()->GetComponent<Transform>();
+					Vec3 targetPos = targetTrans->GetPosition();
+					float length = (targetPos - m_position).length();
+					achieve = (length <= m_collRange);
+					if (achieve) break;
+				}
+			}
+
 			auto ptrColl = GetComponent<CollisionObb>();
-			ptrColl->SetUpdateActive(length <= m_scale.x * m_collRange);
+			ptrColl->SetUpdateActive(achieve);
 		}
 	}
 }

@@ -7,11 +7,44 @@ namespace basecross
 	{
 	protected:
 
+		// SE管理構造体
+		struct SE
+		{
+			weak_ptr<SoundItem> item; // サウンドアイテム
+			wstring seKey = L""; // ファイルキー
+
+			// コンストラクタ
+			SE(const weak_ptr<SoundItem>& ptr, const wstring& key
+			) :
+				item(ptr),
+				seKey(key)
+			{
+			}
+
+			// コンストラクタ
+			SE(const wstring& key, const weak_ptr<SoundItem>& ptr
+			) :
+				item(ptr),
+				seKey(key)
+			{
+			}
+
+		public:
+
+			// リセット関数
+			void Reset()
+			{
+				item.reset();
+				seKey = L"";
+			}
+		};
+
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
 
-		// BGM
+		// BGM・SE
 		weak_ptr<SoundItem> m_bgm;
+		vector<SE> m_seList;
 
 		/*!
 		@brief リソース読み込み関数
@@ -26,12 +59,24 @@ namespace basecross
 		/*!
 		@brief BGMの再生関数
 		*/
-		virtual void CreateBGM();
+		void CreateBGM(const wstring& bgmKey, float volume);
+
+		/*!
+		@brief SEの再生関数
+		*/
+		void CreateSE(const wstring& seKey, float volume);
+
+		/*!
+		@brief SEの再生関数
+		*/
+		void StopSE(const wstring& seKey);
 
 		/*!
 		@brief プレイヤーの生成関数
 		*/
 		virtual void CreatePlayer();
+
+		void CreateEnemy(const string& fileName);
 
 		/*!
 		@brief ステージブロックとギミックの生成関数

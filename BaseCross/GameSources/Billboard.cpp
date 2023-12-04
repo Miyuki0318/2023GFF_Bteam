@@ -37,7 +37,7 @@ namespace basecross
 	{
 		// カメラを元にビルボード関数でクォータニオンを設定
 		const auto& ptrCamera = GetStage()->GetView()->GetTargetCamera();
-		Quat qt = Utility::Billboard(ptrCamera->GetAt() - ptrCamera->GetEye());
+		Quat qt = Utility::GetBillboardQuat(ptrCamera->GetAt() - ptrCamera->GetEye());
 		auto ptrTrans = GetComponent<Transform>();
 		ptrTrans->SetQuaternion(qt);
 	}

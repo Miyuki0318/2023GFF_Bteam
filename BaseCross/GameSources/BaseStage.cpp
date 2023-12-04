@@ -59,7 +59,34 @@ namespace basecross
 
 	void BaseStage::CreateViewLight() {}
 
-	void BaseStage::CreateBGM() {}
+	void BaseStage::CreateBGM(const wstring& bgmKey, float volume)
+	{
+		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+		m_bgm = audioPtr->Start(bgmKey, XAUDIO2_LOOP_INFINITE, volume);
+	}
+
+	void BaseStage::CreateSE(const wstring& seKey, float volume)
+	{
+		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+		m_seList.push_back(SE(audioPtr->Start(seKey, 0, volume), seKey));
+	}
+
+	void BaseStage::StopSE(const wstring& seKey)
+	{
+		if (seKey != L"")
+		{
+			for (size_t i = 0; i < m_seList.size(); i++)
+			{
+				if (m_seList.at(i).seKey == seKey)
+				{
+					const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+					audioPtr->Stop(m_seList.at(i).item.lock());
+					m_seList.at(i).Reset();
+					break;
+				}
+			}
+		}
+	}
 
 	void BaseStage::CreatePlayer()
 	{
@@ -67,11 +94,49 @@ namespace basecross
 		SetSharedGameObject(L"Player", player);
 	}
 
+	void BaseStage::CreateEnemy(const string& fileName)
+	{
+		const auto& data = CSVLoader::LoadFile(fileName);
+		const float under = -97.5f;
+		const float left = -49.0f;
+		const float scale = 1.0f;
+
+		vector<weak_ptr<Enemy>> enemyVec;
+
+		for (size_t i = 0; i < data.size(); i++)
+		{
+			for (size_t j = 0; j < data.at(i).size(); j++)
+			{
+				if (data.at(i).at(j) == "") continue;
+
+				if (data.at(i).at(j) == "300")
+				{
+					enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale));
+				}
+			}
+		}
+
+		const auto& enemyGroup = CreateSharedObjectGroup(L"Enemy");
+
+		for (const auto& enemy : enemyVec)
+		{
+			if (enemy.lock())
+			{
+				enemyGroup->IntoGroup(enemy.lock());
+			}
+		}
+	}
+
 	void BaseStage::CreateStage(const string& fileName)
 	{
-		CreateSharedObjectGroup(L"Stage");
-		CreateSharedObjectGroup(L"Gimmick");
-		CreateSharedObjectGroup(L"Update");
+		const auto& stageGroup = CreateSharedObjectGroup(L"Stage");
+		const auto& gimmickGroup = CreateSharedObjectGroup(L"Gimmick");
+		const auto& updateGroup = CreateSharedObjectGroup(L"Update");
+		vector<weak_ptr<GameObject>> enemyVec;
+		if (GetSharedObjectGroup(L"Enemy", false))
+		{
+			enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
+		}
 
 		const auto& data = CSVLoader::LoadFile(fileName);
 
@@ -156,10 +221,6 @@ namespace basecross
 					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
 					break;
 
-				case 300:
-					block = AddGameObject<Bird>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
-					break;
-
 				default:
 					break;
 				}
@@ -198,26 +259,29 @@ namespace basecross
 				{
 					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), blowerScale, angle, 15.0f);
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), blowerScale, angle, 5.0f);
 					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), update->GetRotation(), blowerScale, true);
 				}
 
 				if (block)
 				{
-					block->SetTarget(GetSharedGameObject<Player>(L"Player"));
-					GetSharedObjectGroup(L"Stage")->IntoGroup(block);
+					block->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					block->AddTarget(enemyVec);
+					stageGroup->IntoGroup(block);
 				}
 
 				if (gimmick)
 				{
-					gimmick->SetTarget(GetSharedGameObject<Player>(L"Player"));
-					GetSharedObjectGroup(L"Gimmick")->IntoGroup(gimmick);
+					gimmick->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					gimmick->AddTarget(enemyVec);
+					gimmickGroup->IntoGroup(gimmick);
 				}
 
 				if (update)
 				{
-					update->SetTarget(GetSharedGameObject<Player>(L"Player"));
-					GetSharedObjectGroup(L"Update")->IntoGroup(update);
+					update->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					update->AddTarget(enemyVec);
+					updateGroup->IntoGroup(update);
 				}
 			}
 		}
@@ -353,7 +417,7 @@ namespace basecross
 				if (!cubeObj) continue;
 
 				float length = (cubeObj->GetPosition() - pos).length();
-				cubeObj->SetUpdateActive(length <= 10.0f);
+				cubeObj->SetUpdateActive(length <= 55.0f);
 				cubeObj->SetDrawActive(length <= 55.0f);
 			}
 

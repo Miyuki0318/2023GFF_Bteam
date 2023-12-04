@@ -36,7 +36,7 @@ namespace basecross
 			{
 				SetPosition(player->GetPosition());
 
-				Utility::RibonVerticesIndices(points, vertex, Vec3(0.0, 0.0f, 1.0f), 0.25f, 1);
+				Utility::RibonVerticesIndices(points, vertex, Vec3(0.0, 0.0f, 1.0f), 0.35f, 1);
 				m_ptrDraw->UpdateVertices(vertex.vertices);
 			}
 		}

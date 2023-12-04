@@ -15,9 +15,8 @@ namespace basecross
 
 		// トランスフォームの設定
 		// 胴のトランスフォーム
-		m_ptrTrans = GetComponent<Transform>();
-		m_ptrTrans->SetPosition(m_position);
-		m_ptrTrans->SetScale(m_scale);
+		SetPosition(m_position);
+		SetScale(m_scale);
 		
 		// 腕のトランスフォーム
 		m_arm.lock()->SetPosition(m_position);
@@ -143,10 +142,6 @@ namespace basecross
 		{
 			SpikeEnter(other, hitPoint);
 		}
-		if (other->FindTag(L"Bird"))
-		{
-			BirdEnter(other, hitPoint);
-		}
 		if (other->FindTag(L"Cannon"))
 		{
 			CannonEnter(other);
@@ -167,7 +162,7 @@ namespace basecross
 		}
 		if (other->FindTag(L"Death"))
 		{
-			m_ptrTrans->SetPosition(m_respawnPos);
+			SetPosition(m_respawnPos);
 			m_acsel = 1.0f;
 			m_velocity = m_deffVelo;
 			m_firePossible = true;
@@ -227,14 +222,14 @@ namespace basecross
 		float deltaTime = DELTA_TIME * m_timeSpeed;
 
 		// 現在の座標を取得
-		m_position = m_ptrTrans->GetPosition();
+		m_position = GetPosition();
 
 		// ポジションに移動ベクトルと速度と加速度とデルタタイムで掛けた数を加算
 		m_position.x += -(m_velocity.x + m_meddleVelo.x) * m_speed * m_acsel * deltaTime;
 		m_position.y += -(m_velocity.y + m_meddleVelo.y) * m_speed * m_acsel * deltaTime;
 
 		// 座標の更新
-		m_ptrTrans->SetPosition(m_position);
+		SetPosition(m_position);
 
 		// 腕の座標の更新(腕と胴のモデルマトリクスのポジションy軸の差分をポジションから差し引く)
 		Vec3 pos = m_position;
@@ -315,7 +310,7 @@ namespace basecross
 		} 
 
 		// ローテーションの更新
-		m_ptrTrans->SetRotation(Vec3(0.0f, body, 0.0f));
+		SetRotation(Vec3(0.0f, body, 0.0f));
 		m_arm.lock()->SetRotation(Vec3(0.0f, 0.0f, arm));
 	}
 
@@ -423,7 +418,7 @@ namespace basecross
 			else
 			{
 				m_position = m_activeCannon.lock()->GetPosition();
-				m_ptrTrans->SetPosition(m_position);
+				SetPosition(m_position);
 			}
 		}
 	}
@@ -624,7 +619,7 @@ namespace basecross
 	void Player::BlockUpperHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 上にブロックがあるかのチェック
-		if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+		if (BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
 		// エアショック使用可能にする
 		m_firePossible = true;
@@ -652,7 +647,7 @@ namespace basecross
 	void Player::BlockUnderHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 下にブロックがあるかのチェック
-		if (!BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
+		if (BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
 
 		// 移動量が上方向なら
 		if (m_velocity.y < 0.0f)
@@ -666,7 +661,7 @@ namespace basecross
 	void Player::BlockLeftHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 左にブロックがあるかのチェック
-		if (!BlockCheck(Vec3(objPos.x - (helf.x * 2.0f), objPos.y, 0.0f))) return;
+		if (BlockCheck(Vec3(objPos.x - (helf.x * 2.0f), objPos.y, 0.0f))) return;
 
 		// 移動量を半減しつつ反転させる
 		m_velocity.x *= -0.5f;
@@ -676,12 +671,11 @@ namespace basecross
 	void Player::BlockRightHit(const Vec3& objPos, const Vec3& helf)
 	{
 		// 右にブロックがあるかのチェック
-		if (!BlockCheck(Vec3(objPos.x + (helf.x * 2.0f), objPos.y, 0.0f))) return;
+		if (BlockCheck(Vec3(objPos.x + (helf.x * 2.0f), objPos.y, 0.0f))) return;
 
 		// 移動量を半減しつつ反転させる
 		m_velocity.x *= -0.5f;
 	}
-
 
 	// ブロックに衝突し続けたら
 	void Player::BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos)
@@ -717,31 +711,6 @@ namespace basecross
 				m_velocity.x = -0.175f;
 			}
 		}
-	}
-
-	// 衝突したブロックの上にブロックがあるかの検証
-	bool Player::BlockCheck(const Vec3& checkPos)
-	{
-		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
-
-		bool check = true;
-
-		for (const auto& ptr : blockVec)
-		{
-			if (!ptr.lock()) continue;
-
-			const auto& block = dynamic_pointer_cast<CubeObject>(ptr.lock());
-			if (!block) continue;
-
-			Vec3 pos = block->GetPosition();
-
-			if (pos == checkPos)
-			{
-				check = false;
-			}
-		}
-
-		return check;
 	}
 
 	// スパイクと衝突した瞬間
@@ -865,49 +834,6 @@ namespace basecross
 		}
 	}
 
-	// 鳥と衝突した時
-	void Player::BirdEnter(const shared_ptr<GameObject>& enemy, const Vec3& hitPos)
-	{
-		// 鳥オブジェクトにキャスト
-		const auto& bird = dynamic_pointer_cast<Bird>(enemy);
-
-		// パラメータの取得
-		Vec3 birdPos = bird->GetPosition();
-		Vec3 helfScale = bird->GetScale() / 2.0f;
-
-		// 上から衝突
-		if (CollHitUpper(hitPos, birdPos, helfScale))
-		{
-			// 移動量を反転させ、半分にする
-			m_velocity.x = -Input::GetLStickValue().round(1).x;
-			m_velocity.y = -2.0f;
-			m_acsel = m_damageAcsel;
-			m_firePossible = true;
-			return;
-		}
-
-		// 下から衝突
-		if (CollHitUnder(hitPos, birdPos, helfScale))
-		{
-			DamageKnockBack(Vec2(0.9f, 1.0f));
-			return;
-		}
-
-		// 左から衝突
-		if (CollHitLeft(hitPos, birdPos, helfScale))
-		{
-			DamageKnockBack(Vec2(1.5f, -0.5f));
-			return;
-		}
-
-		// 右から衝突
-		if (CollHitRight(hitPos, birdPos, helfScale))
-		{
-			DamageKnockBack(Vec2(-1.5f, -0.5f));
-			return;
-		}
-	}
-
 	// 大砲と衝突した時
 	void Player::CannonEnter(const shared_ptr<GameObject>& cannon)
 	{
@@ -935,7 +861,7 @@ namespace basecross
 		if (CollHitUpper(hitPos, objPos, helf))
 		{
 			// 上にブロックがあるかのチェック
-			if (!BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+			if (BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
 			// エアショック使用可能にする
 			m_firePossible = true;
@@ -943,9 +869,9 @@ namespace basecross
 			m_acsel = 1.0f;
 
 			// めり込みを修正
-			Vec3 pos = m_ptrTrans->GetPosition();
+			Vec3 pos = GetPosition();
 			pos.y = objPos.y + objTrans->GetScale().y + 0.1f;
-			m_ptrTrans->SetPosition(pos);
+			SetPosition(pos);
 
 			const auto& ptr = dynamic_pointer_cast<Convayor>(convayor);
 			if (!ptr) return;
@@ -987,9 +913,9 @@ namespace basecross
 		// コリジョンに対して上から衝突
 		if (CollHitUpper(hitPos, objPos, helf))
 		{
-			Vec3 pos = m_ptrTrans->GetPosition();
+			Vec3 pos = GetPosition();
 			pos.y = objPos.y + objTrans->GetScale().y + 0.1f;
-			m_ptrTrans->SetPosition(pos);
+			SetPosition(pos);
 
 			m_velocity.y = 0.0f;
 			m_acsel = 1.0f;
@@ -1027,31 +953,5 @@ namespace basecross
 				m_isDeath = true;
 			}
 		}
-	}
-
-	// 上から衝突したかの検証
-	bool Player::CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
-	{
-		return hitPos.y > hitObjPos.y && ((hitPos.y - hitObjPos.y) >= helfScale.y);
-	}
-
-	// 下から衝突したかの検証
-	bool Player::CollHitUnder(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
-	{
-		return hitPos.y < hitObjPos.y && ((hitPos.y - hitObjPos.y) <= -helfScale.y);
-	}
-
-	// 左から衝突したかの検証
-	bool Player::CollHitLeft(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
-	{
-		return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
-			&& ((hitPos.x - hitObjPos.x) < helfScale.x);
-	}
-
-	// 右から衝突したかの検証
-	bool Player::CollHitRight(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
-	{
-		return ((hitPos.y - hitObjPos.y) < helfScale.y && (hitPos.y - hitObjPos.y) > -helfScale.y)
-			&& ((hitPos.x - hitObjPos.x) > -helfScale.x);
 	}
 }

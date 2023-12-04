@@ -64,13 +64,6 @@ namespace basecross
 		backDraw->SetSamplerState(SamplerState::LinearWrap);
 	}
 
-	// BGMの再生
-	void GameStage::CreateBGM()
-	{
-		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		m_bgm = audioPtr->Start(L"GAME_BGM", XAUDIO2_LOOP_INFINITE, 0.3f);
-	}
-
 	void GameStage::CreatePlayer()
 	{
 		auto player = AddGameObject<Player>(Vec3(-20.0f, -80.0f, 0.0f));
@@ -96,12 +89,13 @@ namespace basecross
 			CreateViewLight();
 
 			// BGMの再生
-			CreateBGM();
+			CreateBGM(L"GAME_BGM", 0.3f);
 
 			// プレイヤーの作成
 			CreatePlayer();
 
 			// ステージ
+			CreateEnemy("Stage");
 			CreateStage("Stage");
 			CreateInstanceBlock("Stage");
 		}
