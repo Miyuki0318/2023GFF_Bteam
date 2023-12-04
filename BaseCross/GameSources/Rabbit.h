@@ -22,9 +22,7 @@ namespace basecross
 		bool m_isAir;
 		float m_dir;
 		float m_gravity;
-
-		weak_ptr<CubeObject> m_debug;
-		weak_ptr<CubeObject> m_search;
+		int m_lostJumpCount;
 
 	public:
 
@@ -38,6 +36,7 @@ namespace basecross
 			m_isAir = true;
 			m_dir = -1.0f;
 			m_gravity = -5.0f;
+			m_lostJumpCount = 0;
 			m_currentTargetPos.zero();
 			m_modelMat.affineTransformation(
 				Vec3(1.35f),
@@ -91,11 +90,6 @@ namespace basecross
 		*/
 		void OnCollisionExcute(const CollisionPair& Pair) override;
 
-		/*!
-		@brief è’ìÀÇµÇƒÇ¢ÇÈä‘åƒÇ—èoÇ≥ÇÍÇÈä÷êî
-		*/
-		void OnCollisionExit(const CollisionPair& Pair) override;
-
 		void MoveRabbit();
 
 		void MoveReduction();
@@ -105,8 +99,6 @@ namespace basecross
 		void SeekState();
 
 		void LostState();
-
-		void CannonState();
 
 		bool SearchPlayer();
 
@@ -118,15 +110,15 @@ namespace basecross
 
 		const vector<Vec3> GetHitBlockPos(const Vec3& targetPos);
 
-		const Vec3 GetAlivePosition() const
+		const Vec3 GetNearPosition(const vector<Vec3>& posVec) const
 		{
 			Vec3 temp;
 			Vec3 pos = GetPosition();
 
-			if (!m_aliveBlockPos.empty())
+			if (!posVec.empty())
 			{
-				temp = m_aliveBlockPos.at(0);
-				for (const auto& alive : m_aliveBlockPos)
+				temp = posVec.at(0);
+				for (const auto& alive : posVec)
 				{
 					float lengthA = (temp - pos).length();
 					float lengthB = (alive - pos).length();

@@ -17,72 +17,30 @@ namespace basecross
 		m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
 
 		auto ptrColl = AddComponent<CollisionObb>();
-		ptrColl->SetDrawActive(true);
+		m_targetObj = GetStage()->GetSharedGameObject<DebugObject>(L"Player");
 
-		const auto& stage = GetStage();
-		m_debug = stage->AddGameObject<CubeObject>(Vec3(0.0f), Vec3(0.0f), Vec3(1.15f), false);
-		auto debugDraw = m_debug.lock()->AddComponent<PNTStaticDraw>();
-		debugDraw->SetMeshResource(L"DEFAULT_CUBE");
-		debugDraw->SetEmissive(COL_RED);
-
-		m_search = stage->AddGameObject<CubeObject>(Vec3(0.0f), Vec3(0.0f), Vec3(1.15f), false);
-		auto searchDraw = m_search.lock()->AddComponent<PNTStaticDraw>();
-		searchDraw->SetMeshResource(L"DEFAULT_CUBE");
-		searchDraw->SetEmissive(COL_GREAN);
-
-		m_targetObj = stage->GetSharedGameObject<DebugObject>(L"Player");
+		AddTag(L"Rabbit");
 	}
 
 	void Rabbit::OnUpdate()
 	{
-		m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
-		
-		Vec3 temp;
-		if (!m_aliveBlockPos.empty())
-		{
-			temp = m_aliveBlockPos.at(0);
-		}
-
-		Vec3 pos = GetPosition();
-
-		for (const auto& alive : m_aliveBlockPos)
-		{
-			float lengthA = (temp - pos).length();
-			float lengthB = (alive - pos).length();
-
-			if (lengthA > lengthB)
-			{
-				temp = alive;
-			}
-		}
-
-		m_debug.lock()->SetPosition(temp);
-		m_search.lock()->SetPosition(m_currentTargetPos);
-
 		MoveRabbit();
 		MoveReduction();
-
-		Debug::Log(L"ウサギのが空中か", m_isAir);
-		Debug::Log(L"ウサギの座標", GetPosition());
-		Debug::Log(L"ウサギの移動量", m_velocity);
-
+		m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
 		if (m_ptrDraw->IsTargetAnimeEnd() && !m_isAir)
 		{
 			m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
 			switch (m_state)
 			{
 			case Patrol:
-				Debug::Log(L"パトロールステート");
 				PatrolState();
 				break;
 
 			case Seek:
-				Debug::Log(L"シークステート");
 				SeekState();
 				break;
 
 			case LostSight:
-				Debug::Log(L"ロストステート");
 				LostState();
 				break;
 
@@ -131,8 +89,14 @@ namespace basecross
 				}
 			}
 		}
-	}
 
+		if (other->FindTag(L"Rabbit"))
+		{
+			// 移動量を半減しつつ反転させる
+			m_velocity.x *= -1.0f;
+			m_dir *= -1.0f;
+		}
+	}
 
 	void Rabbit::OnCollisionExcute(const CollisionPair& Pair)
 	{
@@ -160,13 +124,6 @@ namespace basecross
 			}
 		}
 	}
-
-
-	void Rabbit::OnCollisionExit(const CollisionPair& Pair)
-	{
-
-	}
-
 
 	void Rabbit::MoveRabbit()
 	{
@@ -272,16 +229,18 @@ namespace basecross
 		// 座標の取得
 		Vec3 targetPos = m_currentTargetPos;
 		const Vec3& pos = GetPosition();
-		if ((targetPos - pos).length() <= 5.0f)
+		if ((targetPos - pos).length() <= m_range || m_lostJumpCount > 5)
 		{
 			if (SearchPlayer())
 			{
 				m_state = Seek;
+				m_lostJumpCount = 0;
 				return;
 			}
 			else
 			{
 				m_state = Patrol;
+				m_lostJumpCount = 0;
 				return;
 			}
 		}
@@ -293,10 +252,12 @@ namespace basecross
 		if (!hitPos.empty())
 		{
 			BlockTargetJump(targetPos);
+			m_lostJumpCount++;
 		}
 		else
 		{
 			PlayerTargetJump(targetPos);
+			m_lostJumpCount++;
 		}
 	}
 
@@ -305,20 +266,25 @@ namespace basecross
 		if (m_targetObj.lock())
 		{
 			Vec3 targetPos = m_targetObj.lock()->GetPosition();
-			targetPos.y = 0.0f;
 			Vec3 pos = GetPosition();
-			pos.y = 0.0f;
 
 			float length = (targetPos - pos).length();
 			if (length <= m_range)
 			{
-				Vec3 toTarget = -(targetPos - pos);
-				toTarget.normalize();
-
-				if (m_dir == toTarget.x)
+				if (GetHitBlockPos(targetPos).empty())
 				{
-					return true;
+					targetPos.y = 0.0f;
+					pos.y = 0.0f;
+
+					Vec3 toTarget = -(targetPos - pos);
+					toTarget.normalize();
+
+					if (m_dir == toTarget.x)
+					{
+						return true;
+					}
 				}
+				return false;
 			}
 			else
 			{
@@ -336,7 +302,7 @@ namespace basecross
 	void Rabbit::JumpRabbit()
 	{
 		Vec2 jumpVelo = m_jumpVelo;
-		Vec3 alive = GetAlivePosition();
+		Vec3 alive = GetNearPosition(m_aliveBlockPos);
 
 		if (m_dir > 0.0f)
 		{
@@ -382,23 +348,8 @@ namespace basecross
 
 	void Rabbit::BlockTargetJump(const Vec3& targetPos)
 	{
-		// 衝突座標のバッファ配列
-		vector<Vec3> hitPos = GetHitBlockPos(targetPos);
-		Vec3 nearPos = hitPos.at(0);
-		Vec3 pos = GetPosition();
-
-		// バッファ配列の中から一番近い座標を求める
-		for (const auto& hit : hitPos)
-		{
-			float lengthA = (nearPos - pos).length();
-			float lengthB = (hit - pos).length();
-
-			// 比較
-			if (lengthA > lengthB)
-			{
-				nearPos = hit;
-			}
-		}
+		// 最接近座標の取得
+		Vec3 nearPos = GetNearPosition(GetHitBlockPos(targetPos));
 
 		// 衝突した最接近のブロックの上にブロックがあるかをチェック
 		// ブロックがあった場合さらにその上にあるかをチェック
@@ -409,10 +360,10 @@ namespace basecross
 		{
 			nearPos += up;
 			loopCount++;
-			if (loopCount > 5)
+			if (loopCount > 7)
 			{
 				m_state = Patrol;
-				break;
+				return;
 			}
 		}
 
@@ -428,22 +379,22 @@ namespace basecross
 		Vec3 pos = GetPosition();
 
 		// ブロックオブジェクトグループの取得
-		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
+		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Active")->GetGroupVector();
 		for (const auto& gameObj : blockVec)
 		{
 			// オブジェクトが無い、または非アクティブかのチェック
 			if (!gameObj.lock()) continue;
 			if (!gameObj.lock()->GetUpdateActive()) continue;
 
-			// 型キャストして、OBBを取得し、OBBと線分で衝突判定をする
-			const auto& block = dynamic_pointer_cast<CubeObject>(gameObj.lock());
-			if (!block) continue;
-			const auto& collObb = block->GetComponent<CollisionObb>();
+			// OBBを取得し、OBBと線分で衝突判定をする
+			const auto& objPtr = gameObj.lock();
+			const auto& collObb = objPtr->GetComponent<CollisionObb>();
 			if (!collObb) continue;
 
 			// 衝突したらバッファに座標を追加
 			if (HitTest::SEGMENT_OBB(pos, targetPos, collObb->GetObb()))
 			{
+				const auto& block = dynamic_pointer_cast<CubeObject>(objPtr);
 				posVec.push_back(block->GetSlopePos());
 			}
 		}

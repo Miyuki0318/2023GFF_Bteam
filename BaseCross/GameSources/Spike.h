@@ -24,10 +24,5 @@ namespace basecross
 		virtual ~Spike() {}
 
 		void OnCreate() override;
-
-		const eAngle GetAngle() const
-		{
-			return m_angle;
-		}
 	};
 }

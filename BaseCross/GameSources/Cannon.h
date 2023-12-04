@@ -16,7 +16,7 @@ namespace basecross
 			RRotate,
 		};
 
-	private:
+	protected:
 
 		int m_select;
 		bool m_isFire;
@@ -60,11 +60,11 @@ namespace basecross
 
 		virtual ~Cannon() {}
 
-		void OnCreate() override;
+		virtual void OnCreate() override;
 
 		void OnUpdate() override;
 
-		void EffectUpdate();
+		virtual void EffectUpdate();
 
 		void OnFire()
 		{
@@ -76,5 +76,23 @@ namespace basecross
 		{
 			return m_fireTime.at(m_select);
 		}
+	};
+
+	class GoalCannon : public Cannon
+	{
+	public:
+
+		GoalCannon(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale
+		) :
+			Cannon(stagePtr, position, scale, eAngle::Uright, eFireType::Normal)
+		{
+		}
+
+		virtual ~GoalCannon() {}
+
+		void OnCreate() override;
+
+		void EffectUpdate() override;
 	};
 }

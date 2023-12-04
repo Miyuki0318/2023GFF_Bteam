@@ -146,6 +146,19 @@ namespace basecross
 		{
 			CannonEnter(other);
 		}
+		if (other->FindTag(L"Goal"))
+		{
+			const auto& camera = GetTypeStage<GameStage>()->GetGameView()->GetCamera();
+			if (camera)
+			{
+				const auto& gameCamera = dynamic_pointer_cast<GameCamera>(camera);
+				if (gameCamera)
+				{
+					CannonEnter(other);
+					gameCamera->RemoveTarget();
+				}
+			}
+		}
 		if (other->FindTag(L"Convayor"))
 		{
 			ConvayorEnter(other, hitPoint);

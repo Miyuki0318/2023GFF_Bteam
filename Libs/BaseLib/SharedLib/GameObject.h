@@ -767,10 +767,11 @@ namespace basecross {
 		/*!
 		@brief	グループからゲームオブジェクトを除外する
 		@param[in]	Obj	除外するゲームオブジェクト
+		@param[in]  bool 例外処理するかどうか
 		@return	なし
 		*/
 		//--------------------------------------------------------------------------------------
-		void OutoGroup(const shared_ptr<GameObject>& Obj);
+		void OutoGroup(const shared_ptr<GameObject>& Obj, bool ExceptionActive = true);
 		//--------------------------------------------------------------------------------------
 		/*!
 		@brief	グループをクリアする

@@ -43,7 +43,8 @@ namespace basecross{
 		RegisterMultiMesh(L"RABBIT", modelPath + L"Rabbit/", L"rabbitEnemy", true);
 
 		// 大砲モデル
-		RegisterSingleMesh(L"CANNON", modelPath + L"Cannon/", L"Cannon", true);
+		RegisterSingleMesh(L"N_CANNON", modelPath + L"Cannon/", L"Cannon", true);
+		RegisterSingleMesh(L"G_CANNON", modelPath + L"Cannon/", L"Cannon", true);
 
 		// ベルトコンベアモデル
 		RegisterMultiMesh(L"MCONVAYOR", modelPath + L"Convayor/", L"m_Convayor", true);
@@ -98,7 +99,7 @@ namespace basecross{
 
 			//自分自身にイベントを送る
 			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
-			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"TitleStage");
+			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"GameStage");
 		}
 		catch (...) 
 		{

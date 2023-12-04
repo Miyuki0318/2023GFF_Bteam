@@ -34,6 +34,7 @@ namespace basecross
 
 	void Convayor::OnUpdate()
 	{
+		CubeObject::OnUpdate();
 		m_ptrDraw->UpdateAnimation(DELTA_TIME);
 	}
 }

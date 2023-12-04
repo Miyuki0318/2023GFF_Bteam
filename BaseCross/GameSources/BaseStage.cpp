@@ -33,6 +33,9 @@ namespace basecross
 		// 石テクスチャ
 		app->RegisterTexture(L"STONE_TX", texturePath + L"Stone.png");
 
+		// 紙テクスチャ
+		app->RegisterTexture(L"PAPER_TX", texturePath + L"Paper.png");
+
 		// 背景テクスチャ
 		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
 
@@ -129,6 +132,7 @@ namespace basecross
 
 	void BaseStage::CreateStage(const string& fileName)
 	{
+		CreateSharedObjectGroup(L"Active");
 		const auto& stageGroup = CreateSharedObjectGroup(L"Stage");
 		const auto& gimmickGroup = CreateSharedObjectGroup(L"Gimmick");
 		const auto& updateGroup = CreateSharedObjectGroup(L"Update");
@@ -221,6 +225,9 @@ namespace basecross
 					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
 					break;
 
+				case 400:
+					AddGameObject<GoalCannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
+
 				default:
 					break;
 				}
@@ -243,7 +250,7 @@ namespace basecross
 					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&data.at(i).at(j).at(2)) / 10);
 					const auto& beltType = static_cast<Convayor::eType>(checker.check);
 					const float& speed = static_cast<float>(atof(&data.at(i).at(j).at(3)));
-					gimmick = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType, speed);
+					update = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType, speed);
 				}
 
 				// 大砲
@@ -273,14 +280,12 @@ namespace basecross
 				if (gimmick)
 				{
 					gimmick->AddTarget(GetSharedGameObject<Player>(L"Player"));
-					gimmick->AddTarget(enemyVec);
 					gimmickGroup->IntoGroup(gimmick);
 				}
 
 				if (update)
 				{
 					update->AddTarget(GetSharedGameObject<Player>(L"Player"));
-					update->AddTarget(enemyVec);
 					updateGroup->IntoGroup(update);
 				}
 			}
@@ -406,19 +411,53 @@ namespace basecross
 			const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
 			Debug::Log(L"FPS : ", fps);
 
-			const auto& player = GetSharedGameObject<Player>(L"Player");
-			Vec3 pos = player->GetComponent<Transform>()->GetPosition();
+			const float range = 55.0f;
+			const auto& playerPos = GetSharedGameObject<Player>(L"Player")->GetPosition();
+
+			const auto& enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
+			for (const auto& weakObj : enemyVec)
+			{
+				const auto& enemyObj = dynamic_pointer_cast<Enemy>(weakObj.lock());
+
+				if (!enemyObj) continue;
+
+				bool alive = false;
+				const Vec3& pos = playerPos;
+				float length = (enemyObj->GetPosition() - pos).length();
+				enemyObj->SetDrawActive(length <= range);
+				enemyObj->SetUpdateActive(length <= range);
+			}
 
 			const auto& cubeVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
+			const auto& activeGroup = GetSharedObjectGroup(L"Active");
+			activeGroup->AllClear();
 			for (const auto& weakObj : cubeVec)
 			{
 				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
 
 				if (!cubeObj) continue;
 
-				float length = (cubeObj->GetPosition() - pos).length();
-				cubeObj->SetUpdateActive(length <= 55.0f);
-				cubeObj->SetDrawActive(length <= 55.0f);
+				bool alive = false;
+				const auto& vec = cubeObj->GetTargetVec();
+				for (const auto& v : vec)
+				{
+					if (!v.lock()) continue;
+					if (!v.lock()->GetUpdateActive()) continue;
+
+					const Vec3& pos = v.lock()->GetComponent<Transform>()->GetPosition();
+					float length = (cubeObj->GetPosition() - pos).length();
+					if (length <= 4.0f)						
+					{
+						activeGroup->IntoGroup(cubeObj);
+						alive = true;
+						break;
+					}
+				}
+
+				cubeObj->SetUpdateActive(alive);
+
+				float length = (cubeObj->GetPosition() - playerPos).length();
+				cubeObj->SetDrawActive(length <= range);
 			}
 
 			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
@@ -428,9 +467,22 @@ namespace basecross
 
 				if (!gimmickObj) continue;
 
-				float length = (gimmickObj->GetPosition() - pos).length();
-				gimmickObj->SetUpdateActive(length <= 55.0f);
-				gimmickObj->SetDrawActive(length <= 55.0f);
+				float length = (gimmickObj->GetPosition() - playerPos).length();
+				gimmickObj->SetUpdateActive(length <= range);
+				gimmickObj->SetDrawActive(length <= range);
+			}
+
+			const auto& updateVec = GetSharedObjectGroup(L"Update")->GetGroupVector();
+
+			for (const auto& weakObj : updateVec)
+			{
+				const auto& gimmickObj = dynamic_pointer_cast<Gimmick>(weakObj.lock());
+
+				if (!gimmickObj) continue;
+
+				float length = (gimmickObj->GetPosition() - playerPos).length();
+				gimmickObj->SetUpdateActive(length <= range / 2.0f);
+				gimmickObj->SetDrawActive(length <= range);
 			}
 		}
 		catch (...)

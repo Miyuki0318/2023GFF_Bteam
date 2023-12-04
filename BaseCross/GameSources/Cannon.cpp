@@ -7,7 +7,7 @@ namespace basecross
 	{
 		Gimmick::OnCreate();
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
-		m_ptrDraw->SetMeshResource(L"CANNON");
+		m_ptrDraw->SetMeshResource(L"N_CANNON");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 		m_ptrDraw->AddAnimation(L"FIRE", 0, 60, false);
 		m_ptrDraw->AddAnimation(L"RAPID", 30, 30, false);
@@ -92,4 +92,76 @@ namespace basecross
 			sprite.m_LocalQt.rotationZ(Utility::DegToRad(Utility::RangeRand(360.0f, 0.0f)));
 		}
 	}
-}	
+
+	void GoalCannon::OnCreate()
+	{
+		Gimmick::OnCreate();
+		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
+		m_ptrDraw->SetMeshResource(L"G_CANNON");
+		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
+		m_ptrDraw->AddAnimation(L"FIRE", 0, 60, false);
+		m_ptrDraw->AddAnimation(L"RAPID", 30, 30, false);
+
+		auto ptrColl = GetComponent<CollisionObb>();
+		ptrColl->SetUpdateActive(true);
+		ptrColl->SetAfterCollision(AfterCollision::None);
+
+		m_particle = GetStage()->AddGameObject<MultiParticle>();
+
+		SetAlphaActive(true);
+
+		AddTag(L"Goal");
+	}
+
+	void GoalCannon::EffectUpdate()
+	{
+		// 石のエフェクトを自身の位置に生成
+		const auto paperParticle = m_particle.lock()->InsertParticle(50);
+		paperParticle->SetEmitterPos(m_position);
+		paperParticle->SetTextureResource(L"PAPER_TX");
+		paperParticle->SetMaxTime(5.0f);
+		paperParticle->SetDrawOption(Particle::Normal);
+
+		// 生成したスプライトを配列で取得
+		vector<ParticleSprite>& paperSpriteVec = paperParticle->GetParticleSpriteVec();
+
+		// スプライトの数分ループ
+		for (auto& sprite : paperSpriteVec)
+		{
+			float rad = GetRotation().z - XM_PIDIV2 + Utility::DegToRad(Utility::RangeRand(90.0f, 0.0f) - 45.0f);
+			sprite.m_Velocity = -Vec2(cos(rad), sin(rad)).normalize() * Utility::RangeRand(10.0f, 5.0f);
+			sprite.m_LocalScale = Vec2(Utility::RangeRand(1.0f, 0.5f));
+			sprite.m_LocalQt.rotationZ(Utility::DegToRad(Utility::RangeRand(180.0f, 0.0f)));
+
+			Col4 color;
+			int random = Utility::RangeRand(4, 0);
+			switch (random)
+			{
+			case 0:
+				color = COL_RED;
+				break;
+
+			case 1:
+				color = COL_BLUE;
+				break;
+
+			case 2:
+				color = COL_GREAN;
+				break;
+
+			case 3:
+				color = COL_YELOW;
+				break;
+
+			case 4:
+				color = COL_BG;
+				break;
+
+			default:
+				break;
+			}
+
+			sprite.m_Color = color;
+		}
+	}
+}

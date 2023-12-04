@@ -34,5 +34,11 @@ namespace basecross
 		{
 			m_target = object;
 		}
+
+		void RemoveTarget()
+		{
+			m_currentPos = m_target.lock()->GetComponent<Transform>()->GetPosition();
+			m_target.reset();
+		}
 	};
 }

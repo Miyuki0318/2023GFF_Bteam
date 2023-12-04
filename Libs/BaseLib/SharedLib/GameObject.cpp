@@ -261,7 +261,7 @@ namespace basecross {
 		pImpl->m_Group.push_back(Obj);
 	}
 
-	void GameObjectGroup::OutoGroup(const shared_ptr<GameObject>& Obj) {
+	void GameObjectGroup::OutoGroup(const shared_ptr<GameObject>& Obj, bool ExceptionActive) {
 		bool find = false;
 		for (auto& ptr : pImpl->m_Group) {
 			if (ptr.lock() == Obj) {
@@ -271,11 +271,13 @@ namespace basecross {
 		}
 
 		if (!find) {
-			throw BaseException(
-				L"このオブジェクトはグループに登録されていません",
-				L"\n",
-				L"GameObjectGroup::OutoGroup"
-			);
+			if (ExceptionActive) {
+				throw BaseException(
+					L"このオブジェクトはグループに登録されていません",
+					L"\n",
+					L"GameObjectGroup::OutoGroup"
+				);
+			}
 		}
 	}
 
@@ -509,7 +511,7 @@ namespace basecross {
 				if (rParticleSprite.m_Active) {
 					//移動速度に従って移動させる
 					rParticleSprite.m_LocalPos += rParticleSprite.m_Velocity * ElapsedTime;
-					rParticleSprite.m_Color = Col4(1.0f, 1.0f, 1.0f, 1.0f - (ParticlePtr->GetTotalTime() / ParticlePtr->GetMaxTime()));
+					rParticleSprite.m_Color.w = 1.0f - (ParticlePtr->GetTotalTime() / ParticlePtr->GetMaxTime());
 					if (ParticlePtr->GetTotalTime() >= ParticlePtr->GetMaxTime()) {
 						//制限時間になったら
 						rParticleSprite.m_Active = false;

@@ -31,7 +31,7 @@ namespace basecross
 
 		CubeObject(const shared_ptr<Stage>& stagePtr) :
 			DebugObject(stagePtr),
-			m_collRange(5.0f),
+			m_collRange(2.0f),
 			m_collActive(true)
 		{
 			m_type = Normal;
@@ -50,7 +50,7 @@ namespace basecross
 			const Vec3& position, const Vec3& rotation, const Vec3& scale, const bool active
 		) :
 			DebugObject(stagePtr, position, rotation, scale),
-			m_collRange(5.0f),
+			m_collRange(2.0f),
 			m_collActive(active)
 		{
 			m_type = Normal;
@@ -70,7 +70,7 @@ namespace basecross
 		) :
 			DebugObject(stagePtr, position, Vec3(0.0f), scale),
 			m_type(type),
-			m_collRange(5.0f),
+			m_collRange(2.0f),
 			m_collActive(active)
 		{
 			m_angle = {

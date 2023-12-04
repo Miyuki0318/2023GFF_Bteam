@@ -24,11 +24,12 @@ namespace basecross
 		if (m_collActive)
 		{
 			bool achieve = false;
-			for (size_t i = 0; i < m_targetObj.size(); i++)
+			for (const auto& obj : m_targetObj)
 			{
-				if (m_targetObj.at(i).lock())
+				const auto& target = obj.lock();
+				if (target && target->GetUpdateActive())
 				{
-					auto targetTrans = m_targetObj.at(i).lock()->GetComponent<Transform>();
+					auto targetTrans = target->GetComponent<Transform>();
 					Vec3 targetPos = targetTrans->GetPosition();
 					float length = (targetPos - m_position).length();
 					achieve = (length <= m_collRange);
