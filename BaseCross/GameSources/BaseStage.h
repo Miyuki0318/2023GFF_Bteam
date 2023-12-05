@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "Sprite.h"
 
 namespace basecross
 {
@@ -57,21 +58,6 @@ namespace basecross
 		virtual void CreateViewLight();
 
 		/*!
-		@brief BGMの再生関数
-		*/
-		void CreateBGM(const wstring& bgmKey, float volume);
-
-		/*!
-		@brief SEの再生関数
-		*/
-		void CreateSE(const wstring& seKey, float volume);
-
-		/*!
-		@brief SEの再生関数
-		*/
-		void StopSE(const wstring& seKey);
-
-		/*!
 		@brief プレイヤーの生成関数
 		*/
 		virtual void CreatePlayer();
@@ -110,6 +96,21 @@ namespace basecross
 		@brief 描画更新関数
 		*/
 		virtual void OnDraw() override;
+
+		/*!
+		@brief BGMの再生関数
+		*/
+		virtual void CreateBGM(const wstring& bgmKey, float volume);
+
+		/*!
+		@brief SEの再生関数
+		*/
+		virtual void CreateSE(const wstring& seKey, float volume);
+
+		/*!
+		@brief SEの再生関数
+		*/
+		virtual void StopSE(const wstring& seKey);
 
 		/*!
 		@brief ゲームビュー取得関数

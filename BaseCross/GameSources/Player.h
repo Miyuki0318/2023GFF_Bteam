@@ -47,7 +47,6 @@ namespace basecross
 		float m_gravity;
 		
 		bool m_isAir;
-		bool m_isDeath;
 		bool m_isBlower;
 		bool m_isInvincible;
 		bool m_firePossible;
@@ -84,7 +83,6 @@ namespace basecross
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
 			m_isAir = true;
-			m_isDeath = false;
 			m_isBlower = false;
 			m_isInvincible = false;
 			m_firePossible = true;

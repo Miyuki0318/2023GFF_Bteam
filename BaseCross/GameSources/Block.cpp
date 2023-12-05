@@ -15,6 +15,19 @@ namespace basecross
 		AddTag(L"Death");
 	}
 
+	void StagingColl::OnCreate()
+	{
+		CubeObject::OnCreate();
+		AddTag(L"Block");
+	}
+
+	void StagingColl::OnUpdate()
+	{
+		const auto& stageState = GetTypeStage<GameStage>()->GetStageState();
+		auto ptrColl = GetComponent<CollisionObb>();
+		ptrColl->SetUpdateActive(stageState != GameStage::StartMove);
+	}
+
 	void InstanceBlock::OnCreate()
 	{
 		auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();

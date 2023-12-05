@@ -36,7 +36,7 @@ namespace basecross
 
 		virtual ~Enemy() {}
 
-		void SetMoveValue(const Vec2& velocity, float acsel)
+		virtual void SetMoveValue(const Vec2& velocity, float acsel)
 		{
 			m_velocity = velocity;
 			m_acsel = acsel < 1.0f ? 1.0f : acsel;

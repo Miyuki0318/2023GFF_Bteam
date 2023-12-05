@@ -106,6 +106,12 @@ namespace basecross
 			return m_scale;
 		}
 
+		virtual void StartSE(const wstring& seKey, float volume)
+		{
+			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
+			audioPtr->Start(seKey, 0, volume);
+		}
+
 		// 衝突したブロックの上にブロックがあるかの検証
 		virtual bool BlockCheck(const Vec3& checkPos)
 		{

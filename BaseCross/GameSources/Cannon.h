@@ -72,6 +72,11 @@ namespace basecross
 			m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(m_select), 0.0f);
 		}
 
+		bool GetFire() const
+		{
+			return m_isFire;
+		}
+
 		const float& GetFireTime() const
 		{
 			return m_fireTime.at(m_select);

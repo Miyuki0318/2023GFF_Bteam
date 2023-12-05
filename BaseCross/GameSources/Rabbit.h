@@ -11,15 +11,18 @@ namespace basecross
 			Patrol,
 			Seek,
 			LostSight,
+			CannonJump,
 		};
 
 		eState m_state;
 		Vec3 m_currentTargetPos;
-		vector<Vec3> m_aliveBlockPos;
+		vector<Vec3> m_aliveBlockPos;		
+		weak_ptr<Cannon> m_activeCannon;
 		vector<vector<Vec3>> m_jumpTargetPos;
 		const Vec2 m_jumpVelo;
 
 		bool m_isAir;
+		bool m_isCannon;
 		float m_dir;
 		float m_gravity;
 		int m_lostJumpCount;
@@ -29,11 +32,12 @@ namespace basecross
 		Rabbit(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, float scale
 		) :
-			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), 3.0f, 3.0f, 15.0f),
+			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), 3.0f, 5.0f, 15.0f),
 			m_jumpVelo(1.0f, -2.0f)
 		{
 			m_state = Patrol;
 			m_isAir = true;
+			m_isCannon = false;
 			m_dir = -1.0f;
 			m_gravity = -5.0f;
 			m_lostJumpCount = 0;
@@ -100,6 +104,8 @@ namespace basecross
 
 		void LostState();
 
+		void CannonState();
+
 		bool SearchPlayer();
 
 		void JumpRabbit();
@@ -107,6 +113,10 @@ namespace basecross
 		void PlayerTargetJump(const Vec3& targetPos);
 
 		void BlockTargetJump(const Vec3& targetPos);
+
+		void StartJumpSE();
+
+		void SetMoveValue(const Vec2& velocity, float acsel) override;
 
 		const vector<Vec3> GetHitBlockPos(const Vec3& targetPos);
 

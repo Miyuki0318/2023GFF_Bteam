@@ -24,31 +24,42 @@ namespace basecross
 
 	void Rabbit::OnUpdate()
 	{
-		MoveRabbit();
-		MoveReduction();
-		m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
-		if (m_ptrDraw->IsTargetAnimeEnd() && !m_isAir)
+		// ステージとステージステートの取得
+		const auto& stage = GetTypeStage<GameStage>();
+		const auto& state = stage->GetStageState();
+
+		if (Utility::GetBetween(state, GameStage::GameNow, GameStage::Death))
 		{
-			m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
-			switch (m_state)
+			MoveRabbit();
+			MoveReduction();
+			m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
+			if (m_ptrDraw->IsTargetAnimeEnd() && !m_isAir)
 			{
-			case Patrol:
-				PatrolState();
-				break;
+				m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
+				switch (m_state)
+				{
+				case Patrol:
+					PatrolState();
+					break;
 
-			case Seek:
-				SeekState();
-				break;
+				case Seek:
+					SeekState();
+					break;
 
-			case LostSight:
-				LostState();
-				break;
+				case LostSight:
+					LostState();
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
+			}
+
+			if (m_state == CannonJump)
+			{
+				CannonState();
 			}
 		}
-
 		m_aliveBlockPos.clear();
 	}
 
@@ -64,6 +75,7 @@ namespace basecross
 			Vec3 objPos = cube->GetSlopePos();
 			Vec3 helf = cube->GetScale() / 2.0f;
 			m_aliveBlockPos.push_back(objPos);
+			m_isCannon = false;
 
 			if (CollHitUpper(hitPoint, objPos, helf))
 			{
@@ -95,6 +107,23 @@ namespace basecross
 			// 移動量を半減しつつ反転させる
 			m_velocity.x *= -1.0f;
 			m_dir *= -1.0f;
+		}
+
+		if (other->FindTag(L"Cannon"))
+		{
+			const auto& ptr = dynamic_pointer_cast<Cannon>(other);
+			if (!ptr->GetFire() && !m_isCannon)
+			{
+				ptr->OnFire();
+				m_activeCannon = ptr;
+				m_isAir = true;
+				m_isCannon = true;
+				m_velocity = Vec2(0.0f);
+				m_acsel = 1.0f;
+				m_state = CannonJump;
+				SetPosition(ptr->GetPosition());
+				GetComponent<CollisionObb>()->SetUpdateActive(false);
+			}
 		}
 	}
 
@@ -220,7 +249,7 @@ namespace basecross
 		}
 		else
 		{
-			PlayerTargetJump(targetPos);
+			PlayerTargetJump(targetPos + Vec3(0.0f, -1.0f, 0.0f));
 		}
 	}
 
@@ -261,6 +290,31 @@ namespace basecross
 		}
 	}
 
+	void Rabbit::CannonState()
+	{
+		if (m_activeCannon.lock())
+		{
+			const float& fireTime = m_activeCannon.lock()->GetFireTime();
+			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
+			if (drawPtr->GetCurrentAnimationTime() > fireTime)
+			{
+				m_isAir = true;
+				m_state = Patrol;
+				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
+				Vec2 velo = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
+				SetMoveValue(velo, 7.5f);
+				StartSE(L"CANNON_SE", 0.75f);
+				GetComponent<CollisionObb>()->SetUpdateActive(true);
+				m_activeCannon.reset();
+			}
+			else
+			{
+				m_velocity = Vec2(0.0f);
+				SetPosition(m_activeCannon.lock()->GetPosition());
+			}
+		}
+	}
+
 	bool Rabbit::SearchPlayer()
 	{
 		if (m_targetObj.lock())
@@ -281,6 +335,7 @@ namespace basecross
 
 					if (m_dir == toTarget.x)
 					{
+						StartSE(L"RABBIT_SEARCH_SE", 0.5f);
 						return true;
 					}
 				}
@@ -368,6 +423,25 @@ namespace basecross
 		}
 
 		PlayerTargetJump(nearPos);
+	}
+
+	void Rabbit::StartJumpSE()
+	{
+		const Vec3& pos = GetPosition();
+		const Vec3& playerPos = m_targetObj.lock()->GetPosition();
+
+		float length = (playerPos - pos).length();
+		if (length <= m_range)
+		{
+			float volume = (m_range - length) / 10.0f;
+			StartSE(L"RABBIT_JUMP_SE", volume);
+		}
+	}
+
+	void Rabbit::SetMoveValue(const Vec2& velocity, float acsel)
+	{
+		Enemy::SetMoveValue(velocity, acsel);
+		StartJumpSE();
 	}
 
 	const vector<Vec3> Rabbit::GetHitBlockPos(const Vec3& targetPos)

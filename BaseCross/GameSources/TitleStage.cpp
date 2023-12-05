@@ -22,10 +22,6 @@ namespace basecross
 		// タイトルロゴの読み込み
 		app->RegisterTexture(L"TITLE_LOGO", texturePath + L"TitleLogo.tga");
 
-		// メタルの背景の読み込み
-		app->RegisterTexture(L"METAL_LEFT", texturePath + L"MetalLeft.png");
-		app->RegisterTexture(L"METAL_RIGHT", texturePath + L"MetalRight.png");
-
 		// スタートボタンの読み込み
 		app->RegisterTexture(L"PUSH_BUTTON", texturePath + L"PushButton.png");
 
@@ -46,10 +42,6 @@ namespace basecross
 		// サウンドの取得
 		// タイトル画面BGMの読み込み
 		app->RegisterWav(L"TITLE_BGM", BGMPath + L"TitleBGM");
-
-		// メタルシャッターの開閉SE
-		app->RegisterWav(L"METAL_SE", SEPath + L"MetalDoorSE");
-		app->RegisterWav(L"METAL_STOP_SE", SEPath + L"MetalStopSE");
 	}
 
 	void TitleStage::CreateViewLight()
@@ -107,6 +99,15 @@ namespace basecross
 		m_pushButton = AddGameObject<Sprite>(L"PUSH_BUTTON", WINDOW_SIZE / 2.0f, Vec3(0.0f, -200.0f, 0.2f));
 	}
 
+	void TitleStage::PushButtonState()
+	{
+		if (Input::GetPushA())
+		{
+			m_stageState = BackFadeOut;
+			CreateSE(L"METAL_SE", 0.75f);
+		}
+	}
+
 	void TitleStage::BackFadeState()
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
@@ -125,15 +126,6 @@ namespace basecross
 			StopSE(L"METAL_SE");
 			CreateSE(L"METAL_STOP_SE", 1.5f);
 			m_stageState = StartMove;
-		}
-	}
-
-	void TitleStage::PushButtonState()
-	{
-		if (Input::GetPushA())
-		{
-			m_stageState = BackFadeOut;
-			CreateSE(L"METAL_SE", 0.75f);
 		}
 	}
 

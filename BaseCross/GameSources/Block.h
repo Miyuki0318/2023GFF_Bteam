@@ -56,6 +56,24 @@ namespace basecross
 		void OnCreate() override;
 	};
 
+	class StagingColl : public CubeObject
+	{
+	public:
+
+		StagingColl(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale
+		) :
+			CubeObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), true)
+		{
+		}
+
+		~StagingColl() {}
+
+		void OnCreate() override;
+
+		void OnUpdate() override;
+	};
+
 	class InstanceBlock : public GameObject
 	{
 		int m_type;

@@ -18,6 +18,10 @@ namespace basecross
 		// 白塗りテクスチャ
 		app->RegisterTexture(L"WHITE_TX", texturePath + L"White.png");
 
+		// メタルの背景の読み込み
+		app->RegisterTexture(L"METAL_LEFT", texturePath + L"MetalLeft.png");
+		app->RegisterTexture(L"METAL_RIGHT", texturePath + L"MetalRight.png");
+
 		// 炎のテクスチャの読み込み
 		app->RegisterTexture(L"EFFECT_TX", texturePath + L"Effect.png");
 
@@ -46,11 +50,15 @@ namespace basecross
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
 
-		// ゲーム用BGM
-		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
+		// メタルシャッターの開閉SE
+		app->RegisterWav(L"METAL_SE", SEPath + L"MetalDoorSE");
+		app->RegisterWav(L"METAL_STOP_SE", SEPath + L"MetalStopSE");
 
 		// 衝撃波SE
 		app->RegisterWav(L"AIRSHOCK_SE", SEPath + L"AirShockSE");
+
+		// バウンド
+		app->RegisterWav(L"ROBOT_BOUND_SE", SEPath + L"RobotBoundSE");
 
 		// 大砲発射SE
 		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
@@ -58,6 +66,13 @@ namespace basecross
 		// シールドSE
 		app->RegisterWav(L"SHIELD_C_SE", SEPath + L"ShieldCreateSE");
 		app->RegisterWav(L"SHIELD_D_SE", SEPath + L"ShieldDestroySE");
+
+		// ダメージSE
+		app->RegisterWav(L"DAMAGE_SE", SEPath + L"DamageSE");
+
+		// ウサギのSE
+		app->RegisterWav(L"RABBIT_JUMP_SE", SEPath + L"RabbitJumpSE");
+		app->RegisterWav(L"RABBIT_SEARCH_SE", SEPath + L"RabbitSearchSE");
 	}
 
 	void BaseStage::CreateViewLight() {}
@@ -188,6 +203,10 @@ namespace basecross
 
 				case 1:
 					block = AddGameObject<DeathColl>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					break;
+
+				case 3:
+					block = AddGameObject<StagingColl>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
 					break;
 
 				case 2:

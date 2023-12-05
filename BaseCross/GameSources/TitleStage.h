@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "BaseStage.h"
 #include "DebugObject.h"
-#include "Sprite.h"
 
 namespace basecross
 {
@@ -22,7 +21,7 @@ namespace basecross
 			FadeOut,
 		};
 
-	public:
+	private:
 
 		// ステージステート
 		eStageState m_stageState;
@@ -36,9 +35,6 @@ namespace basecross
 		weak_ptr<Sprite> m_metalLeft;
 		weak_ptr<Sprite> m_metalRight;
 		weak_ptr<Sprite> m_pushButton;
-		//weak_ptr<Sprite> m_easy;
-		//weak_ptr<Sprite> m_normal;
-		//weak_ptr<Sprite> m_hard;
 
 		/*!
 		@brief リソース読み込み関数

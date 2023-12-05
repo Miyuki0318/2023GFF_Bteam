@@ -16,10 +16,10 @@ namespace basecross
 	public:
 
 		GameCamera() :
-			m_startEye(Vec3(0.0f, -72.0f, -33.0f)),
-			m_startAt(Vec3(0.0f, -72.0f, 0.0f))
+			m_startEye(Vec3(-20.5f, -82.3f, -33.0f)),
+			m_startAt(Vec3(-20.5f, -82.3f, 0.0f))
 		{
-			m_currentPos.zero();
+			m_currentPos = Vec3(-35.0f ,-88.5f, 0.0f);
 			m_currentEye = m_startEye;
 			m_currentAt = m_startAt;
 		}
@@ -32,7 +32,10 @@ namespace basecross
 
 		void SetTargetObject(const shared_ptr<GameObject>& object)
 		{
-			m_target = object;
+			if (m_target.lock() != object)
+			{
+				m_target = object;
+			}
 		}
 
 		void RemoveTarget()

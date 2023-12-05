@@ -52,44 +52,56 @@ namespace basecross
 
 	void Player::OnUpdate()
 	{
-		// Aボタン入力有無での関数分岐
-		if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
+		// ステージとステージステートの取得
+		const auto& stage = GetTypeStage<GameStage>();
+		const auto& state = stage->GetStageState();
+
+		// 開始時の動きからゲーム中の範囲なら
+		if (Utility::GetBetween(state, GameStage::StartMove, GameStage::Death))
 		{
-			OnReleaseA();
+			// Aボタン入力有無での関数分岐
+			if (state == GameStage::GameNow)
+			{
+				if (m_acsel <= 1.7f && m_firePossible)
+				{
+					if (Input::GetReleaseA()) OnReleaseA();
+				}
+			}
+
+			// 大砲待機時
+			if (m_cannonStandby)
+			{
+				CannonStandby(10.0f);
+			}
+
+			// 無敵時間経過
+			if (m_isInvincible)
+			{
+				InvincibleTimer();
+			}
+
+			// 照準の回転処理
+			RotateAligment();
+
+			// 送風機のチェック
+			BlowerBetweenCheck();
+
+			// プレイヤーの移動関数
+			MovePlayer();
+
+			// 移動時の減少量
+			MoveReduction();
+
+			// プレイヤーの回転関数
+			RotatePlayer();
+
+			// アニメーションの再生
+			AnimationUpdate();
+
+			// エフェクト描画関数
+			EffectUpdate();
 		}
 
-		// 大砲待機時
-		if (m_cannonStandby)
-		{
-			CannonStandby(10.0f);
-		}
-
-		// 無敵時間経過
-		if (m_isInvincible)
-		{
-			InvincibleTimer();
-		}
-
-		// 照準の回転処理
-		RotateAligment();
-
-		// 送風機のチェック
-		BlowerBetweenCheck();
-
-		// プレイヤーの移動関数
-		MovePlayer();
-
-		// 移動時の減少量
-		MoveReduction();
-
-		// プレイヤーの回転関数
-		RotatePlayer();
-
-		// アニメーションの再生
-		AnimationUpdate();
-
-		// エフェクト描画関数
-		EffectUpdate();
 
 		// デバッグ文字列
 		Debug::Log(L"pos : ", m_position);
@@ -98,7 +110,6 @@ namespace basecross
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(L"shield : ", m_shieldCount);
 		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
-		Debug::Log(m_isDeath != false ? L"死亡" : L"生存");
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
@@ -124,8 +135,7 @@ namespace basecross
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
 
 		// SEの再生
-		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		audioPtr->Start(L"AIRSHOCK_SE", 0, 0.5f);
+		StartSE(L"AIRSHOCK_SE", 0.5f);
 	}
 
 	// コリジョンに衝突したら
@@ -148,15 +158,13 @@ namespace basecross
 		}
 		if (other->FindTag(L"Goal"))
 		{
-			const auto& camera = GetTypeStage<GameStage>()->GetGameView()->GetCamera();
+			const auto& stage = GetTypeStage<GameStage>();
+			const auto& camera = stage->GetGameCamera();
 			if (camera)
 			{
-				const auto& gameCamera = dynamic_pointer_cast<GameCamera>(camera);
-				if (gameCamera)
-				{
-					CannonEnter(other);
-					gameCamera->RemoveTarget();
-				}
+				CannonEnter(other);
+				camera->RemoveTarget();
+				stage->SetStageState(GameStage::Goal);
 			}
 		}
 		if (other->FindTag(L"Convayor"))
@@ -167,11 +175,12 @@ namespace basecross
 		{
 			const auto& ring = dynamic_pointer_cast<Ring>(other);
 			ring->IsGetRing();
-
-			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-			audioPtr->Start(L"SHIELD_C_SE", 0, 0.75f);
-			
+			StartSE(L"SHIELD_C_SE", 0.75f);
 			AddShield();
+		}
+		if (other->FindTag(L"Rabbit"))
+		{
+			DamageKnockBack(m_deffVelo);
 		}
 		if (other->FindTag(L"Death"))
 		{
@@ -423,8 +432,7 @@ namespace basecross
 				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
 
-				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-				audioPtr->Start(L"CANNON_SE", 0, 0.75f);
+				StartSE(L"CANNON_SE", 0.75f);
 
 				m_activeCannon.reset();
 			}
@@ -573,6 +581,19 @@ namespace basecross
 	// ブロックに衝突した瞬間
 	void Player::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
+		// ステージとステージステートの取得
+		const auto& stage = GetTypeStage<GameStage>(false);
+		if (stage)
+		{
+			const auto& state = stage->GetStageState();
+
+			if (state == GameStage::StartMove)
+			{
+				stage->SetStageState(GameStage::GameNow);
+				stage->GetGameCamera()->SetTargetObject(GetThis<Player>());
+			}
+		}
+
 		// ブロックのパラメータを取得
 		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
 		Vec3 objPos = cube->GetSlopePos();
@@ -638,12 +659,6 @@ namespace basecross
 		m_firePossible = true;
 		m_respawnPos = Vec3(objPos.x, objPos.y + (helf.y * 3.0f), 0.0f);
 
-		// 死亡判定があるなら
-		if (m_isDeath)
-		{
-			// コンティニュー画面へ遷移
-		}
-
 		// 移動量が下方向にあり
 		if (m_velocity.y > 0.0f)
 		{
@@ -652,6 +667,8 @@ namespace basecross
 			{
 				// 移動量を反転させ、半分にする
 				m_velocity.y *= -0.5f;
+				float volume = ((m_velocity.y + m_meddleVelo.y + m_acsel) / 3.0f) /2.5f;
+				StartSE(L"ROBOT_BOUND_SE", volume);
 			}
 		}
 	}
@@ -667,6 +684,7 @@ namespace basecross
 		{
 			// 反転させ、落下させる
 			m_velocity.y *= -1.0f;
+			StartSE(L"ROBOT_BOUND_SE", 0.25f);
 		}
 	}
 
@@ -958,12 +976,18 @@ namespace basecross
 				m_shieldCount--;
 				m_isInvincible = true;
 
-				const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-				audioPtr->Start(L"SHIELD_D_SE", 0, 1.5f);
+				StartSE(L"SHIELD_D_SE", 1.5f);
 			}
 			else
 			{
-				m_isDeath = true;
+				const auto& stage = GetTypeStage<GameStage>();
+				if (stage->GetStageState() == GameStage::GameNow)
+				{
+					StartSE(L"DAMAGE_SE", 0.75f);
+
+					stage->SetStageState(GameStage::Death);
+					stage->CreateSE(L"METAL_SE", 0.75f);
+				}
 			}
 		}
 	}
