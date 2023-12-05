@@ -126,10 +126,10 @@ namespace basecross
 	{
 		// スティック入力を取得し移動ベクトルに保持
 		Vec2 stick = Input::GetLStickValue();
-		m_velocity = (stick.length() > 0.0f ? stick.round(1) : m_deffVelo) * 3.0f;
+		m_velocity = (stick.length() > 0.0f ? stick.round(1) : m_deffVelo) * m_veloSpeed;
 		if (!m_isAir && stick.y > 0.0f)
 		{
-			m_velocity.y = -stick.round(1).y * 3.0f;
+			m_velocity.y = -stick.round(1).y * m_veloSpeed;
 		}
 		
 		// メンバ変数の設定

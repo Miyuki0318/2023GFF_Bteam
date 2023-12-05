@@ -36,6 +36,7 @@ namespace basecross
 		const int m_jumpLimit;
 		const int m_shieldLimit;
 		const float m_maxAcsel;
+		const float m_veloSpeed;
 		const float m_damageAcsel;
 		const float m_slowTime;
 		const float m_normalTime;
@@ -73,6 +74,7 @@ namespace basecross
 			m_jumpLimit(3),
 			m_shieldLimit(3),
 			m_maxAcsel(4.5f),
+			m_veloSpeed(2.5f),
 			m_damageAcsel(2.5f),
 			m_slowTime(0.1f),
 			m_normalTime(1.5f),
