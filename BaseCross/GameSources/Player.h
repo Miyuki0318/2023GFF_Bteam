@@ -33,12 +33,14 @@ namespace basecross
 		weak_ptr<MultiParticle> m_particle;
 		weak_ptr<ArrowEffect> m_aligment;
 
+		const int m_shieldLimit;
 		const float m_maxAcsel;
 		const float m_damageAcsel;
 		const float m_slowTime;
 		const float m_normalTime;
 		const float m_invincibleTime;
 
+		int m_sRingCount;
 		int m_shieldCount;
 		float m_timeSpeed;
 		float m_damageTime;
@@ -64,6 +66,7 @@ namespace basecross
 		) :
 			DebugObject(stagePtr),
 			m_respawnPos(position),
+			m_shieldLimit(3),
 			m_maxAcsel(4.5f),
 			m_damageAcsel(2.5f),
 			m_slowTime(0.1f),
@@ -77,6 +80,7 @@ namespace basecross
 			m_velocity = m_deffVelo;
 			m_meddleVelo.zero();
 			m_timeSpeed = m_normalTime;
+			m_sRingCount = 0;
 			m_shieldCount = 1;
 			m_damageTime = 0.0f;
 			m_acsel = 1.0f;
@@ -215,9 +219,16 @@ namespace basecross
 
 		void DamageKnockBack(const Vec2& velocity);
 
+		void RingCheck(const shared_ptr<GameObject>& ring);
+
 		void AddShield()
 		{
+			StartSE(L"SHIELD_C_SE", 0.75f);
 			m_shieldCount++;
+			if (m_shieldCount > m_shieldLimit)
+			{
+				m_shieldCount = m_shieldLimit;
+			}
 		}
 
 		const int& GetShieldCount() const

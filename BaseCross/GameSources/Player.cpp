@@ -110,6 +110,7 @@ namespace basecross
 		Debug::Log(L"acsel : ", m_acsel);
 		Debug::Log(L"shield : ", m_shieldCount);
 		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
+		Debug::Log(L"スモールリング : ", m_sRingCount);
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
@@ -173,10 +174,7 @@ namespace basecross
 		}
 		if (other->FindTag(L"Ring"))
 		{
-			const auto& ring = dynamic_pointer_cast<Ring>(other);
-			ring->IsGetRing();
-			StartSE(L"SHIELD_C_SE", 0.75f);
-			AddShield();
+			RingCheck(other);
 		}
 		if (other->FindTag(L"Rabbit"))
 		{
@@ -991,4 +989,36 @@ namespace basecross
 			}
 		}
 	}
+
+	void Player::RingCheck(const shared_ptr<GameObject>& ring)
+	{
+		const auto& ringPtr = dynamic_pointer_cast<Ring>(ring);
+		if (ringPtr)
+		{
+			ringPtr->IsGetRing();
+			const auto& size = ringPtr->GetRingSize();
+			switch (size)
+			{
+			case Ring::Big:
+				AddShield();
+				StartSE(L"RING_SE", 0.75f);
+				break;
+
+			case Ring::Small:
+				m_sRingCount++;
+				StartSE(L"RING_SE", 0.35f);
+				break;
+
+			default:
+				break;
+			}
+
+			if (m_sRingCount >= 25)
+			{
+				AddShield();
+				m_sRingCount = 0;
+			}
+		}
+	}
+
 }

@@ -6,7 +6,17 @@ namespace basecross
 {
 	class Ring : public Gimmick
 	{
+	public:
+		enum eRing
+		{
+			Big,
+			Small,
+		};
+
+	private:
+
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
+		eRing m_ring;
 		bool m_isGet;
 		float m_rotSpeed;
 		float m_totalTime;
@@ -15,16 +25,17 @@ namespace basecross
 	public:
 
 		Ring(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, float scale
+			const Vec2& position, float scale, eRing ring
 		) :
-			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale / 10.0f, scale, scale), Up)
+			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale / 2.5f, scale, scale), Up),
+			m_ring(ring)
 		{
 			m_isGet = false;
 			m_rotSpeed = 3.0f;
 			m_totalTime = 0.0f;
 			m_deleteTime = 3.0f;
 			m_modelMat.affineTransformation(
-				Vec3(4.75f, 0.475f, 0.475f),
+				Vec3(1.9f, 0.475f, 0.475f),
 				Vec3(0.0f),
 				Vec3(0.0f),
 				Vec3(0.0f, -0.75f, 0.0f)
@@ -41,6 +52,11 @@ namespace basecross
 		{
 			m_isGet = true;
 			m_rotSpeed = 12.0f;
+		}
+
+		const eRing& GetRingSize() const
+		{
+			return m_ring;
 		}
 	};
 }

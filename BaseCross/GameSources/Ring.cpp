@@ -5,6 +5,9 @@ namespace basecross
 {
 	void Ring::OnCreate()
 	{
+		float size = 1.0f;
+		if (m_ring == Big) size = 5.0f;
+		m_scale *= size;
 		Gimmick::OnCreate();
 
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();

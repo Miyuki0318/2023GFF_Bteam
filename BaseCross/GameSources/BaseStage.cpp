@@ -63,6 +63,9 @@ namespace basecross
 		// 大砲発射SE
 		app->RegisterWav(L"CANNON_SE", SEPath + L"CannonFireSE");
 
+		// リングSE
+		app->RegisterWav(L"RING_SE", SEPath + L"RingGetSE");
+
 		// シールドSE
 		app->RegisterWav(L"SHIELD_C_SE", SEPath + L"ShieldCreateSE");
 		app->RegisterWav(L"SHIELD_D_SE", SEPath + L"ShieldDestroySE");
@@ -241,7 +244,11 @@ namespace basecross
 					break;
 
 				case 230:
-					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
+					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Ring::Big);
+					break;
+
+				case 231:
+					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Ring::Small);
 					break;
 
 				case 400:

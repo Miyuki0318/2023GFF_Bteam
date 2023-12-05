@@ -90,6 +90,14 @@ namespace basecross
 				}
 			}
 
+			if (CollHitUnder(hitPoint, objPos, helf))
+			{
+				if (m_velocity.y < 0.0f)
+				{
+					m_velocity.y *= -1.0f;
+				}
+			}
+
 			if (CollHitLeft(hitPoint, objPos, helf) || CollHitRight(hitPoint, objPos, helf))
 			{
 				const auto& angle = cube->GetAngleType();
