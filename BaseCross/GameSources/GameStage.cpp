@@ -141,9 +141,9 @@ namespace basecross
 			CreateSprites();
 
 			// ステージ
-			CreateEnemy("Stage");
-			CreateStage("Stage");
-			CreateInstanceBlock("Stage");
+			CreateEnemy(m_stagePath);
+			CreateStage(m_stagePath);
+			CreateInstanceBlock(m_stagePath);
 		}
 		catch (...) 
 		{
@@ -161,11 +161,11 @@ namespace basecross
 			switch (m_stageState)
 			{
 			case GameStage::FadeIn:
-				if (m_fade.lock()->FadeOutColor(3.7f)) m_stageState = StartMove;
+				if (m_fade.lock()->FadeOutColor(2.0f)) m_stageState = StartMove;
 				break;
 
 			case GameStage::Goal:
-				FadeOutState(2.0f);
+				FadeOutState(3.75f);
 				break;
 
 			case GameStage::Death:

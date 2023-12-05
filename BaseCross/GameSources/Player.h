@@ -33,13 +33,16 @@ namespace basecross
 		weak_ptr<MultiParticle> m_particle;
 		weak_ptr<ArrowEffect> m_aligment;
 
+		const int m_jumpLimit;
 		const int m_shieldLimit;
 		const float m_maxAcsel;
 		const float m_damageAcsel;
 		const float m_slowTime;
 		const float m_normalTime;
 		const float m_invincibleTime;
+		const float m_jumpRecoveryLimit;
 
+		int m_jumpCount;
 		int m_sRingCount;
 		int m_shieldCount;
 		float m_timeSpeed;
@@ -47,6 +50,7 @@ namespace basecross
 		float m_acsel;
 		float m_speed;
 		float m_gravity;
+		float m_jumpRecoveryTime;
 		
 		bool m_isAir;
 		bool m_isBlower;
@@ -66,12 +70,14 @@ namespace basecross
 		) :
 			DebugObject(stagePtr),
 			m_respawnPos(position),
+			m_jumpLimit(3),
 			m_shieldLimit(3),
 			m_maxAcsel(4.5f),
 			m_damageAcsel(2.5f),
 			m_slowTime(0.1f),
 			m_normalTime(1.5f),
 			m_invincibleTime(0.5f),
+			m_jumpRecoveryLimit(0.75f),
 			m_deffVelo(0.0f, -1.0f)
 		{
 			m_position = position;
@@ -80,12 +86,14 @@ namespace basecross
 			m_velocity = m_deffVelo;
 			m_meddleVelo.zero();
 			m_timeSpeed = m_normalTime;
+			m_jumpCount = 0;
 			m_sRingCount = 0;
 			m_shieldCount = 1;
 			m_damageTime = 0.0f;
 			m_acsel = 1.0f;
 			m_speed = 4.0f;
 			m_gravity = -5.0f;
+			m_jumpRecoveryTime = 0.0f;
 			m_isAir = true;
 			m_isBlower = false;
 			m_isInvincible = false;
@@ -152,6 +160,11 @@ namespace basecross
 		@brief プレイヤーの移動量減少関数
 		*/
 		void MoveReduction();
+
+		/*!
+		@brief エアショックの回復関数
+		*/
+		void RecoveryAirShock();
 
 		/*!
 		@brief プレイヤーの回転関数

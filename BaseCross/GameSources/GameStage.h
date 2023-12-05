@@ -39,6 +39,9 @@ namespace basecross
 		weak_ptr<Sprite> m_metalLeft;
 		weak_ptr<Sprite> m_metalRight;
 
+		// ステージパス
+		string m_stagePath;
+
 		/*!
 		@brief リソース読み込み関数
 		*/
@@ -76,6 +79,7 @@ namespace basecross
 		GameStage() :BaseStage() 
 		{
 			m_stageState = FadeIn;
+			m_stagePath = "Stage";
 		}
 
 		/*!

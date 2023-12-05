@@ -62,10 +62,13 @@ namespace basecross
 			// Aボタン入力有無での関数分岐
 			if (state == GameStage::GameNow)
 			{
-				if (m_acsel <= 1.7f && m_firePossible)
+				if (m_acsel <= 1.7f && m_firePossible && m_jumpCount < m_jumpLimit)
 				{
 					if (Input::GetReleaseA()) OnReleaseA();
 				}
+
+				// 照準の回転処理
+				RotateAligment();
 			}
 
 			// 大砲待機時
@@ -80,8 +83,10 @@ namespace basecross
 				InvincibleTimer();
 			}
 
-			// 照準の回転処理
-			RotateAligment();
+			if (m_jumpCount > 0)
+			{
+				RecoveryAirShock();
+			}
 
 			// 送風機のチェック
 			BlowerBetweenCheck();
@@ -104,11 +109,12 @@ namespace basecross
 
 
 		// デバッグ文字列
-		Debug::Log(L"pos : ", m_position);
-		Debug::Log(L"velo : ", m_velocity);
-		Debug::Log(L"addVelo : ", m_meddleVelo);
-		Debug::Log(L"acsel : ", m_acsel);
-		Debug::Log(L"shield : ", m_shieldCount);
+		Debug::Log(L"座標 : ", m_position);
+		Debug::Log(L"移動量 : ", m_velocity);
+		Debug::Log(L"加算移動量 : ", m_meddleVelo);
+		Debug::Log(L"加速度 : ", m_acsel);
+		Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
+		Debug::Log(L"シールドの数 : ", m_shieldCount);
 		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
 		Debug::Log(L"スモールリング : ", m_sRingCount);
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
@@ -131,6 +137,8 @@ namespace basecross
 		m_acsel = m_maxAcsel;
 		m_cannonFire = false;
 		m_meddleVelo.zero();
+		m_jumpCount++;
+		m_jumpRecoveryTime = 0.0f;
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
@@ -305,6 +313,19 @@ namespace basecross
 				m_velocity.y = 0.25f;
 			}
 		}
+	}
+
+	void Player::RecoveryAirShock()
+	{
+		if (m_jumpCount == 0) return;
+
+		if (m_jumpRecoveryTime >= m_jumpRecoveryLimit)
+		{
+			m_jumpCount--;
+			m_jumpRecoveryTime = 0.0f;
+		}
+
+		m_jumpRecoveryTime += DELTA_TIME;
 	}
 
 	// プレイヤーの回転

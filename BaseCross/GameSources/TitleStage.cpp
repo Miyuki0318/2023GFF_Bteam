@@ -23,7 +23,7 @@ namespace basecross
 		app->RegisterTexture(L"TITLE_LOGO", texturePath + L"TitleLogo.tga");
 
 		// スタートボタンの読み込み
-		app->RegisterTexture(L"PUSH_BUTTON", texturePath + L"PushButton.png");
+		app->RegisterTexture(L"PUSH_BUTTON", texturePath + L"PushButton.tga");
 
 		//// イージーボタンの読み込み
 		//app->RegisterTexture(L"EASY_BUTTON", texturePath + L"Easy.png");
@@ -104,6 +104,7 @@ namespace basecross
 		if (Input::GetPushA())
 		{
 			m_stageState = BackFadeOut;
+			CreateSE(L"PUSH_SE", 1.5f);
 			CreateSE(L"METAL_SE", 0.75f);
 		}
 	}
@@ -143,7 +144,7 @@ namespace basecross
 	void TitleStage::FadeOutState()
 	{
 		const auto& scene = App::GetApp()->GetScene<Scene>();
-		if (m_fade.lock()->FadeInColor(2.0f))
+		if (m_fade.lock()->FadeInColor(1.0f))
 		{
 			PostEvent(0.0f, GetThis<ObjectInterface>(), scene, L"GameStage");
 		}

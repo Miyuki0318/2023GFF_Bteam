@@ -45,6 +45,26 @@ namespace basecross
 						Vec2 scale = Vec2(1.5f + (0.5f * shieldCount));
 						SetScale(scale);
 						outLine->SetScale(scale + Vec2(0.05f));
+
+						Col4 color = COL_NONE;
+						switch (shieldCount)
+						{
+						case 1:
+							color = Col4(0.0f, 0.0f, 1.0f, 0.25f);
+							break;
+
+						case 2:
+						case 3:
+							color = Col4(1.0f, 0.0f, 0.0f, 0.25f);
+							break;
+
+						default:
+							break;
+						}
+
+						outLine->GetComponent<PNTStaticDraw>()->SetDiffuse(color);
+						color.w = 1.0f;
+						outLine->GetComponent<PNTStaticDraw>()->SetEmissive(color);
 					}
 				}
 			}

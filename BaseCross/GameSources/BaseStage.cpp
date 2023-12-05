@@ -42,6 +42,7 @@ namespace basecross
 
 		// 背景テクスチャ
 		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
+		app->RegisterTexture(L"NBACKGROUND_TX", texturePath + L"NewBackGround.png");
 
 		// 矢印テクスチャ
 		app->RegisterTexture(L"ARROW_TX", texturePath + L"Arrow.png");
@@ -53,6 +54,9 @@ namespace basecross
 		// メタルシャッターの開閉SE
 		app->RegisterWav(L"METAL_SE", SEPath + L"MetalDoorSE");
 		app->RegisterWav(L"METAL_STOP_SE", SEPath + L"MetalStopSE");
+
+		// ボタンのSE
+		app->RegisterWav(L"PUSH_SE", SEPath + L"PushButtonSE");
 
 		// 衝撃波SE
 		app->RegisterWav(L"AIRSHOCK_SE", SEPath + L"AirShockSE");
