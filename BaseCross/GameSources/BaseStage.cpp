@@ -268,7 +268,7 @@ namespace basecross
 				if (GetBetween(num, 200, 204))
 				{
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, angle);
+					update = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, angle);
 				}
 
 				// ベルトコンベア

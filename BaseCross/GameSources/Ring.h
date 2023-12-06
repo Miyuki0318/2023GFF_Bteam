@@ -33,7 +33,7 @@ namespace basecross
 			m_isGet = false;
 			m_rotSpeed = 3.0f;
 			m_totalTime = 0.0f;
-			m_deleteTime = 3.0f;
+			m_deleteTime = 1.0f;
 			m_modelMat.affineTransformation(
 				Vec3(1.9f, 0.475f, 0.475f),
 				Vec3(0.0f),

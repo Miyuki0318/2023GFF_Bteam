@@ -24,6 +24,7 @@ namespace basecross
 			StartMove,
 			GameNow,
 			Goal,
+			DeathDrop,
 			Death,
 			Continue,
 			FadeOut,

@@ -33,7 +33,9 @@ namespace basecross
 			MoveRabbit();
 			MoveReduction();
 			m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
-			if (m_ptrDraw->IsTargetAnimeEnd() && !m_isAir)
+
+			bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_isAir && !m_isDeath;
+			if (jumpPossible)
 			{
 				m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
 				switch (m_state)
@@ -54,10 +56,13 @@ namespace basecross
 					break;
 				}
 			}
-
-			if (m_state == CannonJump)
+			if (m_state == CannonJump && !m_isDeath)
 			{
 				CannonState();
+			}
+			if (m_state == Death)
+			{
+				DeathState();
 			}
 		}
 		m_aliveBlockPos.clear();
@@ -70,6 +75,8 @@ namespace basecross
 
 		if (other->FindTag(L"Block"))
 		{
+			if (m_isDeath) GetStage()->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
+
 			// ブロックのパラメータを取得
 			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
 			Vec3 objPos = cube->GetSlopePos();
@@ -320,6 +327,22 @@ namespace basecross
 				m_velocity = Vec2(0.0f);
 				SetPosition(m_activeCannon.lock()->GetPosition());
 			}
+		}
+	}
+
+	void Rabbit::DeathState()
+	{
+		if (!m_isDeath) 
+		{
+			m_isDeath = true;
+			auto ptrColl = GetComponent<CollisionObb>();
+			ptrColl->SetAfterCollision(AfterCollision::None);
+			RemoveTag(L"Rabbit");
+			SetMoveValue(Vec2(-m_dir, -1.5f), m_maxAcsel);
+		}
+		else
+		{
+			SetRotation(GetRotation() + Vec3(0.0f, 0.0f, DELTA_TIME * m_dir * 100.0f));
 		}
 	}
 

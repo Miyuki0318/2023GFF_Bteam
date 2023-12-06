@@ -31,8 +31,8 @@ namespace basecross{
 		app->RegisterTexture(L"ROCK_TX", modelPath + L"Block/Rock.png");
 
 		// スパイクモデル
-		RegisterSingleMesh(L"SPIKE", modelPath, L"Spike", false);
-		RegisterSingleMesh(L"SPIKE_BLOCK", modelPath, L"SpikeBlock", false);
+		RegisterMultiMesh(L"SPIKE", modelPath, L"Spike", true);
+		RegisterMultiMesh(L"SPIKE_BLOCK", modelPath, L"SpikeBlock", true);
 
 		// ロボットモデル
 		RegisterSingleMesh(L"ROBOT_BODY", modelPath + L"Robot/", L"Robot_Body", true);

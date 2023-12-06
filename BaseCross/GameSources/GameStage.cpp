@@ -161,7 +161,7 @@ namespace basecross
 			switch (m_stageState)
 			{
 			case GameStage::FadeIn:
-				if (m_fade.lock()->FadeOutColor(2.0f)) m_stageState = StartMove;
+				if (m_fade.lock()->FadeOutColor(1.0f)) m_stageState = StartMove;
 				break;
 
 			case GameStage::Goal:
