@@ -164,7 +164,7 @@ namespace basecross
 			enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
 		}
 
-		const auto& data = CSVLoader::LoadFile(fileName);
+		m_csvData = CSVLoader::LoadFile(fileName);
 
 		struct Checker
 		{
@@ -190,17 +190,17 @@ namespace basecross
 		const Vec2 slopeDRight = Vec2(-0.5f, 0.5f);
 
 		Checker checker;
-		for (size_t i = 0; i < data.size(); i++)
+		for (size_t i = 0; i < m_csvData.size(); i++)
 		{
-			for (size_t j = 0; j < data.at(i).size(); j++)
+			for (size_t j = 0; j < m_csvData.at(i).size(); j++)
 			{
-				if (data.at(i).at(j) == "") continue;
+				if (m_csvData.at(i).at(j) == "") continue;
 
 				shared_ptr<CubeObject> block = nullptr;
 				shared_ptr<Gimmick> gimmick = nullptr;
 				shared_ptr<Gimmick> update = nullptr;
 
-				const int& num = stoi(data.at(i).at(j));
+				const int& num = stoi(m_csvData.at(i).at(j));
 
 				switch (num)
 				{
@@ -209,54 +209,54 @@ namespace basecross
 					break;
 
 				case 1:
-					block = AddGameObject<DeathColl>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					block = AddGameObject<DeathColl>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, true);
 					break;
 
 				case 3:
-					block = AddGameObject<StagingColl>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale);
+					block = AddGameObject<StagingColl>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale);
 					break;
 
 				case 2:
 				case 100:
 				case 110:
 				case 120:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, true);
 					break;
 
 				case 101:
 				case 111:
 				case 121:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeULeft, slopeScale, CubeObject::SlopeUL, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)) + slopeULeft, slopeScale, CubeObject::SlopeUL, true);
 					break;
 
 				case 102:
 				case 112:
 				case 122:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeURight, slopeScale, CubeObject::SlopeUR, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)) + slopeURight, slopeScale, CubeObject::SlopeUR, true);
 					break;
 
 				case 103:
 				case 113:
 				case 123:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDLeft, slopeScale, CubeObject::SlopeDL, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)) + slopeDLeft, slopeScale, CubeObject::SlopeDL, true);
 					break;
 
 				case 104:
 				case 114:
 				case 124:
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)) + slopeDRight, slopeScale, CubeObject::SlopeDR, true);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)) + slopeDRight, slopeScale, CubeObject::SlopeDR, true);
 					break;
 
 				case 230:
-					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Ring::Big);
+					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big);
 					break;
 
 				case 231:
-					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, Ring::Small);
+					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small);
 					break;
 
 				case 400:
-					AddGameObject<GoalCannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 5.0f);
+					AddGameObject<GoalCannon>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 5.0f);
 
 				default:
 					break;
@@ -267,37 +267,37 @@ namespace basecross
 				// 棘
 				if (GetBetween(num, 200, 204))
 				{
-					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
-					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, angle);
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
+					block = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, angle);
 				}
 
 				// ベルトコンベア
 				if (GetBetween(num, 2101, 2119))
 				{
 					checker.count++;
-					checker.type = data.at(i).at(j);
-					checker.check = data.at(i).at(j + 1) != checker.type || data.at(i).at(j - 1) != checker.type;
-					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&data.at(i).at(j).at(2)) / 10);
+					checker.type = m_csvData.at(i).at(j);
+					checker.check = m_csvData.at(i).at(j + 1) != checker.type || m_csvData.at(i).at(j - 1) != checker.type;
+					const auto& rotate = static_cast<Convayor::eRotate>(atoi(&m_csvData.at(i).at(j).at(2)) / 10);
 					const auto& beltType = static_cast<Convayor::eType>(checker.check);
-					const float& speed = static_cast<float>(atof(&data.at(i).at(j).at(3)));
-					update = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale, rotate, beltType, speed);
+					const float& speed = static_cast<float>(atof(&m_csvData.at(i).at(j).at(3)));
+					update = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, rotate, beltType, speed);
 				}
 
 				// 大砲
 				if (GetBetween(num, 2200, 2283))
 				{
-					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)) / 10);
-					const auto& fireType = static_cast<Cannon::eFireType> (atoi(&data.at(i).at(j).at(3)));
-					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale * 3.0f, angle, fireType);
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)) / 10);
+					const auto& fireType = static_cast<Cannon::eFireType> (atoi(&m_csvData.at(i).at(j).at(3)));
+					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 3.0f, angle, fireType);
 				}
 
 				// 送風機
 				if (GetBetween(num, 240, 243))
 				{
 					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
-					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&data.at(i).at(j).at(2)));
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), blowerScale, angle, 5.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), update->GetRotation(), blowerScale, true);
+					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
+					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), blowerScale, angle, 5.0f);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), update->GetRotation(), blowerScale, true);
 				}
 
 				if (block)

@@ -79,7 +79,7 @@ namespace basecross
 		GameStage() :BaseStage() 
 		{
 			m_stageState = FadeIn;
-			m_stagePath = "Stage";
+			m_stagePath = "Tutorial";
 		}
 
 		/*!

@@ -40,6 +40,9 @@ namespace basecross
 			}
 		};
 
+		// CSVデータ
+		vector<vector<string>> m_csvData;
+
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
 

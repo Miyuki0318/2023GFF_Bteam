@@ -71,7 +71,7 @@ namespace basecross
 		) :
 			DebugObject(stagePtr),
 			m_respawnPos(position),
-			m_jumpLimit(3),
+			m_jumpLimit(2),
 			m_shieldLimit(3),
 			m_maxAcsel(4.5f),
 			m_veloSpeed(2.5f),
@@ -79,7 +79,7 @@ namespace basecross
 			m_slowTime(0.1f),
 			m_normalTime(1.5f),
 			m_invincibleTime(0.5f),
-			m_jumpRecoveryLimit(0.75f),
+			m_jumpRecoveryLimit(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
 			m_position = position;
