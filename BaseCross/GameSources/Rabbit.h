@@ -6,26 +6,32 @@ namespace basecross
 {
 	class Rabbit : public Enemy
 	{
+	public:
+
 		enum eState
 		{
 			Patrol,
 			Seek,
 			LostSight,
 			CannonJump,
+			Death,
 		};
 
+	private:
+
 		eState m_state;
+		const Vec2 m_jumpVelo;
 		Vec3 m_currentTargetPos;
 		vector<Vec3> m_aliveBlockPos;		
 		weak_ptr<Cannon> m_activeCannon;
 		vector<vector<Vec3>> m_jumpTargetPos;
-		const Vec2 m_jumpVelo;
 
-		bool m_isAir;
-		bool m_isCannon;
+		int m_lostJumpCount;
 		float m_dir;
 		float m_gravity;
-		int m_lostJumpCount;
+		bool m_isAir;
+		bool m_isDeath;
+		bool m_isCannon;
 
 	public:
 
@@ -106,6 +112,8 @@ namespace basecross
 
 		void CannonState();
 
+		void DeathState();
+
 		bool SearchPlayer();
 
 		void JumpRabbit();
@@ -141,6 +149,16 @@ namespace basecross
 			}
 
 			return temp;
+		}
+
+		const eState& GetState() const
+		{
+			return m_state;
+		}
+
+		void SetState(const eState& state)
+		{
+			m_state = state;
 		}
 	};
 }

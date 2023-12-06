@@ -6,6 +6,9 @@ namespace basecross
 {
 	class Spike : public Gimmick
 	{
+		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
+		Mat4x4 m_blockMat;
+
 	public:
 
 		Spike(const shared_ptr<Stage>& stagePtr,
@@ -19,10 +22,18 @@ namespace basecross
 				Vec3(0.0f, XM_PIDIV2, 0.0f),
 				Vec3(0.0f, -0.65f, 0.0f)
 			);
+			m_blockMat.affineTransformation(
+				Vec3(1.35f),
+				Vec3(0.0f),
+				Vec3(0.0f, 0.0f, 0.0f),
+				Vec3(0.0f, -0.65f, 0.0f)
+			);
 		}
 
 		virtual ~Spike() {}
 
 		void OnCreate() override;
+
+		void OnUpdate() override;
 	};
 }

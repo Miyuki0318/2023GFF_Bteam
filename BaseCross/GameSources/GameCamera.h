@@ -43,5 +43,10 @@ namespace basecross
 			m_currentPos = m_target.lock()->GetComponent<Transform>()->GetPosition();
 			m_target.reset();
 		}
+
+		const Vec3& GetCurrentPos() const
+		{
+			return m_currentPos;
+		}
 	};
 }

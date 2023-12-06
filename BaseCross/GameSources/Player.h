@@ -193,6 +193,13 @@ namespace basecross
 		*/
 		virtual void CannonStandby(float acsel);
 
+		void DeathSetup();
+
+		/*!
+		@brief €–S‚Ì—‰ºŠÖ”
+		*/
+		void DeathDrop();
+
 		/*!
 		@brief –³“GŠÔŒo‰ß
 		*/
@@ -231,6 +238,8 @@ namespace basecross
 		void ConvayorEnter(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
 
 		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
+
+		void RabbitEnter(const shared_ptr<GameObject>& rabbit);
 
 		void DamageKnockBack(const Vec2& velocity);
 

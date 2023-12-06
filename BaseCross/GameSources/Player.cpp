@@ -57,7 +57,7 @@ namespace basecross
 		const auto& state = stage->GetStageState();
 
 		// 開始時の動きからゲーム中の範囲なら
-		if (Utility::GetBetween(state, GameStage::StartMove, GameStage::Death))
+		if (Utility::GetBetween(state, GameStage::StartMove, GameStage::DeathDrop))
 		{
 			// Aボタン入力有無での関数分岐
 			if (state == GameStage::GameNow)
@@ -69,6 +69,9 @@ namespace basecross
 
 				// 照準の回転処理
 				RotateAligment();
+
+				// プレイヤーの回転関数
+				RotatePlayer();
 			}
 
 			// 大砲待機時
@@ -97,14 +100,16 @@ namespace basecross
 			// 移動時の減少量
 			MoveReduction();
 
-			// プレイヤーの回転関数
-			RotatePlayer();
-
 			// アニメーションの再生
 			AnimationUpdate();
 
 			// エフェクト描画関数
 			EffectUpdate();
+
+			if (state == GameStage::DeathDrop)
+			{
+				DeathDrop();
+			}
 		}
 
 
@@ -186,7 +191,7 @@ namespace basecross
 		}
 		if (other->FindTag(L"Rabbit"))
 		{
-			DamageKnockBack(m_deffVelo);
+			RabbitEnter(other);
 		}
 		if (other->FindTag(L"Death"))
 		{
@@ -295,12 +300,10 @@ namespace basecross
 			// X軸移動ベクトルが0.01より大きかったら(符号問わず)
 			if (m_velocity.x > 0.1f || m_velocity.x < -0.1f)
 			{
-				// X軸移動ベクトルを減少量で減算
 				m_velocity.x -= decrease;
 			}
 			else
 			{
-				// 0.01より小さかったら0.0で修正
 				m_velocity.x = 0.0f;
 			}
 
@@ -472,6 +475,46 @@ namespace basecross
 		{
 			m_damageTime = 0.0f;
 			m_isInvincible = false;
+		}
+	}
+
+	void Player::DeathSetup()
+	{
+		const auto& stage = GetTypeStage<GameStage>();
+		if (stage->GetStageState() == GameStage::GameNow)
+		{
+			StartSE(L"DAMAGE_SE", 0.75f);
+
+			stage->SetStageState(GameStage::DeathDrop);
+			stage->GetGameCamera()->RemoveTarget();
+
+			Vec3 pos = GetPosition();
+			pos.z = -1.5f;
+			SetPosition(pos);
+			m_velocity = m_deffVelo * 2.5f;
+			m_acsel = 2.5f;
+
+			auto ptrColl = GetComponent<CollisionSphere>();
+			ptrColl->SetUpdateActive(false);
+		}
+	}
+
+	void Player::DeathDrop()
+	{
+		const auto& stage = GetTypeStage<GameStage>();
+		const Vec3& deathPos = stage->GetGameCamera()->GetCurrentPos();
+		float length = (deathPos - GetPosition()).length();
+		Vec3 rad = GetRotation();
+		rad.z += DELTA_TIME * 5.0f;
+		if (rad.z >= XM_PIDIV2) rad.z = -XM_PIDIV2;
+
+		SetRotation(rad);
+		m_arm.lock()->SetRotation(rad + Vec3(0.0f, 0.0f, XM_PI));
+
+		if (length >= 22.5f) 
+		{
+			stage->SetStageState(GameStage::Death);
+			stage->CreateSE(L"METAL_SE", 0.75f);
 		}
 	}
 
@@ -972,6 +1015,17 @@ namespace basecross
 		}
 	}
 
+	void Player::RabbitEnter(const shared_ptr<GameObject>& other)
+	{
+		if (m_shieldCount > 1)
+		{
+			const auto& rabbit = dynamic_pointer_cast<Rabbit>(other);
+			if (rabbit) rabbit->SetState(Rabbit::Death);
+		}
+
+		DamageKnockBack(m_deffVelo);
+	}
+
 	// ダメージノックバック
 	void Player::DamageKnockBack(const Vec2& velocity)
 	{
@@ -999,14 +1053,7 @@ namespace basecross
 			}
 			else
 			{
-				const auto& stage = GetTypeStage<GameStage>();
-				if (stage->GetStageState() == GameStage::GameNow)
-				{
-					StartSE(L"DAMAGE_SE", 0.75f);
-
-					stage->SetStageState(GameStage::Death);
-					stage->CreateSE(L"METAL_SE", 0.75f);
-				}
+				DeathSetup();
 			}
 		}
 	}
