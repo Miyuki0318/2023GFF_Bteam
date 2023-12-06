@@ -27,7 +27,7 @@ namespace basecross
 		Ring(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, float scale, eRing ring
 		) :
-			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale / 2.5f, scale, scale), Up),
+			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale, scale, scale), Up),
 			m_ring(ring)
 		{
 			m_isGet = false;
@@ -35,7 +35,7 @@ namespace basecross
 			m_totalTime = 0.0f;
 			m_deleteTime = 1.0f;
 			m_modelMat.affineTransformation(
-				Vec3(1.9f, 0.475f, 0.475f),
+				Vec3(0.475f),
 				Vec3(0.0f),
 				Vec3(0.0f),
 				Vec3(0.0f, -0.75f, 0.0f)

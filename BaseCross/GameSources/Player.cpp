@@ -111,6 +111,13 @@ namespace basecross
 				DeathDrop();
 			}
 		}
+		if(state == GameStage::Goal)
+		{
+			vector<Vec3> point;
+			m_aligment.lock()->UpdateEffect(point);
+			m_jetEffect.lock()->SetDrawActive(false);
+			m_shieldEffect.lock()->SetDrawShield(false);
+		}
 
 
 		// デバッグ文字列

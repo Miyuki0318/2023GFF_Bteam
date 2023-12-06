@@ -18,7 +18,7 @@ namespace basecross
 		m_ptrDraw->SetEmissive(COL_WHITE);
 
 		auto ptrColl = GetComponent<CollisionObb>();
-		ptrColl->SetUpdateActive(true);
+		ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
 		ptrColl->SetAfterCollision(AfterCollision::None);
 
 		AddTag(L"Ring");

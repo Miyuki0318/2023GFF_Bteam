@@ -90,8 +90,8 @@ namespace basecross
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
 		if (mLPos.x < 0.0f)
 		{
-			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 400.0f, 0.0f, 0.0f));
-			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 400.0f, 0.0f, 0.0f));
+			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
+			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
 		}
 		else
 		{

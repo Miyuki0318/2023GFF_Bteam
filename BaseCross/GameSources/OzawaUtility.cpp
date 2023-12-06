@@ -180,10 +180,10 @@ namespace Utility
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
 	*/
-	void RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
+	bool RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
 	{
 		const int& size = static_cast<int>(point.size());
-		if (size == 0) return;
+		if (size == 0) return false;
 
 		vertices.clear();
 
@@ -218,6 +218,8 @@ namespace Utility
 				indices.push_back(baseIndices.at(j) + (2 * i));
 			}
 		}
+
+		return true;
 	}
 
 	/*!
@@ -228,9 +230,9 @@ namespace Utility
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
 	*/
-	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
+	bool RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
 	{
-		RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
+		return RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
 	}
 
 	/*!

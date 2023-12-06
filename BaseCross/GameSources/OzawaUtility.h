@@ -270,8 +270,8 @@ namespace Utility
 	*/
 	void NumberVerticesIndices(VertexData& vertex, const int number);
 
-	void RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop);
-	void RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec , float weight, int texLoop);
+	bool RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop);
+	bool RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec , float weight, int texLoop);
 
 	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)
