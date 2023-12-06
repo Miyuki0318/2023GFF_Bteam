@@ -60,4 +60,9 @@ namespace Input
 
 		return Vec2(0.0f);
 	}
+
+	bool IsInputLStick()
+	{
+		return GetLStickValue().length() > 0.0f;
+	}
 }

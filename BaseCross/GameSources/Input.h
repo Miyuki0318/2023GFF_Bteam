@@ -16,4 +16,6 @@ namespace Input
 	bool GetReleaseA();
 
 	Vec2 GetLStickValue();
+
+	bool IsInputLStick();
 }

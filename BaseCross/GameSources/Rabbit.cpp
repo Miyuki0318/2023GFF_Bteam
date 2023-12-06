@@ -317,7 +317,7 @@ namespace basecross
 				m_state = Patrol;
 				float rad = m_activeCannon.lock()->GetRotation().z - XM_PIDIV2;
 				Vec2 velo = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
-				SetMoveValue(velo, 7.5f);
+				SetMoveValue(velo, 10.0f);
 				StartSE(L"CANNON_SE", 0.75f);
 				GetComponent<CollisionObb>()->SetUpdateActive(true);
 				m_activeCannon.reset();
