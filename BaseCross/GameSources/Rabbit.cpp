@@ -58,21 +58,18 @@ namespace basecross
 						break;
 					}
 				}
-				if (m_state == CannonJump && !m_isDeath)
-				{
-					CannonState();
-				}
-				if (m_state == Death)
-				{
-					DeathState();
-				}
+				if (m_state == CannonJump && !m_isDeath) CannonState();
+				if (m_state == Death) DeathState();
 			}
 		}
 		if (m_type == Wall)
 		{
+			if (!m_isDeath) CollisiontPerformance();
 			if (m_state == Death)
 			{
 				DeathState();
+				MoveRabbit();
+				MoveReduction();
 			}
 		}
 		m_aliveBlockPos.clear();
@@ -80,6 +77,8 @@ namespace basecross
 
 	void Rabbit::OnCollisionEnter(const CollisionPair& Pair)
 	{
+		if (m_type != Normal) return;
+
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
@@ -127,6 +126,11 @@ namespace basecross
 			}
 		}
 
+		if (other->FindTag(L"Death"))
+		{
+			m_state = Death;
+		}
+
 		if (other->FindTag(L"Rabbit"))
 		{
 			// ˆÚ“®—Ê‚ð”¼Œ¸‚µ‚Â‚Â”½“]‚³‚¹‚é
@@ -154,6 +158,8 @@ namespace basecross
 
 	void Rabbit::OnCollisionExcute(const CollisionPair& Pair)
 	{
+		if (m_type != Normal) return;
+
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
@@ -345,10 +351,9 @@ namespace basecross
 		if (!m_isDeath) 
 		{
 			m_isDeath = true;
-			auto ptrColl = GetComponent<CollisionObb>();
-			ptrColl->SetAfterCollision(AfterCollision::None);
+			RemoveComponent<CollisionObb>();
 			RemoveTag(L"Rabbit");
-			SetMoveValue(Vec2(-m_dir, -1.5f), m_maxAcsel);
+			SetMoveValue(Vec2(Utility::RangeRand(2.0f, 0.0f) - 1.0f, -1.5f), m_maxAcsel);
 		}
 		else
 		{
@@ -515,5 +520,24 @@ namespace basecross
 		}
 
 		return posVec;
+	}
+
+	void Rabbit::CollisiontPerformance()
+	{
+		bool achieve = false;
+		if (m_targetObj.lock())
+		{
+			const auto& target = m_targetObj.lock();
+			if (target)
+			{
+				Vec3 targetPos = target->GetPosition();
+				float length = (targetPos - m_position).length();
+				achieve = (length <= 4.0f);
+			}
+		}
+
+		auto ptrColl = GetComponent<CollisionObb>();
+		ptrColl->SetAfterCollision(AfterCollision::None);
+		ptrColl->SetUpdateActive(achieve);
 	}
 }

@@ -45,10 +45,11 @@ namespace basecross
 		Rabbit(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, float scale, eType type
 		) :
-			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), 3.0f, 5.0f, 15.0f),
+			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, XM_PI, 0.0f), Vec3(scale), 3.0f, 5.0f, 15.0f),
 			m_type(type),
 			m_jumpVelo(1.0f, -2.0f)
 		{
+			m_velocity = Vec2(-1.0f, 0.0f);
 			m_state = Patrol;
 			m_isAir = true;
 			m_isCannon = false;
@@ -133,6 +134,8 @@ namespace basecross
 		void StartJumpSE();
 
 		void SetMoveValue(const Vec2& velocity, float acsel) override;
+
+		void CollisiontPerformance();
 
 		const vector<Vec3> GetHitBlockPos(const Vec3& targetPos);
 

@@ -54,6 +54,9 @@ namespace basecross
 							break;
 
 						case 2:
+							color = Col4(0.0f, 1.0f, 0.0f, 0.25f);
+							break;
+
 						case 3:
 							color = Col4(1.0f, 0.0f, 0.0f, 0.25f);
 							break;

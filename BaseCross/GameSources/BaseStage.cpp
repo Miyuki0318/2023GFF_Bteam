@@ -137,8 +137,19 @@ namespace basecross
 				const int& num = stoi(m_csvData.at(i).at(j));
 				if (GetBetween(num, 300, 301))
 				{
-					const auto& type = static_cast<Rabbit::eType>(atoi(&m_csvData.at(i).at(j).at(2)));
-					enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, type));
+					switch (num)
+					{
+					case 300:
+						enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Normal));
+						break;
+
+					case 301:
+						AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Wall);
+						break;
+
+					default:
+						break;
+					}
 				}
 			}
 		}

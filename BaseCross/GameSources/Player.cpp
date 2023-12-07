@@ -119,7 +119,7 @@ namespace basecross
 		}
 
 		// ゴールステートなら
-		if(state == GameStage::Goal)
+		if(state == GameStage::Goal || state == GameStage::DeathDrop)
 		{
 			vector<Vec3> point;
 			m_aligment.lock()->UpdateEffect(point);
@@ -209,6 +209,8 @@ namespace basecross
 		if (other->FindTag(L"Death"))
 		{
 			// 死亡時の設定をする
+			m_shieldCount = 0;
+			StartSE(L"SHIELD_D_SE", 1.5f);
 			DeathSetup();
 		}
 	}
@@ -1106,7 +1108,13 @@ namespace basecross
 		if (rabbit)
 		{
 			// シールドが二枚以上あるなら
-			if (m_shieldCount >= 2 || m_cannonFire)
+			if (m_cannonFire)
+			{
+				// ウサギのステートを死亡に設定
+				rabbit->SetState(Rabbit::Death);
+				return;
+			}
+			if (m_shieldCount >= 2)
 			{
 				// ウサギのステートを死亡に設定
 				rabbit->SetState(Rabbit::Death);
