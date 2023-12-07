@@ -8,6 +8,12 @@ namespace basecross
 	{
 	public:
 
+		enum eType
+		{
+			Normal,
+			Wall,
+		};
+
 		enum eState
 		{
 			Patrol,
@@ -19,6 +25,7 @@ namespace basecross
 
 	private:
 
+		eType m_type;
 		eState m_state;
 		const Vec2 m_jumpVelo;
 		Vec3 m_currentTargetPos;
@@ -36,9 +43,10 @@ namespace basecross
 	public:
 
 		Rabbit(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, float scale
+			const Vec2& position, float scale, eType type
 		) :
 			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f), Vec3(scale), 3.0f, 5.0f, 15.0f),
+			m_type(type),
 			m_jumpVelo(1.0f, -2.0f)
 		{
 			m_state = Patrol;

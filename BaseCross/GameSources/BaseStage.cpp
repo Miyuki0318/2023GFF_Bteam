@@ -121,22 +121,24 @@ namespace basecross
 
 	void BaseStage::CreateEnemy(const string& fileName)
 	{
-		const auto& data = CSVLoader::LoadFile(fileName);
+		m_csvData = CSVLoader::LoadFile(fileName);
 		const float under = -97.5f;
 		const float left = -49.0f;
 		const float scale = 1.0f;
 
 		vector<weak_ptr<Enemy>> enemyVec;
 
-		for (size_t i = 0; i < data.size(); i++)
+		for (size_t i = 0; i < m_csvData.size(); i++)
 		{
-			for (size_t j = 0; j < data.at(i).size(); j++)
+			for (size_t j = 0; j < m_csvData.at(i).size(); j++)
 			{
-				if (data.at(i).at(j) == "") continue;
+				if (m_csvData.at(i).at(j) == "") continue;
 
-				if (data.at(i).at(j) == "300")
+				const int& num = stoi(m_csvData.at(i).at(j));
+				if (GetBetween(num, 300, 301))
 				{
-					enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((data.size() - i) * scale)), scale));
+					const auto& type = static_cast<Rabbit::eType>(atoi(&m_csvData.at(i).at(j).at(2)));
+					enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, type));
 				}
 			}
 		}

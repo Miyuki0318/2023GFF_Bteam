@@ -24,42 +24,52 @@ namespace basecross
 
 	void Rabbit::OnUpdate()
 	{
-		// ステージとステージステートの取得
-		const auto& stage = GetTypeStage<GameStage>();
-		const auto& state = stage->GetStageState();
-
-		if (Utility::GetBetween(state, GameStage::GameNow, GameStage::Death))
+		if (m_type == Normal)
 		{
-			MoveRabbit();
-			MoveReduction();
-			m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
+			// ステージとステージステートの取得
+			const auto& stage = GetTypeStage<GameStage>();
+			const auto& state = stage->GetStageState();
 
-			bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_isAir && !m_isDeath;
-			if (jumpPossible)
+			if (Utility::GetBetween(state, GameStage::GameNow, GameStage::Death))
 			{
-				m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
-				switch (m_state)
+				MoveRabbit();
+				MoveReduction();
+				m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
+
+				bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_isAir && !m_isDeath;
+				if (jumpPossible)
 				{
-				case Patrol:
-					PatrolState();
-					break;
+					m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
+					switch (m_state)
+					{
+					case Patrol:
+						PatrolState();
+						break;
 
-				case Seek:
-					SeekState();
-					break;
+					case Seek:
+						SeekState();
+						break;
 
-				case LostSight:
-					LostState();
-					break;
+					case LostSight:
+						LostState();
+						break;
 
-				default:
-					break;
+					default:
+						break;
+					}
+				}
+				if (m_state == CannonJump && !m_isDeath)
+				{
+					CannonState();
+				}
+				if (m_state == Death)
+				{
+					DeathState();
 				}
 			}
-			if (m_state == CannonJump && !m_isDeath)
-			{
-				CannonState();
-			}
+		}
+		if (m_type == Wall)
+		{
 			if (m_state == Death)
 			{
 				DeathState();
