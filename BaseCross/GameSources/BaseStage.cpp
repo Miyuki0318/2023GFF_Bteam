@@ -269,6 +269,7 @@ namespace basecross
 				{
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
 					update = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, angle);
+					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 0.9f, true);
 				}
 
 				// ベルトコンベア
@@ -297,7 +298,6 @@ namespace basecross
 					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
 					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), blowerScale, angle, 5.0f);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), update->GetRotation(), blowerScale, true);
 				}
 
 				if (block)

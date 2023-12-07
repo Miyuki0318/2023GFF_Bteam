@@ -139,6 +139,7 @@ namespace basecross
 		Debug::Log(L"スモールリング : ", m_sRingCount);
 		Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
+		Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
 	}
 
 	// Aボタンを離した時
@@ -203,7 +204,7 @@ namespace basecross
 		}
 		if (other->FindTag(L"Rabbit"))
 		{
-			RabbitEnter(other);
+			RabbitEnter(other, hitPoint);
 		}
 		if (other->FindTag(L"Death"))
 		{
@@ -311,6 +312,9 @@ namespace basecross
 			if (m_velocity.y > 0.25f) m_velocity.y -= DELTA_TIME;
 			else m_velocity.y = 0.25f;
 		}
+
+		// 大砲発射後で、加速度が最大加速度以下になったら　
+		if (m_cannonFire && m_acsel <= m_maxAcsel) m_cannonFire = false;
 	}
 
 	void Player::RecoveryAirShock()
@@ -880,14 +884,15 @@ namespace basecross
 
 		// パラメータの取得
 		Vec3 spikePos = spike->GetPosition();
+		Vec3 scale = spike->GetScale();
 		Vec3 helfScale = spike->GetScale() / 2.0f;
 
 		// 衝突方向真偽
 		bool upper, under, left, right;
-		upper = CollHitUpper(hitPos, spikePos, helfScale);
-		under = CollHitUnder(hitPos, spikePos, helfScale);
-		left = CollHitLeft(hitPos, spikePos, helfScale);
-		right = CollHitRight(hitPos, spikePos, helfScale);
+		upper = CollHitUpper(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(0.0f, scale.y, 0.0f)));
+		under = CollHitUnder(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(0.0f, -scale.y, 0.0f)));
+		left = CollHitLeft(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(-scale.x, 0.0f, 0.0f)));
+		right = CollHitRight(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(scale.x, 0.0f, 0.0f)));
 
 		// スパイクの方向に応じて処理
 		const auto& angle = spike->GetAngle();
@@ -1094,18 +1099,36 @@ namespace basecross
 	}
 
 	// 敵のウサギと衝突した時
-	void Player::RabbitEnter(const shared_ptr<GameObject>& other)
-	{
-		// シールドが二枚以上あるなら
-		if (m_shieldCount >= 2)
+	void Player::RabbitEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)
+	{			
+		// ウサギ型にキャスト
+		const auto& rabbit = dynamic_pointer_cast<Rabbit>(other);
+		if (rabbit)
 		{
-			// ウサギ型にキャストし、ウサギのステートを死亡に設定
-			const auto& rabbit = dynamic_pointer_cast<Rabbit>(other);
-			if (rabbit) rabbit->SetState(Rabbit::Death);
-		}
+			// シールドが二枚以上あるなら
+			if (m_shieldCount >= 2 || m_cannonFire)
+			{
+				// ウサギのステートを死亡に設定
+				rabbit->SetState(Rabbit::Death);
+				m_shieldCount--;
+			}
+			else
+			{
+				// 衝突方向真偽
+				Vec3 helfScale = rabbit->GetScale() / 2.0f;
 
-		// ダメージ処理を送る
-		DamageKnockBack(m_deffVelo);
+				if (CollHitLeft(hitPos, hitPos, helfScale))
+				{
+					DamageKnockBack(Vec2(1.5f, -0.5f));
+					return;
+				}
+				if (CollHitRight(hitPos, hitPos, helfScale))
+				{
+					DamageKnockBack(Vec2(-1.5f, -0.5f));
+					return;
+				}
+			}
+		}
 	}
 
 	// ダメージノックバック

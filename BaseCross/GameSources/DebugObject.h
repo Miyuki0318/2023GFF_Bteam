@@ -112,7 +112,6 @@ namespace basecross
 			audioPtr->Start(seKey, 0, volume);
 		}
 
-		// 衝突したブロックの上にブロックがあるかの検証
 		virtual bool BlockCheck(const Vec3& checkPos)
 		{
 			const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Active")->GetGroupVector();

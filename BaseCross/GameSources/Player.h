@@ -322,7 +322,7 @@ namespace basecross
 		@brief 敵のウサギに衝突した時
 		@param ウサギのポインタ
 		*/
-		void RabbitEnter(const shared_ptr<GameObject>& rabbit);
+		void RabbitEnter(const shared_ptr<GameObject>& rabbit, const Vec3& hitPos);
 
 		/*!
 		@brief リングに衝突した時

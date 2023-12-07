@@ -38,22 +38,22 @@ namespace basecross
 		switch (m_angle)
 		{
 		case Gimmick::Up:
-			left = Vec3(pos.x - scale.x, pos.y + helf.y, 0.0f);
+			left = Vec3(pos.x - scale.x, pos.y - helf.y, 0.0f);
 			right = Vec3(pos.x + scale.x, pos.y + helf.y + m_length, 0.0f);
 			break;
 		
 		case Gimmick::Down:
 			left = Vec3(pos.x - scale.x, pos.y - helf.y - m_length, 0.0f);
-			right = Vec3(pos.x + scale.x, pos.y - helf.y, 0.0f);
+			right = Vec3(pos.x + scale.x, pos.y + helf.y, 0.0f);
 			break;
 		
 		case Gimmick::Left:
 			left = Vec3(pos.x - helf.x - m_length, pos.y - scale.y, 0.0f);
-			right = Vec3(pos.x - helf.x, pos.y + scale.y, 0.0f);
+			right = Vec3(pos.x + helf.x, pos.y + scale.y, 0.0f);
 			break;
 		
 		case Gimmick::Right:
-			left = Vec3(pos.x + helf.x, pos.y - scale.y, 0.0f);
+			left = Vec3(pos.x - helf.x, pos.y - scale.y, 0.0f);
 			right = Vec3(pos.x + helf.x + m_length, pos.y + scale.y, 0.0f);
 			break;
 
