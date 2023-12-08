@@ -14,7 +14,7 @@ namespace basecross
 	void Player::OnCreate()
 	{
 		// 腕モデル用オブジェクトの生成
-		m_arm = GetStage()->AddGameObject<DebugObject>();
+		m_arm = GetStage()->AddGameObject<TemplateObject>();
 
 		// トランスフォームの設定
 		// 胴のトランスフォーム
@@ -46,9 +46,9 @@ namespace basecross
 		m_ptrColl->SetDrawActive(false);
 
 		// エフェクトオブジェクトの生成
-		m_airEffect = GetStage()->AddGameObject<AirJetEffect>(GetThis<DebugObject>());
-		m_shieldEffect = GetStage()->AddGameObject<ShieldEffect>(GetThis<DebugObject>());
-		m_aligment = GetStage()->AddGameObject<ArrowEffect>(GetThis<DebugObject>());
+		m_airEffect = GetStage()->AddGameObject<AirJetEffect>(GetThis<TemplateObject>());
+		m_shieldEffect = GetStage()->AddGameObject<ShieldEffect>(GetThis<TemplateObject>());
+		m_aligment = GetStage()->AddGameObject<ArrowEffect>(GetThis<TemplateObject>());
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
@@ -56,8 +56,7 @@ namespace basecross
 	void Player::OnUpdate()
 	{
 		// ステージとステージステートの取得
-		const auto& stage = GetTypeStage<GameStage>();
-		const auto& state = stage->GetStageState();
+		const auto& state = GetStageState<GameStage>();
 
 		// 開始時の動きからゲーム中の範囲なら
 		if (GetBetween(state, GameStage::StartMove, GameStage::DeathDrop))

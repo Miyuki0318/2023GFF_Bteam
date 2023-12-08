@@ -1,10 +1,10 @@
 #pragma once
 #include "stdafx.h"
-#include "DebugObject.h"
+#include "TemplateObject.h"
 
 namespace basecross
 {
-	class CubeObject : public DebugObject
+	class CubeObject : public TemplateObject
 	{
 	public:
 
@@ -31,7 +31,7 @@ namespace basecross
 	public:
 
 		CubeObject(const shared_ptr<Stage>& stagePtr) :
-			DebugObject(stagePtr),
+			TemplateObject(stagePtr),
 			m_collRange(2.0f),
 			m_collActive(true)
 		{
@@ -50,7 +50,7 @@ namespace basecross
 		CubeObject(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position, const Vec3& rotation, const Vec3& scale, const bool active
 		) :
-			DebugObject(stagePtr, position, rotation, scale),
+			TemplateObject(stagePtr, position, rotation, scale),
 			m_collRange(2.0f),
 			m_collActive(active)
 		{
@@ -69,7 +69,7 @@ namespace basecross
 		CubeObject(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position, const Vec3& scale, const eType& type, const bool active
 		) :
-			DebugObject(stagePtr, position, Vec3(0.0f), scale),
+			TemplateObject(stagePtr, position, Vec3(0.0f), scale),
 			m_type(type),
 			m_collRange(2.0f),
 			m_collActive(active)

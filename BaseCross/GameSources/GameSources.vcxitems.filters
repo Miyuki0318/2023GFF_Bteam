@@ -7,10 +7,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Input.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugSphere.h">
-      <Filter>DebugObject</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugObject.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h">
       <Filter>DebugObject</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h">
@@ -88,8 +85,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)BaseStage.h">
       <Filter>Stage\BaseStage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)StagingPlayer.h">
-      <Filter>Player\Staging</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TitlePlayer.h">
+      <Filter>Player\Title</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h">
       <Filter>Player\Player</Filter>
@@ -100,6 +97,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h">
       <Filter>Stage\NextStage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)NextPlayer.h">
+      <Filter>Player\Next</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -107,9 +107,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)DebugSphere.cpp">
-      <Filter>DebugObject</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp">
       <Filter>DebugObject</Filter>
@@ -183,11 +180,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp">
       <Filter>Player\Player</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StagingPlayer.cpp">
-      <Filter>Player\Staging</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TitlePlayer.cpp">
+      <Filter>Player\Title</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Rabbit.cpp">
       <Filter>Enemy\Rabbit</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)NextStage.cpp">
+      <Filter>Stage\NextStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)NextPlayer.cpp">
+      <Filter>Player\Next</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,9 +269,6 @@
     <Filter Include="Stage\BaseStage">
       <UniqueIdentifier>{773332b0-7863-4867-a20d-17618d677504}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player\Staging">
-      <UniqueIdentifier>{3b454494-64ac-4efe-bb9c-15f6fba63afa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Player\Player">
       <UniqueIdentifier>{d5049f5c-e3fc-4b20-b70b-1c4cb6206b61}</UniqueIdentifier>
     </Filter>
@@ -277,6 +277,12 @@
     </Filter>
     <Filter Include="Stage\NextStage">
       <UniqueIdentifier>{16db351c-ac8c-4184-8e6b-71fae84c3c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Title">
+      <UniqueIdentifier>{3b454494-64ac-4efe-bb9c-15f6fba63afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\Next">
+      <UniqueIdentifier>{ca68a5a1-3cb6-4d6f-a9dc-2766a72dfe01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

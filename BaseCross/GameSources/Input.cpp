@@ -65,4 +65,18 @@ namespace Input
 	{
 		return GetLStickValue().length() > 0.0f;
 	}
+
+	bool IsInputLStickX()
+	{
+		Vec2 stick = GetLStickValue();
+		stick.y = 0.0f;
+		return stick.length() > 0.0f;
+	}
+
+	bool IsInputLStickY()
+	{
+		Vec2 stick = GetLStickValue();
+		stick.x = 0.0f;
+		return stick.length() > 0.0f;
+	}
 }

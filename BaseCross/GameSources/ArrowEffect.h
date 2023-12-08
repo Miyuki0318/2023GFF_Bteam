@@ -1,19 +1,19 @@
 #pragma once
 #include "stdafx.h"
-#include "DebugObject.h"
+#include "TemplateObject.h"
 
 namespace basecross
 {
-	class ArrowEffect : public DebugObject
+	class ArrowEffect : public TemplateObject
 	{
 		VertexData vertex;
-		weak_ptr<DebugObject> m_ownerObject;
+		weak_ptr<TemplateObject> m_ownerObject;
 		shared_ptr<PCTStaticDraw> m_ptrDraw;
 
 	public:
 
-		ArrowEffect(const shared_ptr<Stage>& stagePtr, const shared_ptr<DebugObject>& ownerPtr) :
-			DebugObject(stagePtr),
+		ArrowEffect(const shared_ptr<Stage>& stagePtr, const shared_ptr<TemplateObject>& ownerPtr) :
+			TemplateObject(stagePtr),
 			m_ownerObject(ownerPtr)
 		{
 		}

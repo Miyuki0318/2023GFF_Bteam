@@ -3,7 +3,7 @@
 
 namespace basecross
 {
-	class DebugObject : public GameObject
+	class TemplateObject : public GameObject
 	{
 	protected:
 
@@ -13,7 +13,7 @@ namespace basecross
 
 	public:
 
-		DebugObject(const shared_ptr<Stage>& stagePtr
+		TemplateObject(const shared_ptr<Stage>& stagePtr
 		) :
 			GameObject(stagePtr)
 		{
@@ -22,7 +22,7 @@ namespace basecross
 			m_scale.zero();
 		}
 
-		DebugObject(const shared_ptr<Stage>& stagePtr,
+		TemplateObject(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position, const Vec3& rotation, const Vec3& scale
 		) :
 			GameObject(stagePtr),
@@ -32,7 +32,19 @@ namespace basecross
 		{
 		}
 
-		virtual ~DebugObject() {}
+		virtual ~TemplateObject() {}
+
+		template <typename T>
+		const typename T::eStageState& GetStageState()
+		{
+			return GetTypeStage<T>()->GetStageState();
+		}
+
+		template <typename T>
+		void SetStageState(const typename T::eStageState& state)
+		{
+			return GetTypeStage<T>()->SetStageState(state);
+		}
 
 		virtual void SetPosition(const Vec3& position)
 		{
@@ -122,7 +134,7 @@ namespace basecross
 			{
 				if (!ptr.lock()) continue;
 
-				const auto& block = dynamic_pointer_cast<DebugObject>(ptr.lock());
+				const auto& block = dynamic_pointer_cast<TemplateObject>(ptr.lock());
 				if (!block) continue;
 
 				Vec3 pos = block->GetPosition();

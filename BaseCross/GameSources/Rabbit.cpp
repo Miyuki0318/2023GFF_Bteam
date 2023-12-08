@@ -17,7 +17,7 @@ namespace basecross
 		m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
 
 		auto ptrColl = AddComponent<CollisionObb>();
-		m_targetObj = GetStage()->GetSharedGameObject<DebugObject>(L"Player");
+		m_targetObj = GetStage()->GetSharedGameObject<TemplateObject>(L"Player");
 
 		AddTag(L"Rabbit");
 	}

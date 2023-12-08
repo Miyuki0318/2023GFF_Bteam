@@ -18,7 +18,6 @@ namespace basecross
 		m_ptrDraw->SetEmissive(COL_WHITE);
 
 		m_ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
-		m_ptrColl->SetDrawActive(true);
 		m_ptrColl->SetAfterCollision(AfterCollision::None);
 
 		m_targetObj.clear();

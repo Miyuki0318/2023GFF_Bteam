@@ -3,13 +3,13 @@
 
 namespace basecross
 {
-	void StagingPlayer::OnUpdate()
+	void TitlePlayer::OnUpdate()
 	{
 		// ステージステートの取得
-		const auto& stageState = GetTypeStage<TitleStage>()->GetStageState();
+		const auto& state = GetStageState<TitleStage>();
 
 		// ステージステートがスタートムーブ以上なら
-		if (stageState >= TitleStage::StartMove)
+		if (state >= TitleStage::StartMove)
 		{
 			// 大砲待機時
 			if (m_cannonStandby)
@@ -18,7 +18,7 @@ namespace basecross
 			}
 
 			// モードセレクト時なら
-			if (stageState == TitleStage::ModeSelect)
+			if (state == TitleStage::ModeSelect)
 			{
 				// Aボタン入力有無での関数分岐
 				if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
@@ -54,7 +54,7 @@ namespace basecross
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
 
-	void StagingPlayer::OnReleaseA()
+	void TitlePlayer::OnReleaseA()
 	{
 		Vec2 stick = Input::GetLStickValue().round(1);
 
@@ -78,11 +78,11 @@ namespace basecross
 			StartSE(L"AIRSHOCK_SE", 0.5f);
 
 			// ステージステートを大砲待機に設定
-			GetTypeStage<TitleStage>()->SetStageState(TitleStage::CannonStanby);
+			SetStageState<TitleStage>(TitleStage::CannonStanby);
 		}
 	}
 
-	void StagingPlayer::RotateAligment()
+	void TitlePlayer::RotateAligment()
 	{
 		Vec2 stick = Input::GetLStickValue().round(1);
 		Vec2 velo = m_deffVelo / 10.0f;
@@ -105,11 +105,11 @@ namespace basecross
 		m_aligment.lock()->UpdateEffect(points);
 
 		bool input = Input::GetLStickValue().length() > 0.0f;
-		bool state = GetTypeStage<TitleStage>()->GetStageState() == TitleStage::ModeSelect;
+		bool state = GetStageState<TitleStage>() == TitleStage::ModeSelect;
 		m_aligment.lock()->SetDrawActive(input && state && m_firePossible);
 	}
 
-	void StagingPlayer::CannonStandby(float acsel)
+	void TitlePlayer::CannonStandby(float acsel)
 	{
 		if (m_activeCannon.lock())
 		{

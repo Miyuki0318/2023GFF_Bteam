@@ -1,20 +1,12 @@
-/*!
-@file GameStage.cpp
-@brief ゲームステージ実体
-*/
-
 #include "stdafx.h"
 #include "Project.h"
 
 using namespace Utility;
-namespace basecross 
+namespace basecross
 {
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス実体
-	//--------------------------------------------------------------------------------------
-
-	void GameStage::CreateResourses()
+	void NextStage::CreateResourses()
 	{
+		// 継承元の関数
 		BaseStage::CreateResourses();
 
 		// アプリケーションの取得
@@ -26,18 +18,22 @@ namespace basecross
 		// テクスチャディレクトリパスの取得
 		const wstring texturePath = mediaPath + L"Textures/";
 
-		// サウンドディレクトリパスの取得
+		// テクスチャの取得
+		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
 
-		// ゲーム用BGM
-		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
+		// サウンドの取得
+		// ネクスト画面BGMの読み込み
+		app->RegisterWav(L"TITLE_BGM", BGMPath + L"TitleBGM");
 	}
 
-	void GameStage::CreateViewLight() 
+	void NextStage::CreateViewLight()
 	{
 		// ビューのカメラの設定
-		auto ptrCamera = ObjectFactory::Create<GameCamera>();
+		auto ptrCamera = ObjectFactory::Create<Camera>();
+		ptrCamera->SetEye(Vec3(0.0f, 0.0f, -33.0f));
+		ptrCamera->SetAt(Vec3(0.0f, 0.0f, 0.0f));
 		m_gameView = CreateView<SingleView>();
 		m_gameView->SetCamera(ptrCamera);
 
@@ -46,25 +42,26 @@ namespace basecross
 		ptrMultiLight->SetDefaultLighting();
 	}
 
-	void GameStage::CreateBackGround()
+	// 背景の生成
+	void NextStage::CreateBackGround()
 	{
-		// 背景の生成
+		// オブジェクトの生成と配置
 		m_backObj = AddGameObject<TemplateObject>();
-		float x, y, loopX, loopY;
-		loopX = 16;
-		loopY = 12;
-		x = 80.0f * loopX;
-		y = 45.0f * loopY;
+		float loop, x, y;
+		loop = 2.0f;
+		x = 80.0f * loop;
+		y = 45.0f * loop;
 		const auto& backObj = m_backObj.lock();
-		backObj->SetPosition(Vec3(500.0f, 135.0f, 50.0f));
+		backObj->SetPosition(Vec3(0.0f, 0.0f, 50.0f));
 		backObj->SetScale(Vec3(x, y, 5.0f));
 		backObj->SetAlphaActive(true);
 
+		// メッシュの生成と設定
 		VertexData vertex;
 		SimpleVerticesIndices(vertex);
-		vertex.vertices.at(1).textureCoordinate = Vec2(loopY, 0.0f);
-		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, loopX);
-		vertex.vertices.at(3).textureCoordinate = Vec2(loopY, loopX);
+		vertex.vertices.at(1).textureCoordinate = Vec2(loop, 0.0f);
+		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, loop);
+		vertex.vertices.at(3).textureCoordinate = Vec2(loop, loop);
 		auto backDraw = backObj->AddComponent<PCTStaticDraw>();
 		backDraw->SetOriginalMeshUse(true);
 		backDraw->CreateOriginalMesh(vertex);
@@ -72,20 +69,54 @@ namespace basecross
 		backDraw->SetSamplerState(SamplerState::LinearWrap);
 	}
 
-	void GameStage::CreatePlayer()
+	void NextStage::CreatePlayer()
 	{
-		auto player = AddGameObject<Player>(Vec3(-48.5f, -70.0f, 0.0f));
-		SetSharedGameObject(L"Player", player);
+		m_player = AddGameObject<NextPlayer>(Vec3(0.0f));
 	}
 
-	void GameStage::CreateSprites()
+	void NextStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
 	}
 
-	void GameStage::DeathFadeState()
+	void NextStage::SlideBackGround()
+	{
+		const auto& backObj = m_backObj.lock();
+		auto backDraw = backObj->GetComponent<PCTStaticDraw>();
+		auto& vertices = backDraw->GetMeshResource()->GetBackupVerteces<VertexPositionColorTexture>();
+		for (auto& v : vertices) v.textureCoordinate += Vec2(1.0f, 0.0f) * DELTA_TIME;
+		backDraw->UpdateVertices(vertices);
+	}
+
+	void NextStage::SelectState()
+	{
+		const bool inputLStick = Input::IsInputLStickX();
+
+		// スティック入力が0より小さくて、前フレームの入力が0.0以上の時(上から下への入力)
+		if (inputLStick && !m_currentStickX)
+		{
+			m_totalTime = 0.0f;
+			switch (m_select)
+			{
+			case NextStage::Next:
+				m_select = Back;
+				break;
+
+			case NextStage::Back:
+				m_select = Next;
+				break;
+
+			default:
+				break;
+			}
+
+			m_currentStickX = inputLStick;
+		}
+	}
+
+	void NextStage::BackFadeState()
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
@@ -102,27 +133,30 @@ namespace basecross
 			m_metalRight.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.2f));
 			m_stageState = FadeOut;
 		}
-
 	}
 
-	void GameStage::FadeOutState(float fadeTime)
+	void NextStage::FadeOutState()
 	{
 		const auto& scene = App::GetApp()->GetScene<Scene>();
-		if (m_fade.lock()->FadeInColor(fadeTime))
+		if (m_fade.lock()->FadeInColor(1.0f))
 		{
-			if (m_isClear)
+			switch (m_select)
 			{
-				scene->SetCurrentStage(m_stagePath);
-				PostEvent(0.0f, GetThis<ObjectInterface>(), scene, L"NextStage");
-			}
-			else
-			{
+			case NextStage::Next:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), scene, L"GameStage");
+				break;
+
+			case NextStage::Back:
 				PostEvent(0.0f, GetThis<ObjectInterface>(), scene, L"TitleStage");
+				break;
+
+			default:
+				break;
 			}
 		}
 	}
 
-	void GameStage::OnCreate() 
+	void NextStage::OnCreate()
 	{
 		try
 		{
@@ -141,51 +175,42 @@ namespace basecross
 			CreateBackGround();
 
 			// BGMの再生
-			CreateBGM(L"GAME_BGM", 0.3f);
+			CreateBGM(L"TITLE_BGM", 0.25f);
 
 			// プレイヤーの作成
 			CreatePlayer();
 
 			// スプライトの作成
 			CreateSprites();
-
-			// ステージ
-			CreateEnemy(m_stagePath);
-			CreateStage(m_stagePath);
-			CreateInstanceBlock(m_stagePath);
 		}
-		catch (...) 
+		catch (...)
 		{
 			throw;
 		}
 	}
 
-	void GameStage::OnUpdate()
+	void NextStage::OnUpdate()
 	{
 		try
 		{
-			BaseStage::OnUpdate();
+			SlideBackGround();
 
 			switch (m_stageState)
 			{
-			case GameStage::FadeIn:
-				if (m_fade.lock()->FadeOutColor(1.0f)) m_stageState = StartMove;
+			case NextStage::FadeIn:
+				if (m_fade.lock()->FadeOutColor(2.0f)) m_stageState = Select;
 				break;
 
-			case GameStage::Goal:
-				m_isClear = true;
-				FadeOutState(3.75f);
+			case NextStage::Select:
+				SelectState();
 				break;
 
-			case GameStage::Death:
-				DeathFadeState();
+			case NextStage::BackFade:
+				BackFadeState();
 				break;
 
-			case GameStage::Continue:
-				break;
-
-			case GameStage::FadeOut:
-				FadeOutState(3.0f);
+			case NextStage::FadeOut:
+				FadeOutState();
 				break;
 
 			default:

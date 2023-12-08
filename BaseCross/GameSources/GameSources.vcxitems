@@ -26,13 +26,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugObject.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugSphere.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gimmick.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Input.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NextPlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Number.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h" />
@@ -45,7 +45,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StagingPlayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TitlePlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
   </ItemGroup>
   <ItemGroup>
@@ -61,11 +61,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)DebugSphere.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameCamera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gimmick.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NextPlayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NextStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
@@ -75,7 +76,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StagingPlayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TitlePlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>

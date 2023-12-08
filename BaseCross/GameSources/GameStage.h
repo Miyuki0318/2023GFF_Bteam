@@ -43,6 +43,9 @@ namespace basecross
 		// ステージパス
 		string m_stagePath;
 
+		// クリアしたかの真偽
+		bool m_isClear;
+
 		/*!
 		@brief リソース読み込み関数
 		*/
@@ -68,8 +71,15 @@ namespace basecross
 		*/
 		void CreateSprites();
 
+		/*!
+		@brief 死亡時のフェードステート
+		*/
 		void DeathFadeState();
 
+		/*!
+		@brief フェードアウトステート
+		@param フェード時間
+		*/
 		void FadeOutState(float fadeTime);
 
 	public:
@@ -77,10 +87,11 @@ namespace basecross
 		/*!
 		@brief コンストラクタ
 		*/
-		GameStage() :BaseStage() 
+		GameStage(const string& stageName) :BaseStage() 
 		{
 			m_stageState = FadeIn;
-			m_stagePath = "Tutorial";
+			m_stagePath = stageName;
+			m_isClear = false;
 		}
 
 		/*!

@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Sprite.h"
-#include "DebugObject.h"
+#include "TemplateObject.h"
 
 namespace basecross
 {
@@ -52,7 +52,7 @@ namespace basecross
 		vector<SE> m_seList;
 
 		// 背景オブジェクト
-		weak_ptr<DebugObject> m_backObj;
+		weak_ptr<TemplateObject> m_backObj;
 
 		/*!
 		@brief リソース読み込み関数

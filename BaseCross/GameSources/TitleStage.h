@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "BaseStage.h"
-#include "DebugObject.h"
+#include "TemplateObject.h"
 
 namespace basecross
 {
@@ -27,7 +27,7 @@ namespace basecross
 		eStageState m_stageState;
 
 		// プレイヤー
-		weak_ptr<DebugObject> m_player;
+		weak_ptr<TemplateObject> m_player;
 
 		// スプライト
 		weak_ptr<Sprite> m_fade;

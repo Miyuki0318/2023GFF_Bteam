@@ -524,7 +524,9 @@ namespace basecross
 				if (!gimmickObj) continue;
 
 				float length = (gimmickObj->GetPosition() - playerPos).length();
-				gimmickObj->SetUpdateActive(length <= range / 2.0f);
+
+				if (gimmickObj->FindTag(L"Ring")) gimmickObj->SetUpdateActive(length <= range / 1.5f);
+				else gimmickObj->SetUpdateActive(length <= range / 2.0f);
 				gimmickObj->SetDrawActive(length <= range);
 			}
 		}

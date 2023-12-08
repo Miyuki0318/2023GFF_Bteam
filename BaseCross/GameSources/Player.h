@@ -5,14 +5,14 @@
 
 #pragma once
 #include "stdafx.h"
-#include "DebugObject.h"
+#include "TemplateObject.h"
 #include "ArrowEffect.h"
 #include "AirJetEffect.h"
 #include "Cannon.h"
 
 namespace basecross
 {
-	class Player : public DebugObject
+	class Player : public TemplateObject
 	{
 	protected:
 
@@ -26,7 +26,7 @@ namespace basecross
 		Mat4x4 m_bodyMat;		// 胴のモデルとトランスフォームの差分行列
 		Mat4x4 m_armMat;		// 腕のモデルとトランスフォームの差分行列
 
-		weak_ptr<DebugObject> m_arm;			// 腕モデル用オブジェクト
+		weak_ptr<TemplateObject> m_arm;			// 腕モデル用オブジェクト
 		weak_ptr<AirJetEffect> m_airEffect;		// エアショックエフェクト
 		weak_ptr<ShieldEffect> m_shieldEffect;	// シールドエフェクト
 		weak_ptr<Cannon> m_activeCannon;		// 大砲ポインタ一時保持用
@@ -67,7 +67,7 @@ namespace basecross
 		Player(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position
 		) :
-			DebugObject(stagePtr),
+			TemplateObject(stagePtr),
 			m_jumpLimit(2),
 			m_shieldLimit(3),
 			m_speed(4.0f),
@@ -121,7 +121,7 @@ namespace basecross
 		/*!
 		@brief 生成時に一度だけ呼び出される関数
 		*/
-		void OnCreate() override;
+		virtual void OnCreate() override;
 
 		/*!
 		@brief 毎フレーム度に呼び出される関数
@@ -169,7 +169,7 @@ namespace basecross
 		/*!
 		@brief プレイヤーの回転関数
 		*/
-		void RotatePlayer();
+		virtual void RotatePlayer();
 
 		/*!
 		@brief エアショックの軌道描画関数
@@ -195,12 +195,12 @@ namespace basecross
 		/*!
 		@brief 死亡時の設定関数
 		*/
-		void DeathSetup();
+		virtual void DeathSetup();
 
 		/*!
 		@brief 死亡時の落下関数
 		*/
-		void DeathDrop();
+		virtual void DeathDrop();
 
 		/*!
 		@brief 無敵時間経過

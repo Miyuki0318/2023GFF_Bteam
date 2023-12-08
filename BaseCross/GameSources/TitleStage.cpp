@@ -52,7 +52,7 @@ namespace basecross
 	void TitleStage::CreateBackGround()
 	{
 		// オブジェクトの生成と配置
-		m_backObj = AddGameObject<DebugObject>();
+		m_backObj = AddGameObject<TemplateObject>();
 		float loop, x, y;
 		loop = 5.0f;
 		x = 80.0f * loop;
@@ -77,7 +77,7 @@ namespace basecross
 
 	void TitleStage::CreatePlayer()
 	{
-		m_player = AddGameObject<StagingPlayer>(Vec3(-50.0f, -45.0f, 0.0f));
+		m_player = AddGameObject<TitlePlayer>(Vec3(-50.0f, -45.0f, 0.0f));
 		SetSharedGameObject(L"Player", m_player.lock());
 	}
 
@@ -183,15 +183,6 @@ namespace basecross
 	{
 		try
 		{
-			const auto& backObj = m_backObj.lock();
-			auto backDraw = backObj->GetComponent<PCTStaticDraw>();
-			auto& vertices = backDraw->GetMeshResource()->GetBackupVerteces<VertexPositionColorTexture>();
-			for (auto& v : vertices)
-			{
-				v.textureCoordinate += Vec2(1.0f, 0.0f) * DELTA_TIME;
-			}
-			backDraw->UpdateVertices(vertices);
-
 			switch (m_stageState)
 			{
 			case TitleStage::FadeIn:

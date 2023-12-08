@@ -5,13 +5,14 @@ namespace basecross
 {
 	void ShieldEffect::OnCreate()
 	{
-		DebugSphere::OnCreate();
-		m_ptrDraw = GetComponent<PNTStaticDraw>();
+		m_ptrDraw = AddComponent<PNTStaticDraw>();
+		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
 		m_ptrDraw->SetTextureResource(L"SHIELD_TX");
 		m_ptrDraw->SetDiffuse(Col4(0.5f, 1.0f, 1.0f, 0.75f));
 
-		m_outLine = GetStage()->AddGameObject<ShieldOutLine>(GetThis<DebugSphere>());
+		m_outLine = GetStage()->AddGameObject<ShieldOutLine>(GetThis<TemplateObject>());
 
+		SetAlphaActive(true);
 		SetDrawLayer(2);
 	}
 

@@ -18,4 +18,8 @@ namespace Input
 	Vec2 GetLStickValue();
 
 	bool IsInputLStick();
+
+	bool IsInputLStickX();
+
+	bool IsInputLStickY();
 }

@@ -4,13 +4,13 @@
 
 namespace basecross
 {
-	class Enemy : public DebugObject
+	class Enemy : public TemplateObject
 	{
 	protected:
 
 		Vec2 m_velocity;
 		Mat4x4 m_modelMat;
-		weak_ptr<DebugObject> m_targetObj;
+		weak_ptr<TemplateObject> m_targetObj;
 		shared_ptr<Transform> m_ptrTrans;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 
@@ -25,7 +25,7 @@ namespace basecross
 			const Vec3& position, const Vec3& rotation, 
 			const Vec3& scale, float speed, float acsel, float range
 		) :
-			DebugObject(stagePtr, position, rotation, scale),
+			TemplateObject(stagePtr, position, rotation, scale),
 			m_speed(speed),
 			m_maxAcsel(acsel),
 			m_range(range)

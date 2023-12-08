@@ -6,11 +6,11 @@ namespace basecross
 {
 	class AirJetEffect : public Billboard
 	{
-		weak_ptr<DebugObject> m_ownerObject;
+		weak_ptr<TemplateObject> m_ownerObject;
 
 	public:
 
-		AirJetEffect(const shared_ptr<Stage>& stagePtr, const shared_ptr<DebugObject>& ownerPtr) :
+		AirJetEffect(const shared_ptr<Stage>& stagePtr, const shared_ptr<TemplateObject>& ownerPtr) :
 			Billboard(stagePtr, L"EFFECT_TX", Vec2(0.0f), Vec3(0.0f)),
 			m_ownerObject(ownerPtr)
 		{
