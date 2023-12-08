@@ -30,7 +30,8 @@ namespace basecross
 	void Ring::OnUpdate()
 	{
 		const float& deltaTime = DELTA_TIME;
-		
+		const float size = m_ring == Big ? 7.5f : 1.5f;
+
 		Vec3 rot = GetRotation();
 		rot.y -= deltaTime * m_rotSpeed;
 		SetRotation(rot);
@@ -41,10 +42,9 @@ namespace basecross
 		{
 			m_totalTime += deltaTime;
 
-			float size = m_ring == Big ? 5.0f : 1.0f;
 			float ratio = m_totalTime / m_deleteTime;
 
-			SetScale(Utility::SinCurve(ratio * Utility::DegToRad(235.0f), -2.5f, size * 1.5f));
+			SetScale(Utility::SinCurve(ratio * Utility::DegToRad(235.0f), -2.5f, size));
 			m_ptrDraw->SetDiffuse(Utility::Lerp(COL_WHITE, COL_ALPHA, ratio));
 
 			if (m_deleteTime <= m_totalTime)
@@ -54,7 +54,7 @@ namespace basecross
 		}
 		else
 		{
-			CollisionPerformance(7.5f);
+			CollisionPerformance(size);
 		}
 	}
 }
