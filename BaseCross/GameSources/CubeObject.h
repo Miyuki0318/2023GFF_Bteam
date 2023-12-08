@@ -91,6 +91,8 @@ namespace basecross
 
 		void OnUpdate() override;
 
+		void CollisionPerformance(const float range);
+
 		const eType& GetAngleType() const
 		{
 			return m_type;

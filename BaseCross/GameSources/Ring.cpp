@@ -18,6 +18,7 @@ namespace basecross
 		m_ptrDraw->SetEmissive(COL_WHITE);
 
 		m_ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
+		m_ptrColl->SetDrawActive(true);
 		m_ptrColl->SetAfterCollision(AfterCollision::None);
 
 		m_targetObj.clear();
@@ -28,8 +29,6 @@ namespace basecross
 
 	void Ring::OnUpdate()
 	{
-		CubeObject::OnUpdate();
-
 		const float& deltaTime = DELTA_TIME;
 		
 		Vec3 rot = GetRotation();
@@ -52,6 +51,10 @@ namespace basecross
 			{
 				GetStage()->RemoveGameObject<GameObject>(GetThis<GameObject>());
 			}
+		}
+		else
+		{
+			CollisionPerformance(7.5f);
 		}
 	}
 }

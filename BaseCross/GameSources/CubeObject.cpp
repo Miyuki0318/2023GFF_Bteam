@@ -21,6 +21,12 @@ namespace basecross
 
 	void CubeObject::OnUpdate()
 	{
+		CollisionPerformance(m_collRange);
+	}
+
+
+	void CubeObject::CollisionPerformance(const float range)
+	{
 		if (m_collActive)
 		{
 			bool achieve = false;
@@ -32,7 +38,7 @@ namespace basecross
 					auto targetTrans = target->GetComponent<Transform>();
 					Vec3 targetPos = targetTrans->GetPosition();
 					float length = (targetPos - m_position).length();
-					achieve = (length <= m_collRange);
+					achieve = (length <= range);
 					if (achieve) break;
 				}
 			}
