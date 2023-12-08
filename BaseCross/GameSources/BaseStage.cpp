@@ -261,11 +261,11 @@ namespace basecross
 					break;
 
 				case 230:
-					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big);
+					update = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big);
 					break;
 
 				case 231:
-					gimmick = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small);
+					update = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small);
 					break;
 
 				case 400:

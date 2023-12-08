@@ -97,6 +97,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Rabbit.h">
       <Filter>Enemy\Rabbit</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h">
+      <Filter>Stage\NextStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -271,6 +274,9 @@
     </Filter>
     <Filter Include="Enemy\Rabbit">
       <UniqueIdentifier>{24fd7295-4dc4-4aec-b796-6d0e5e3a6128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage\NextStage">
+      <UniqueIdentifier>{16db351c-ac8c-4184-8e6b-71fae84c3c81}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

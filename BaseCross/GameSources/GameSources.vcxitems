@@ -33,6 +33,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gimmick.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Input.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Number.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Params.h" />

@@ -49,22 +49,23 @@ namespace basecross
 	void GameStage::CreateBackGround()
 	{
 		// îwåiÇÃê∂ê¨
-		auto ptrBack = AddGameObject<DebugObject>();
+		m_backObj = AddGameObject<DebugObject>();
 		float x, y, loopX, loopY;
 		loopX = 16;
 		loopY = 12;
 		x = 80.0f * loopX;
 		y = 45.0f * loopY;
-		ptrBack->SetPosition(Vec3(500.0f, 135.0f, 50.0f));
-		ptrBack->SetScale(Vec3(x, y, 5.0f));
-		ptrBack->SetAlphaActive(true);
+		const auto& backObj = m_backObj.lock();
+		backObj->SetPosition(Vec3(500.0f, 135.0f, 50.0f));
+		backObj->SetScale(Vec3(x, y, 5.0f));
+		backObj->SetAlphaActive(true);
 
 		VertexData vertex;
 		SimpleVerticesIndices(vertex);
 		vertex.vertices.at(1).textureCoordinate = Vec2(loopY, 0.0f);
 		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, loopX);
 		vertex.vertices.at(3).textureCoordinate = Vec2(loopY, loopX);
-		auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
+		auto backDraw = backObj->AddComponent<PCTStaticDraw>();
 		backDraw->SetOriginalMeshUse(true);
 		backDraw->CreateOriginalMesh(vertex);
 		backDraw->SetTextureResource(L"BACKGROUND_TX");

@@ -25,16 +25,6 @@ namespace basecross
 		// スタートボタンの読み込み
 		app->RegisterTexture(L"PUSH_BUTTON", texturePath + L"PushButton.tga");
 
-		//// イージーボタンの読み込み
-		//app->RegisterTexture(L"EASY_BUTTON", texturePath + L"Easy.png");
-
-		//// ノーマルボタンの読み込み
-		//app->RegisterTexture(L"NORMAL_BUTTON", texturePath + L"Normal.png");
-
-		//// ハードボタンの読み込み
-		//app->RegisterTexture(L"HARD_BUTTON", texturePath + L"Hard.png");
-
-
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
@@ -62,14 +52,15 @@ namespace basecross
 	void TitleStage::CreateBackGround()
 	{
 		// オブジェクトの生成と配置
-		auto ptrBack = AddGameObject<DebugObject>();
+		m_backObj = AddGameObject<DebugObject>();
 		float loop, x, y;
 		loop = 5.0f;
 		x = 80.0f * loop;
 		y = 45.0f * loop;
-		ptrBack->SetPosition(Vec3(-90.0f, 0.0f, 50.0f));
-		ptrBack->SetScale(Vec3(x, y, 5.0f));
-		ptrBack->SetAlphaActive(true);
+		const auto& backObj = m_backObj.lock();
+		backObj->SetPosition(Vec3(-90.0f, 0.0f, 50.0f));
+		backObj->SetScale(Vec3(x, y, 5.0f));
+		backObj->SetAlphaActive(true);
 
 		// メッシュの生成と設定
 		VertexData vertex;
@@ -77,7 +68,7 @@ namespace basecross
 		vertex.vertices.at(1).textureCoordinate = Vec2(loop, 0.0f);
 		vertex.vertices.at(2).textureCoordinate = Vec2(0.0f, loop);
 		vertex.vertices.at(3).textureCoordinate = Vec2(5.0f, loop);
-		auto backDraw = ptrBack->AddComponent<PCTStaticDraw>();
+		auto backDraw = backObj->AddComponent<PCTStaticDraw>();
 		backDraw->SetOriginalMeshUse(true);
 		backDraw->CreateOriginalMesh(vertex);
 		backDraw->SetTextureResource(L"BACKGROUND_TX");
@@ -192,6 +183,15 @@ namespace basecross
 	{
 		try
 		{
+			const auto& backObj = m_backObj.lock();
+			auto backDraw = backObj->GetComponent<PCTStaticDraw>();
+			auto& vertices = backDraw->GetMeshResource()->GetBackupVerteces<VertexPositionColorTexture>();
+			for (auto& v : vertices)
+			{
+				v.textureCoordinate += Vec2(1.0f, 0.0f) * DELTA_TIME;
+			}
+			backDraw->UpdateVertices(vertices);
+
 			switch (m_stageState)
 			{
 			case TitleStage::FadeIn:

@@ -12,6 +12,40 @@ namespace basecross{
 	//--------------------------------------------------------------------------------------
 	///	ゲームシーン
 	//--------------------------------------------------------------------------------------
+	void Scene::OnCreate()
+	{
+		try
+		{
+			// リソースの読み込み
+			CreateResourses();
+
+			// クリアする色を設定
+			SetClearColor(Col4(160.0f / 256.0f, 216.0f / 256.0f, 239.0f / 256.0f, 1.0));
+
+			//自分自身にイベントを送る
+			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
+			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"GameStage");
+		}
+		catch (...)
+		{
+			throw;
+		}
+	}
+
+	Scene::~Scene() {}
+
+	void Scene::OnEvent(const shared_ptr<Event>& event)
+	{
+		if (event->m_MsgStr == L"TitleStage")
+		{
+			ResetActiveStage<TitleStage>();
+		}
+		if (event->m_MsgStr == L"GameStage")
+		{
+			ResetActiveStage<GameStage>();
+		}
+	}
+
 	void Scene::CreateResourses()
 	{
 		// アプリケーションの取得
@@ -86,40 +120,5 @@ namespace basecross{
 		const auto& app = App::GetApp();
 		app->RegisterResource(registerKey, modelMesh);
 	}
-
-	void Scene::OnCreate()
-	{
-		try 
-		{
-			// リソースの読み込み
-			CreateResourses();
-
-			// クリアする色を設定
-			SetClearColor(Col4(160.0f / 256.0f, 216.0f / 256.0f, 239.0f / 256.0f, 1.0));
-
-			//自分自身にイベントを送る
-			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
-			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"GameStage");
-		}
-		catch (...) 
-		{
-			throw;
-		}
-	}
-
-	Scene::~Scene(){}
-
-	void Scene::OnEvent(const shared_ptr<Event>& event) 
-	{
-		if (event->m_MsgStr == L"TitleStage")
-		{
-			ResetActiveStage<TitleStage>();
-		}
-		if (event->m_MsgStr == L"GameStage")
-		{
-			ResetActiveStage<GameStage>();
-		}
-	}
-
 }
 //end basecross

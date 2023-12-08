@@ -17,23 +17,24 @@ namespace basecross
 		m_ptrDraw->ChangeCurrentAnimation(L"ROTATE");
 		m_ptrDraw->SetEmissive(COL_WHITE);
 
-		auto ptrColl = GetComponent<CollisionObb>();
-		ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
-		ptrColl->SetAfterCollision(AfterCollision::None);
+		m_ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
+		m_ptrColl->SetAfterCollision(AfterCollision::None);
+
+		m_targetObj.clear();
+		m_targetObj.push_back(GetStage()->GetSharedGameObject<Player>(L"Player"));
 
 		AddTag(L"Ring");
 	}
 
 	void Ring::OnUpdate()
 	{
+		CubeObject::OnUpdate();
+
 		const float& deltaTime = DELTA_TIME;
 		
 		Vec3 rot = GetRotation();
 		rot.y -= deltaTime * m_rotSpeed;
 		SetRotation(rot);
-
-		auto ptrColl = GetComponent<CollisionObb>();
-		ptrColl->SetUpdateActive(!m_isGet);
 
 		m_ptrDraw->UpdateAnimation(deltaTime);
 

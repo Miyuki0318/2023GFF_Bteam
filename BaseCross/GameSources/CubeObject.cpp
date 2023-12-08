@@ -11,9 +11,9 @@ namespace basecross
 
 		if (m_collActive)
 		{
-			auto ptrColl = AddComponent<CollisionObb>();
-			ptrColl->SetFixed(true);
-			ptrColl->SetUpdateActive(false);
+			m_ptrColl = AddComponent<CollisionObb>();
+			m_ptrColl->SetFixed(true);
+			m_ptrColl->SetUpdateActive(false);
 		}
 
 		SetAlphaActive(true);
@@ -37,8 +37,7 @@ namespace basecross
 				}
 			}
 
-			auto ptrColl = GetComponent<CollisionObb>();
-			ptrColl->SetUpdateActive(achieve);
+			m_ptrColl->SetUpdateActive(achieve);
 		}
 	}
 }

@@ -25,6 +25,7 @@ namespace basecross
 		vector<Vec3> m_angle;
 		const float m_collRange;
 		const bool m_collActive;
+		shared_ptr<CollisionObb> m_ptrColl;
 		vector<weak_ptr<GameObject>> m_targetObj;
 
 	public:

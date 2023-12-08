@@ -52,6 +52,7 @@ namespace basecross
 		{
 			m_isGet = true;
 			m_rotSpeed = 12.0f;
+			m_ptrColl->SetUpdateActive(false);
 		}
 
 		const eRing& GetRingSize() const

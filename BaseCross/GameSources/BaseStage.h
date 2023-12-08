@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Sprite.h"
+#include "DebugObject.h"
 
 namespace basecross
 {
@@ -50,6 +51,9 @@ namespace basecross
 		weak_ptr<SoundItem> m_bgm;
 		vector<SE> m_seList;
 
+		// 背景オブジェクト
+		weak_ptr<DebugObject> m_backObj;
+
 		/*!
 		@brief リソース読み込み関数
 		*/
@@ -65,12 +69,11 @@ namespace basecross
 		*/
 		virtual void CreatePlayer();
 
-		void CreateEnemy(const string& fileName);
-
 		/*!
 		@brief ステージブロックとギミックの生成関数
 		*/
 		void CreateStage(const string& fileName);
+		void CreateEnemy(const string& fileName);
 		void CreateInstanceBlock(const string& fileName);
 
 	public:
