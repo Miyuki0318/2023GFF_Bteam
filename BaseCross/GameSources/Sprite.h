@@ -38,7 +38,8 @@ namespace basecross
 		@param ポジション
 		*/
 		Sprite(const shared_ptr<Stage>& stagePtr,
-			const wstring& texWstr, const Vec2& scale, const Vec3& position
+			const wstring& texWstr, const Vec2& scale, 
+			const Vec3& position
 		) :
 			DrawObject(stagePtr, texWstr, position, Vec3(0.0f), scale)
 		{
@@ -88,6 +89,12 @@ namespace basecross
 		@param 色
 		*/
 		void SetEmissiveColor(Col4& color);
+
+		/*!
+		@brief テクスチャを変更する関数
+		@param テクスチャキー
+		*/
+		void SetTexture(const wstring& textureKey);
 
 		/*!
 		@brief フェードイン処理する関数

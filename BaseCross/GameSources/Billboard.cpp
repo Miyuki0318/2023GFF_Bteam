@@ -81,4 +81,13 @@ namespace basecross
 		// 色を保持
 		m_verticesColor = color;
 	}
+
+	/*!
+	@brief テクスチャを変更する関数
+	@param テクスチャキー
+	*/
+	void Billboard::SetTexture(const wstring& textureKey)
+	{
+		m_ptrDraw->SetTextureResource(textureKey);
+	}
 }

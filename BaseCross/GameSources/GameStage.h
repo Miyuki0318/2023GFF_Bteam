@@ -95,8 +95,14 @@ namespace basecross
 		*/
 		void DeathFadeState();
 
+		/*!
+		@brief セレクトステート
+		*/
 		void SelectState();
 
+		/*!
+		@brief コンティニューリセットステート
+		*/
 		void ResetState();
 
 		/*!

@@ -31,7 +31,10 @@ namespace basecross
 			m_scale.zero();
 			m_position.zero();
 			m_rotation.zero();
-			m_texWstr = L"WHITE";
+			m_texWstr = L"WHITE_TX";
+			m_emissiveColor = COL_NONE;
+			m_diffuseColor = COL_WHITE;
+			m_verticesColor = COL_WHITE;
 			Utility::SimpleVerticesIndices(m_vertex);
 		}
 
@@ -52,6 +55,9 @@ namespace basecross
 			m_rotation(rotation),
 			m_scale(scale)
 		{
+			m_emissiveColor = COL_NONE;
+			m_diffuseColor = COL_WHITE;
+			m_verticesColor = COL_WHITE;
 			Utility::SimpleVerticesIndices(m_vertex);
 		}
 

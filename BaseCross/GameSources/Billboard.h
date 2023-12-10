@@ -92,5 +92,11 @@ namespace basecross
 		@param 色
 		*/
 		void SetEmissiveColor(const Col4& color);
+
+		/*!
+		@brief テクスチャを変更する関数
+		@param テクスチャキー
+		*/
+		void SetTexture(const wstring& textureKey);
 	};
 }

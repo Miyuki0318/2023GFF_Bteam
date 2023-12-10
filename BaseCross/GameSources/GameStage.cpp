@@ -26,6 +26,12 @@ namespace basecross
 		// テクスチャディレクトリパスの取得
 		const wstring texturePath = mediaPath + L"Textures/";
 
+		// UI用テクスチャ
+		app->RegisterTexture(L"JGAUGE_TX", texturePath + L"JumpUI.png");
+		app->RegisterTexture(L"SGAUGE_TX", texturePath + L"ShieldUI.png");
+		app->RegisterTexture(L"GAUGE_TX", texturePath + L"Gauge.png");
+		app->RegisterTexture(L"N_EFFECT_TX", texturePath + L"WhiteEffect.png");
+
 		// サウンドディレクトリパスの取得
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
@@ -87,7 +93,10 @@ namespace basecross
 
 	void GameStage::CreateUI()
 	{
+		const Vec2 scale = Vec2(25.0f, 150.0f) * 1.25f;
 
+		AddGameObject<JumpCountUI>(scale, Vec3(600.0f, -225.0f, 0.3f));
+		AddGameObject<ShieldCountUI>(scale, Vec3(525.0f, -225.0f, 0.3f));
 	}
 
 	void GameStage::DeathFadeState()

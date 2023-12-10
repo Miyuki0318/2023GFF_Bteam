@@ -269,9 +269,43 @@ namespace Utility
 	@param (number) 数字
 	*/
 	void NumberVerticesIndices(VertexData& vertex, const int number);
-
+	
+	/*!
+	@brief リボン用頂点データと頂点インデックスを作成
+	@param (point) 節目の座標配列
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (axisVec) 軸ベクトル
+	@param (weight) 幅のサイズ
+	@param (texLoop) テクスチャのループ数
+	*/
 	bool RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop);
+
+	/*!
+	@brief リボン用頂点データと頂点インデックスを作成
+	@param (point) 節目の座標配列
+	@param (vertex) 頂点データと頂点インデックス構造体
+	@param (axisVec) 軸ベクトル
+	@param (weight) 幅のサイズ
+	@param (texLoop) テクスチャのループ数
+	*/
 	bool RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec , float weight, int texLoop);
+
+	/*!
+	@brief 円型用頂点データと頂点インデックスを作成
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (number) 数字
+	*/
+	void CircleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum);
+
+	/*!
+	@brief 円型用頂点データと頂点インデックスを作成
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (number) 数字
+	*/
+	void CircleVerticesIndices(VertexData& vertex, const int squareNum);
 
 	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)

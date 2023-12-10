@@ -627,6 +627,22 @@ namespace basecross {
 		}
 		//--------------------------------------------------------------------------------------
 		/*!
+		@brief	頂点変更できるスプライトメッシュを作成する（すでにある場合は差し替える）
+		@param[in]	Vertex	頂点データ
+		*/
+		//--------------------------------------------------------------------------------------
+		void CreateMesh(VertexData& vertex) {
+			try {
+				//メッシュの作成（変更できる）
+				auto SpriteMesh = MeshResource::CreateMeshResource(vertex.vertices, vertex.indices, true);
+				SetMeshResource(SpriteMesh);
+			}
+			catch (...) {
+				throw;
+			}
+		}
+		//--------------------------------------------------------------------------------------
+		/*!
 		@brief	頂点バッファの更新
 		@param[in]	Vertices	頂点配列
 		@return	なし

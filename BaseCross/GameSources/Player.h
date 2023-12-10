@@ -37,6 +37,7 @@ namespace basecross
 
 		const int m_jumpLimit;			 // 規定ジャンプ回数
 		const int m_shieldLimit;		 // 規定シールド枚数
+		const int m_sRingLimit;			 // スモールリング規定個数
 		const float m_speed;			 // 速度
 		const float m_gravity;			 // 重力
 		const float m_maxAcsel;			 // 最大加速度
@@ -73,6 +74,7 @@ namespace basecross
 			m_startPos(position),
 			m_jumpLimit(2),
 			m_shieldLimit(3),
+			m_sRingLimit(25),
 			m_speed(4.0f),
 			m_gravity(-5.0f),
 			m_maxAcsel(4.5f),
@@ -370,6 +372,69 @@ namespace basecross
 		const int& GetShieldCount() const
 		{
 			return m_shieldCount;
+		}
+
+		/*!
+		@brief シールドの上限数取得関数
+		@return m_shieldLimit
+		*/
+		const int& GetShieldLimit() const
+		{
+			return m_shieldLimit;
+		}
+
+		/*!
+		@brief スモールリング獲得数取得関数
+		@return m_sRingCount
+		*/
+		const int& GetSRingCount() const
+		{
+			return m_sRingCount;
+		}
+
+		/*!
+		@brief スモールリング獲得上限数取得関数
+		@return m_sRingLimit
+		*/
+		const int& GetSRingLimit() const
+		{
+			return m_sRingLimit;
+		}
+
+		/*!
+		@brief ジャンプ回数取得関数
+		@return m_jumpCount
+		*/
+		const int& GetJumpCount() const
+		{
+			return m_jumpCount;
+		}
+
+		/*!
+		@brief ジャンプ上限値取得関数
+		@return m_jumpLimit
+		*/
+		const int& GetJumpLimit() const
+		{
+			return m_jumpLimit;
+		}
+
+		/*!
+		@brief ジャンプ経過時間取得関数
+		@return m_jumpRecoveryTime
+		*/
+		const float& GetJumpRecoveryTime() const
+		{
+			return m_jumpRecoveryTime;
+		}
+
+		/*!
+		@brief ジャンプ回復時間取得関数
+		@return m_jumpRecoveryLimit
+		*/
+		const float& GetJumpRecoveryLimit() const
+		{
+			return m_jumpRecoveryLimit;
 		}
 
 		/*!

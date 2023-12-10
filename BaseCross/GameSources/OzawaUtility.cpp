@@ -236,6 +236,55 @@ namespace Utility
 	}
 
 	/*!
+	@brief 円型用頂点データと頂点インデックスを作成
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (number) 数字
+	*/
+	void CircleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum)
+	{
+		const float HELF_SIZE = 0.5f;
+		const Col4 DEFAULT_COLOR = Col4(1.0f);
+		
+		vertices.clear();
+		indices.clear();
+
+		VertexPositionColorTexture first(Vec3(0.0f), DEFAULT_COLOR, Vec2(HELF_SIZE));
+		vertices.push_back(first);
+
+		for (int i = 0; i < squareNum + 1; i++)
+		{
+			float rad = (XM_2PI / squareNum * i);
+			float x = cosf(rad) * HELF_SIZE;
+			float y = sinf(rad) * HELF_SIZE;
+			Vec3 position = Vec3(x, y, 0.0f);
+			Vec2 uvPos = Vec2(HELF_SIZE) + Vec2(x, -y);
+
+			VertexPositionColorTexture v(position, DEFAULT_COLOR, uvPos);
+			vertices.push_back(v);
+		}
+
+		for (int i = 0; i < squareNum; i++)
+		{
+			// 3の倍数を基準に設定
+			indices.push_back(0);
+			indices.push_back(i + 1);
+			indices.push_back(i + 2);
+		}
+	}
+
+	/*!
+	@brief 円型用頂点データと頂点インデックスを作成
+	@param (vertices) 頂点データ
+	@param (indices) 頂点インデックス
+	@param (number) 数字
+	*/
+	void CircleVerticesIndices(VertexData& vertex, const int squareNum)
+	{
+		CircleVerticesIndices(vertex.vertices, vertex.indices, squareNum);
+	}
+
+	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)
 	@param (viewPtr) viewのshared_ptr
 	@param (position) ワールド座標

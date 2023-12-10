@@ -14,14 +14,12 @@ namespace basecross
 	*/
 	void Sprite::OnCreate()
 	{
+		// 継承元の生成時の関数を実行
 		DrawObject::OnCreate();
 
 		// 描画コンポーネントの設定
 		m_ptrDraw = AddComponent<PCTSpriteDraw>(m_vertex);
 		m_ptrDraw->SetTextureResource(m_texWstr);
-		m_verticesColor = COL_WHITE;
-		m_diffuseColor = m_ptrDraw->GetDiffuse();
-		m_emissiveColor = m_ptrDraw->GetEmissive();
 
 		// 透明色の描画設定
 		SetAlphaActive(true);
@@ -79,6 +77,15 @@ namespace basecross
 
 		// 色を保持
 		m_verticesColor = color;
+	}
+
+	/*!
+	@brief テクスチャを変更する関数
+	@param テクスチャキー
+	*/
+	void Sprite::SetTexture(const wstring& textureKey)
+	{
+		m_ptrDraw->SetTextureResource(textureKey);
 	}
 
 	/*!

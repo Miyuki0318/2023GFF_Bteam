@@ -103,6 +103,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DrawObject.h">
       <Filter>DrawObject</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)JumpCountUI.h">
+      <Filter>UI\JumpCount</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ShieldCountUI.h">
+      <Filter>UI\ShieldCount</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -194,6 +200,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp">
       <Filter>CubeObject</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)JumpCountUI.cpp">
+      <Filter>UI\JumpCount</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ShieldCountUI.cpp">
+      <Filter>UI\ShieldCount</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +304,15 @@
     </Filter>
     <Filter Include="DrawObject\Sprite">
       <UniqueIdentifier>{78f895cb-f76c-449d-a785-d6fe87f1592b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{76479077-52c4-491f-bc36-f49d3f1c4681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\JumpCount">
+      <UniqueIdentifier>{fb392ed7-7118-4e84-a616-9e31702a6396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\ShieldCount">
+      <UniqueIdentifier>{3db18638-c717-4d7a-90bc-46f9e1252b43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
