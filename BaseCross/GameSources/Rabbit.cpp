@@ -499,7 +499,7 @@ namespace basecross
 		Vec3 pos = GetPosition();
 
 		// ブロックオブジェクトグループの取得
-		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Active")->GetGroupVector();
+		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
 		for (const auto& gameObj : blockVec)
 		{
 			// オブジェクトが無い、または非アクティブかのチェック

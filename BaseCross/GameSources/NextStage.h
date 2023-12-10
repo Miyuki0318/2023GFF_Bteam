@@ -38,9 +38,6 @@ namespace basecross
 		// ステージステート
 		eStageState m_stageState;
 
-		// プレイヤー
-		weak_ptr<TemplateObject> m_player;
-
 		// スプライト
 		weak_ptr<Sprite> m_fade;
 		weak_ptr<Sprite> m_next;

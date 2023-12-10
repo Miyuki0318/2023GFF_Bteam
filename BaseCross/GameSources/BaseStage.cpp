@@ -127,6 +127,7 @@ namespace basecross
 		const float scale = 1.0f;
 
 		vector<weak_ptr<Enemy>> enemyVec;
+		vector<weak_ptr<Enemy>> wallVec;
 
 		for (size_t i = 0; i < m_csvData.size(); i++)
 		{
@@ -144,7 +145,7 @@ namespace basecross
 						break;
 
 					case 301:
-						AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Wall);
+						wallVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Wall));
 						break;
 
 					default:
@@ -154,7 +155,8 @@ namespace basecross
 			}
 		}
 
-		const auto& enemyGroup = CreateSharedObjectGroup(L"Enemy");
+		const auto& enemyGroup = GetSharedObjectGroup(L"Enemy");
+		const auto& wallGroup = GetSharedObjectGroup(L"Wall");
 
 		for (const auto& enemy : enemyVec)
 		{
@@ -163,19 +165,24 @@ namespace basecross
 				enemyGroup->IntoGroup(enemy.lock());
 			}
 		}
+
+		for (const auto& wall : wallVec)
+		{
+			if (wall.lock())
+			{
+				wallGroup->IntoGroup(wall.lock());
+			}
+		}
 	}
 
 	void BaseStage::CreateStage(const string& fileName)
 	{
-		CreateSharedObjectGroup(L"Active");
-		const auto& stageGroup = CreateSharedObjectGroup(L"Stage");
-		const auto& gimmickGroup = CreateSharedObjectGroup(L"Gimmick");
-		const auto& updateGroup = CreateSharedObjectGroup(L"Update");
-		vector<weak_ptr<GameObject>> enemyVec;
-		if (GetSharedObjectGroup(L"Enemy", false))
-		{
-			enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
-		}
+		const auto& playerPtr = GetSharedGameObject<Player>(L"Player");
+		const auto& stageGroup = GetSharedObjectGroup(L"Stage");
+		const auto& gimmickGroup = GetSharedObjectGroup(L"Gimmick");
+		const auto& updateGroup = GetSharedObjectGroup(L"Update");
+		const auto& collectGroup = GetSharedObjectGroup(L"Collect");
+		const auto& enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
 
 		m_csvData = CSVLoader::LoadFile(fileName);
 
@@ -212,6 +219,7 @@ namespace basecross
 				shared_ptr<CubeObject> block = nullptr;
 				shared_ptr<Gimmick> gimmick = nullptr;
 				shared_ptr<Gimmick> update = nullptr;
+				shared_ptr<Gimmick> collect = nullptr;
 
 				const int& num = stoi(m_csvData.at(i).at(j));
 
@@ -261,11 +269,11 @@ namespace basecross
 					break;
 
 				case 230:
-					update = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big);
+					collect = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big);
 					break;
 
 				case 231:
-					update = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small);
+					collect = AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small);
 					break;
 
 				case 400:
@@ -315,21 +323,27 @@ namespace basecross
 
 				if (block)
 				{
-					block->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					block->AddTarget(playerPtr);
 					block->AddTarget(enemyVec);
 					stageGroup->IntoGroup(block);
 				}
 
 				if (gimmick)
 				{
-					gimmick->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					gimmick->AddTarget(playerPtr);
 					gimmickGroup->IntoGroup(gimmick);
 				}
 
 				if (update)
 				{
-					update->AddTarget(GetSharedGameObject<Player>(L"Player"));
+					update->AddTarget(playerPtr);
 					updateGroup->IntoGroup(update);
+				}
+
+				if (collect)
+				{
+					collect->AddTarget(playerPtr);
+					collectGroup->IntoGroup(collect);
 				}
 			}
 		}
@@ -438,6 +452,30 @@ namespace basecross
 		}
 	}
 
+	void BaseStage::OnCreate()
+	{
+		try
+		{
+			//各パフォーマンスを得る
+			SetCollisionPerformanceActive(true);
+			SetUpdatePerformanceActive(true);
+			SetDrawPerformanceActive(true);
+
+			// シェアグループの作成
+			CreateSharedObjectGroup(L"Stage");
+			CreateSharedObjectGroup(L"Active");
+			CreateSharedObjectGroup(L"Gimmick");
+			CreateSharedObjectGroup(L"Update");
+			CreateSharedObjectGroup(L"Collect");
+			CreateSharedObjectGroup(L"Enemy");
+			CreateSharedObjectGroup(L"Wall");
+		}
+		catch (...)
+		{
+			throw;
+		}
+	}
+
 	void BaseStage::OnDestroy()
 	{
 		if (m_bgm.lock())
@@ -451,83 +489,70 @@ namespace basecross
 	{
 		try
 		{
+			// FPSの描画
 			const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
 			Debug::Log(L"FPS : ", fps);
 
+			// 範囲
 			const float range = 55.0f;
+			const float cubeRange = 4.0f;
+
+			// プレイヤーの座標
 			const auto& playerPos = GetSharedGameObject<Player>(L"Player")->GetPosition();
 
+			// オブジェクトグループの取得とその配列
 			const auto& enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
-			for (const auto& weakObj : enemyVec)
-			{
-				const auto& enemyObj = dynamic_pointer_cast<Enemy>(weakObj.lock());
-
-				if (!enemyObj) continue;
-
-				bool alive = false;
-				const Vec3& pos = playerPos;
-				float length = (enemyObj->GetPosition() - pos).length();
-				enemyObj->SetDrawActive(length <= range);
-				enemyObj->SetUpdateActive(length <= range);
-			}
-
-			const auto& cubeVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
+			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
+			const auto& updateVec = GetSharedObjectGroup(L"Update")->GetGroupVector();
+			const auto& collectVec = GetSharedObjectGroup(L"Collect")->GetGroupVector();
+			const auto& stageVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
 			const auto& activeGroup = GetSharedObjectGroup(L"Active");
-			activeGroup->AllClear();
-			for (const auto& weakObj : cubeVec)
-			{
-				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
 
+			// パフォーマンス管理関数を実行
+			ObjectPerformance<Enemy>(enemyVec, playerPos, range);
+			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
+			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
+			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
+
+			// ステージオブジェクトグループだけ特殊
+			// アクティブになっているオブジェクトのグループをリセット
+			activeGroup->AllClear();
+			for (const auto& weakObj : stageVec)
+			{
+				// エラーチェック
+				if (!weakObj.lock()) continue;
+
+				// 型キャストとエラーチェック
+				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
 				if (!cubeObj) continue;
 
-				bool alive = false;
+				// アクティブかの真偽
+				bool active = false;
+
+				// 距離を比較するターゲット配列を取得
 				const auto& vec = cubeObj->GetTargetVec();
 				for (const auto& v : vec)
 				{
+					// エラーチェックとアクティブかのチェック
 					if (!v.lock()) continue;
 					if (!v.lock()->GetUpdateActive()) continue;
 
+					// ターゲットの座標との距離を求める
 					const Vec3& pos = v.lock()->GetComponent<Transform>()->GetPosition();
 					float length = (cubeObj->GetPosition() - pos).length();
-					if (length <= 4.0f)						
+					if (length <= cubeRange)
 					{
+						// アクティブグループに追加
 						activeGroup->IntoGroup(cubeObj);
-						alive = true;
+						active = true;
 						break;
 					}
 				}
+				cubeObj->SetUpdateActive(active);
 
-				cubeObj->SetUpdateActive(alive);
-
+				// 描画するかはプレイヤーとの距離で行う
 				float length = (cubeObj->GetPosition() - playerPos).length();
 				cubeObj->SetDrawActive(length <= range);
-			}
-
-			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
-			for (const auto& weakObj : gimmickVec)
-			{
-				const auto& gimmickObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
-
-				if (!gimmickObj) continue;
-
-				float length = (gimmickObj->GetPosition() - playerPos).length();
-				gimmickObj->SetUpdateActive(length <= range);
-				gimmickObj->SetDrawActive(length <= range);
-			}
-
-			const auto& updateVec = GetSharedObjectGroup(L"Update")->GetGroupVector();
-
-			for (const auto& weakObj : updateVec)
-			{
-				const auto& gimmickObj = dynamic_pointer_cast<Gimmick>(weakObj.lock());
-
-				if (!gimmickObj) continue;
-
-				float length = (gimmickObj->GetPosition() - playerPos).length();
-
-				if (gimmickObj->FindTag(L"Ring")) gimmickObj->SetUpdateActive(length <= range / 1.5f);
-				else gimmickObj->SetUpdateActive(length <= range / 2.0f);
-				gimmickObj->SetDrawActive(length <= range);
 			}
 		}
 		catch (...)

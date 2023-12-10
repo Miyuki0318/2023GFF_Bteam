@@ -77,7 +77,7 @@ namespace basecross
 
 	void TitleStage::CreatePlayer()
 	{
-		m_player = AddGameObject<TitlePlayer>(Vec3(-50.0f, -45.0f, 0.0f));
+		m_player = AddGameObject<TitlePlayer>(Vec3(-50.0f, -55.0f, 0.0f));
 		SetSharedGameObject(L"Player", m_player.lock());
 	}
 
@@ -145,10 +145,7 @@ namespace basecross
 	{
 		try
 		{
-			//各パフォーマンスを得る
-			SetCollisionPerformanceActive(true);
-			SetUpdatePerformanceActive(true);
-			SetDrawPerformanceActive(true);
+			BaseStage::OnCreate();
 
 			// リソースの読み込み
 			CreateResourses();

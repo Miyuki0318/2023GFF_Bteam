@@ -26,14 +26,28 @@ namespace basecross
 			Goal,
 			DeathDrop,
 			Death,
-			Continue,
+			Select,
+			Reset,
 			FadeOut,
+		};
+
+		// セレクトタイプ
+		enum eSelect
+		{
+			Continue,
+			TitleBack,
 		};
 
 	private:
 
+		float m_totalTime;		// 経過時間
+		bool m_currentStickX;	// 前フレームのスティック入力X
+
 		// ステージステート
 		eStageState m_stageState;
+
+		// セレクトタイプ
+		eSelect m_select;
 
 		// スプライト
 		weak_ptr<Sprite> m_fade;
@@ -72,15 +86,29 @@ namespace basecross
 		void CreateSprites();
 
 		/*!
+		@brief UIの生成関数
+		*/
+		void CreateUI();
+
+		/*!
 		@brief 死亡時のフェードステート
 		*/
 		void DeathFadeState();
+
+		void SelectState();
+
+		void ResetState();
 
 		/*!
 		@brief フェードアウトステート
 		@param フェード時間
 		*/
 		void FadeOutState(float fadeTime);
+
+		/*!
+		@brief ステージのリセット
+		*/
+		void ResetStage();
 
 	public:
 
@@ -89,9 +117,12 @@ namespace basecross
 		*/
 		GameStage(const string& stageName) :BaseStage() 
 		{
+			m_select = Continue;
 			m_stageState = FadeIn;
 			m_stagePath = stageName;
+			m_totalTime = 0.0f;
 			m_isClear = false;
+			m_currentStickX = false;
 		}
 
 		/*!

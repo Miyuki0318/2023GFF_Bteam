@@ -23,7 +23,7 @@ namespace basecross
 				// Aボタン入力有無での関数分岐
 				if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
 				{
-					OnReleaseA();
+					OnRushA();
 				}
 			}
 
@@ -54,7 +54,7 @@ namespace basecross
 		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
 
-	void TitlePlayer::OnReleaseA()
+	void TitlePlayer::OnRushA()
 	{
 		Vec2 stick = Input::GetLStickValue().round(1);
 

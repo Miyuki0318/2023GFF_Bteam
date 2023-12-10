@@ -35,8 +35,7 @@ namespace basecross
 
 		if (distance > followDistance)
 		{
-			float deltaTime = App::GetApp()->GetElapsedTime();
-			float move = (distance - followDistance) * (deltaTime * speed);
+			float move = (distance - followDistance) * (DELTA_TIME * speed);
 
 			m_currentEye += Vec3(vec.normalize().x * move, vec.normalize().y * move, 0.0f);
 			m_currentAt += Vec3(vec.normalize().x * move, vec.normalize().y * move, 0.0f);

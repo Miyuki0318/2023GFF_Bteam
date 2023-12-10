@@ -71,7 +71,7 @@ namespace basecross
 
 	void NextStage::CreatePlayer()
 	{
-		m_player = AddGameObject<NextPlayer>(Vec3(0.0f));
+		AddGameObject<NextPlayer>(Vec3(0.0f));
 	}
 
 	void NextStage::CreateSprites()
@@ -94,7 +94,6 @@ namespace basecross
 	{
 		const bool inputLStick = Input::IsInputLStickX();
 
-		// スティック入力が0より小さくて、前フレームの入力が0.0以上の時(上から下への入力)
 		if (inputLStick && !m_currentStickX)
 		{
 			m_totalTime = 0.0f;

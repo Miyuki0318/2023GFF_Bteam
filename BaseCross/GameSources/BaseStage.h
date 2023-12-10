@@ -70,11 +70,62 @@ namespace basecross
 		virtual void CreatePlayer();
 
 		/*!
-		@brief ステージブロックとギミックの生成関数
+		@brief ステージの生成関数
+		@param ファイルネーム
 		*/
 		void CreateStage(const string& fileName);
 		void CreateEnemy(const string& fileName);
 		void CreateInstanceBlock(const string& fileName);
+
+		/*!
+		@brief オブジェクトのパフォーマンス管理関数
+		@param オブジェクトのグループベクター配列
+		@param 描画範囲
+		@param 更新範囲
+		*/
+		template<class T>
+		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float drawRange, float updateRange)
+		{
+			for (const auto& weakObj : groupVec)
+			{
+				if (!weakObj.lock()) continue;
+
+				const auto& sharedObj = dynamic_pointer_cast<T>(weakObj.lock());
+				if (!sharedObj) continue;
+
+				bool alive = false;
+				float length = (sharedObj->GetPosition() - pos).length();
+				sharedObj->SetDrawActive(length <= drawRange);
+				sharedObj->SetUpdateActive(length <= updateRange);
+			}
+		}
+
+		/*!
+		@brief オブジェクトのパフォーマンス管理関数
+		@param オブジェクトのグループベクター配列
+		@param 範囲と更新範囲
+		*/
+		template<class T>
+		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float range)
+		{
+			ObjectPerformance<T>(groupVec, pos, range, range);
+		}
+
+		/*!
+		@brief オブジェクトグループの中身を空っぽにする関数
+		@param オブジェクトのグループ
+		*/
+		void GroupObjectRemove(const shared_ptr<GameObjectGroup>& group)
+		{
+			const auto& grouoVec = group->GetGroupVector();
+			for (auto& weakObj : grouoVec)
+			{
+				if (!weakObj.lock()) continue;
+
+				RemoveGameObject<GameObject>(weakObj.lock());
+				group->OutoGroup(weakObj.lock());
+			}
+		}
 
 	public:
 
@@ -87,6 +138,11 @@ namespace basecross
 		@brief デストラクタ
 		*/
 		virtual ~BaseStage() {}
+
+		/*!
+		@brief 生成時に一度だけ呼び出される関数
+		*/
+		virtual void OnCreate() override;
 
 		/*!
 		@brief 生成時に一度だけ呼び出される関数

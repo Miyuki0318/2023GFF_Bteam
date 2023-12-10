@@ -55,7 +55,7 @@ namespace basecross
 		m_airEffect.lock()->SetDrawActive(false);
 	}
 
-	void NextPlayer::OnReleaseA()
+	void NextPlayer::OnRushA()
 	{
 		// ƒƒ“ƒo•Ï”‚ÌÝ’è
 		m_acsel = m_moveAcsel;
@@ -86,7 +86,7 @@ namespace basecross
 		case NextStage::Next:
 			if (inputA)
 			{
-				OnReleaseA();
+				OnRushA();
 				stage->SetStageState(NextStage::StageMove);
 			}
 			break;

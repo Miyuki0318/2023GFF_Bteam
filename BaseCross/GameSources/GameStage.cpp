@@ -74,7 +74,7 @@ namespace basecross
 
 	void GameStage::CreatePlayer()
 	{
-		auto player = AddGameObject<Player>(Vec3(-48.5f, -70.0f, 0.0f));
+		auto player = AddGameObject<Player>(Vec3(-48.5f, -75.0f, 0.0f));
 		SetSharedGameObject(L"Player", player);
 	}
 
@@ -83,6 +83,11 @@ namespace basecross
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
+	}
+
+	void GameStage::CreateUI()
+	{
+
 	}
 
 	void GameStage::DeathFadeState()
@@ -100,9 +105,70 @@ namespace basecross
 			CreateSE(L"METAL_STOP_SE", 1.5f);
 			m_metalLeft.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.2f));
 			m_metalRight.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.2f));
-			m_stageState = FadeOut;
+			m_stageState = Select;
+		}
+	}
+	
+	void GameStage::SelectState()
+	{
+		const auto& player = GetSharedGameObject<Player>(L"Player");
+		const bool inputLStick = Input::IsInputLStickX();
+		if (inputLStick && !m_currentStickX)
+		{
+			m_totalTime = 0.0f;
+			switch (m_select)
+			{
+			case GameStage::Continue:
+				m_select = TitleBack;
+				break;
+
+			case GameStage::TitleBack:
+				m_select = Continue;
+				break;
+
+			default:
+				break;
+			}
+
+			m_currentStickX = inputLStick;
 		}
 
+		if (Input::GetPushA())
+		{
+			switch (m_select)
+			{
+			case GameStage::Continue:
+				ResetStage();
+				player->Reset();
+				CreateSE(L"METAL_SE", 0.75f);
+				m_stageState = Reset;
+				break;
+
+			case GameStage::TitleBack:
+				m_stageState = FadeOut;
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void GameStage::ResetState()
+	{
+		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
+		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		if (mLPos.x > -WINDOW_WIDTH / 1.9f)
+		{
+			m_metalLeft.lock()->SetPosition(mLPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
+			m_metalRight.lock()->SetPosition(mRPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
+		}
+		else
+		{
+			StopSE(L"METAL_SE");
+			CreateSE(L"METAL_STOP_SE", 1.5f);
+			m_stageState = StartMove;
+		}
 	}
 
 	void GameStage::FadeOutState(float fadeTime)
@@ -122,14 +188,102 @@ namespace basecross
 		}
 	}
 
+	void GameStage::ResetStage()
+	{
+		const auto& collectGroup = GetSharedObjectGroup(L"Collect");
+		const auto& enemyGroup = GetSharedObjectGroup(L"Enemy");
+		const auto& wallGroup = GetSharedObjectGroup(L"Wall");
+		const auto& stageVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
+		const auto& playerPtr = GetSharedGameObject<Player>(L"Player");
+
+		GroupObjectRemove(collectGroup);
+		GroupObjectRemove(enemyGroup);
+		GroupObjectRemove(wallGroup);
+
+		const float under = -97.5f;
+		const float left = -49.0f;
+		const float scale = 1.0f;
+
+		vector<weak_ptr<Ring>> ringVec;
+		vector<weak_ptr<Enemy>> enemyVec;
+		vector<weak_ptr<Enemy>> wallVec;
+
+		for (size_t i = 0; i < m_csvData.size(); i++)
+		{
+			for (size_t j = 0; j < m_csvData.at(i).size(); j++)
+			{
+				if (m_csvData.at(i).at(j) == "") continue;
+
+				const int& num = stoi(m_csvData.at(i).at(j));
+
+				if (GetBetween(num, 230, 301))
+				{
+					switch (num)
+					{
+					case 230:
+						ringVec.push_back(AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Big));
+						break;
+
+					case 231:
+						ringVec.push_back(AddGameObject<Ring>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Ring::Small));
+						break;
+
+					case 300:
+						enemyVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Normal));
+						break;
+
+					case 301:
+						wallVec.push_back(AddGameObject<Rabbit>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, Rabbit::Wall));
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+
+		for (const auto& ring : ringVec)
+		{
+			if (ring.lock())
+			{
+				ring.lock()->AddTarget(playerPtr);
+				collectGroup->IntoGroup(ring.lock());
+			}
+		}
+
+		for (const auto& enemy : enemyVec)
+		{
+			if (enemy.lock())
+			{
+				enemyGroup->IntoGroup(enemy.lock());
+			}
+		}
+
+		for (const auto& wall : wallVec)
+		{
+			if (wall.lock())
+			{
+				wallGroup->IntoGroup(wall.lock());
+			}
+		}
+
+		for (const auto& weakObj : stageVec)
+		{
+			if (!weakObj.lock()) continue;
+
+			const auto& block = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+			if (!block) continue;
+
+			block->AddTarget(enemyGroup->GetGroupVector());
+		}
+	}
+
 	void GameStage::OnCreate() 
 	{
 		try
 		{
-			//各パフォーマンスを得る
-			SetCollisionPerformanceActive(true);
-			SetUpdatePerformanceActive(true);
-			SetDrawPerformanceActive(true);
+			BaseStage::OnCreate();
 
 			// リソースの読み込み
 			CreateResourses();
@@ -148,6 +302,9 @@ namespace basecross
 
 			// スプライトの作成
 			CreateSprites();
+
+			// UIの作成
+			CreateUI();
 
 			// ステージ
 			CreateEnemy(m_stagePath);
@@ -181,7 +338,12 @@ namespace basecross
 				DeathFadeState();
 				break;
 
-			case GameStage::Continue:
+			case GameStage::Select:
+				SelectState();
+				break;
+
+			case GameStage::Reset:
+				ResetState();
 				break;
 
 			case GameStage::FadeOut:

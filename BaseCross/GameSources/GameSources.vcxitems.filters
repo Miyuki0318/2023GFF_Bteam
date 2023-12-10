@@ -8,10 +8,7 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h">
-      <Filter>DebugObject</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h">
-      <Filter>DebugObject</Filter>
+      <Filter>TemplateObject</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h">
       <Filter>Block</Filter>
@@ -100,6 +97,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)NextPlayer.h">
       <Filter>Player\Next</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h">
+      <Filter>CubeObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -107,9 +107,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp">
-      <Filter>DebugObject</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp">
       <Filter>Block</Filter>
@@ -192,6 +189,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)NextPlayer.cpp">
       <Filter>Player\Next</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CubeObject.cpp">
+      <Filter>CubeObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -214,9 +214,6 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{a3fbc840-37f9-4d31-a517-d54cc83c56e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugObject">
-      <UniqueIdentifier>{e511a72f-dee7-46db-9104-69603f016977}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sprite">
       <UniqueIdentifier>{78f895cb-f76c-449d-a785-d6fe87f1592b}</UniqueIdentifier>
@@ -283,6 +280,12 @@
     </Filter>
     <Filter Include="Player\Next">
       <UniqueIdentifier>{ca68a5a1-3cb6-4d6f-a9dc-2766a72dfe01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TemplateObject">
+      <UniqueIdentifier>{e511a72f-dee7-46db-9104-69603f016977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CubeObject">
+      <UniqueIdentifier>{f764dc58-a25d-4652-b532-a6a9045e4b58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

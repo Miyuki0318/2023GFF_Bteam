@@ -36,7 +36,7 @@ namespace basecross
 		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
 		*/
-		void OnReleaseA() override;
+		void OnRushA() override;
 
 		/*!
 		@brief プレイヤーの回転関数

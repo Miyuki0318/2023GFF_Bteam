@@ -1,4 +1,4 @@
-/*!
+/*! 
 @file Player.cpp
 @brief プレイヤーなど実体
 */
@@ -64,9 +64,9 @@ namespace basecross
 			// Aボタン入力有無での関数分岐
 			if (state == GameStage::GameNow)
 			{
-				if (m_acsel <= 1.7f && m_firePossible && m_jumpCount < m_jumpLimit)
+				if (m_firePossible && m_jumpCount < m_jumpLimit)
 				{
-					if (GetReleaseA()) OnReleaseA();
+					if (GetPushA()) OnRushA();
 				}
 
 				// 照準の回転処理
@@ -114,7 +114,11 @@ namespace basecross
 
 			// エフェクト描画関数
 			EffectUpdate();
+		}
 
+		if (state == GameStage::StartMove)
+		{
+			m_airEffect.lock()->SetDrawActive(false);
 		}
 
 		// ゴールステートなら
@@ -142,7 +146,7 @@ namespace basecross
 	}
 
 	// Aボタンを離した時
-	void Player::OnReleaseA()
+	void Player::OnRushA()
 	{
 		// スティック入力を取得し移動ベクトルに保持
 		Vec2 stick = GetLStickValue();
@@ -255,6 +259,31 @@ namespace basecross
 				}
 			}
 		}
+	}
+
+	void Player::Reset()
+	{
+		SetPosition(m_startPos);
+		m_rotation.zero();
+		m_velocity = Vec2(-5.0f, 0.0f);
+		m_meddleVelo.zero();
+		m_jumpCount = 0;
+		m_sRingCount = 0;
+		m_shieldCount = 1;
+		m_damageTime = 0.0f;
+		m_acsel = 7.5f;
+		m_jumpRecoveryTime = 0.0f;
+		m_isAir = true;
+		m_isBlower = false;
+		m_isInvincible = false;
+		m_firePossible = true;
+		m_cannonFire = false;
+		m_cannonStandby = false;
+		m_ptrColl->SetUpdateActive(true);
+
+		const auto& stage = GetTypeStage<GameStage>();
+		const auto& camera = stage->GetGameCamera();
+		camera->ResetCamera();
 	}
 
 	// 移動関数

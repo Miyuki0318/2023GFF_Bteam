@@ -20,11 +20,13 @@ namespace basecross
 		shared_ptr<PNTBoneModelDraw> m_armDraw;  // 腕の描画コンポーネント
 		shared_ptr<CollisionSphere> m_ptrColl;   // スフィアコリジョンコンポーネント
 
-		Vec2 m_velocity;		// 移動量
-		Vec2 m_meddleVelo;		// 加算移動量
 		const Vec2 m_deffVelo;	// 未入力時のデフォルトの移動量
-		Mat4x4 m_bodyMat;		// 胴のモデルとトランスフォームの差分行列
-		Mat4x4 m_armMat;		// 腕のモデルとトランスフォームの差分行列
+		const Vec3 m_startPos;  // 開始時の座標
+
+		Vec2 m_velocity;	// 移動量
+		Vec2 m_meddleVelo;	// 加算移動量
+		Mat4x4 m_bodyMat;	// 胴のモデルとトランスフォームの差分行列
+		Mat4x4 m_armMat;	// 腕のモデルとトランスフォームの差分行列
 
 		weak_ptr<TemplateObject> m_arm;			// 腕モデル用オブジェクト
 		weak_ptr<AirJetEffect> m_airEffect;		// エアショックエフェクト
@@ -68,6 +70,7 @@ namespace basecross
 			const Vec3& position
 		) :
 			TemplateObject(stagePtr),
+			m_startPos(position),
 			m_jumpLimit(2),
 			m_shieldLimit(3),
 			m_speed(4.0f),
@@ -80,16 +83,16 @@ namespace basecross
 			m_jumpRecoveryLimit(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
-			m_position = position;
+			m_position = m_startPos;
 			m_rotation.zero();
 			m_scale = Vec3(1.0f);
-			m_velocity = m_deffVelo;
+			m_velocity = Vec2(-5.0f, 0.0f);
 			m_meddleVelo.zero();
 			m_jumpCount = 0;
 			m_sRingCount = 0;
 			m_shieldCount = 1;
 			m_damageTime = 0.0f;
-			m_acsel = 1.0f;
+			m_acsel = 7.5f;
 			m_jumpRecoveryTime = 0.0f;
 			m_isAir = true;
 			m_isBlower = false;
@@ -119,6 +122,11 @@ namespace basecross
 		virtual ~Player() {}
 
 		/*!
+		@brief リセット関数
+		*/
+		virtual void Reset();
+
+		/*!
 		@brief 生成時に一度だけ呼び出される関数
 		*/
 		virtual void OnCreate() override;
@@ -131,7 +139,7 @@ namespace basecross
 		/*!
 		@brief Aボタンが押されなくなった時に呼び出される関数
 		*/
-		virtual void OnReleaseA();
+		virtual void OnRushA();
 
 		/*!
 		@brief 衝突した瞬間に呼び出される関数

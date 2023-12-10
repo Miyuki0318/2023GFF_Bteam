@@ -126,7 +126,7 @@ namespace basecross
 
 		virtual bool BlockCheck(const Vec3& checkPos)
 		{
-			const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Active")->GetGroupVector();
+			const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
 
 			bool check = false;
 

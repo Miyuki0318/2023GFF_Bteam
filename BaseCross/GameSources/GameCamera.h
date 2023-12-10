@@ -44,6 +44,15 @@ namespace basecross
 			m_target.reset();
 		}
 
+		void ResetCamera()
+		{
+			m_currentEye = m_startEye;
+			m_currentAt = m_startAt;
+			SetEye(m_currentEye);
+			SetAt(m_currentAt);
+			m_currentPos = Vec3(-35.0f, -88.5f, 0.0f);
+		}
+
 		const Vec3& GetCurrentPos() const
 		{
 			return m_currentPos;

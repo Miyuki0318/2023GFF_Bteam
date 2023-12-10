@@ -20,9 +20,6 @@ namespace basecross
 		m_ptrColl->SetMakedSize(m_ring == Big ? 1.0f : 1.75f);
 		m_ptrColl->SetAfterCollision(AfterCollision::None);
 
-		m_targetObj.clear();
-		m_targetObj.push_back(GetStage()->GetSharedGameObject<Player>(L"Player"));
-
 		AddTag(L"Ring");
 	}
 
@@ -48,7 +45,10 @@ namespace basecross
 
 			if (m_deleteTime <= m_totalTime)
 			{
-				GetStage()->RemoveGameObject<GameObject>(GetThis<GameObject>());
+				const auto& stage = GetStage();
+				const auto& thisPtr = GetThis<Ring>();
+				stage->GetSharedObjectGroup(L"Collect")->OutoGroup(thisPtr);
+				stage->RemoveGameObject<Ring>(thisPtr);
 			}
 		}
 		else
