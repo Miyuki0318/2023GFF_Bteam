@@ -15,6 +15,7 @@
 #include "NextStage.h"
 #include "GameStage.h"
 #include "TitleStage.h"
+#include "DrawObject.h"
 #include "Sprite.h"
 #include "Number.h"
 #include "Billboard.h"

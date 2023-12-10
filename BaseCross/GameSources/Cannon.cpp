@@ -116,7 +116,7 @@ namespace basecross
 	void GoalCannon::EffectUpdate()
 	{
 		// 石のエフェクトを自身の位置に生成
-		const auto paperParticle = m_particle.lock()->InsertParticle(50);
+		const auto paperParticle = m_particle.lock()->InsertParticle(100);
 		paperParticle->SetEmitterPos(m_position);
 		paperParticle->SetTextureResource(L"PAPER_TX");
 		paperParticle->SetMaxTime(5.0f);
@@ -130,7 +130,7 @@ namespace basecross
 		{
 			float rad = GetRotation().z - XM_PIDIV2 + Utility::DegToRad(Utility::RangeRand(90.0f, 0.0f) - 45.0f);
 			sprite.m_Velocity = -Vec2(cos(rad), sin(rad)).normalize() * Utility::RangeRand(10.0f, 5.0f);
-			sprite.m_LocalScale = Vec2(Utility::RangeRand(1.0f, 0.5f));
+			sprite.m_LocalScale = Vec2(Utility::RangeRand(2.0f, 0.5f));
 			sprite.m_LocalQt.rotationZ(Utility::DegToRad(Utility::RangeRand(180.0f, 0.0f)));
 
 			Col4 color;

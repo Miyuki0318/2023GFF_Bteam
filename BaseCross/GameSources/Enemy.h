@@ -11,7 +11,6 @@ namespace basecross
 		Vec2 m_velocity;
 		Mat4x4 m_modelMat;
 		weak_ptr<TemplateObject> m_targetObj;
-		shared_ptr<Transform> m_ptrTrans;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 
 		const float m_speed;

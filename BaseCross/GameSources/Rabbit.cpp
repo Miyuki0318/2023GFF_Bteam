@@ -5,6 +5,8 @@ namespace basecross
 {
 	void Rabbit::OnCreate()
 	{
+		TemplateObject::OnCreate();
+
 		m_ptrTrans = GetComponent<Transform>();
 		SetPosition(m_position);
 		SetRotation(m_rotation);
@@ -84,46 +86,12 @@ namespace basecross
 
 		if (other->FindTag(L"Block"))
 		{
-			if (m_isDeath) GetStage()->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
+			BlockEnter(other, hitPoint);
+		}
 
-			// ブロックのパラメータを取得
-			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
-			Vec3 objPos = cube->GetSlopePos();
-			Vec3 helf = cube->GetScale() / 2.0f;
-			m_aliveBlockPos.push_back(objPos);
-			m_isCannon = false;
-
-			if (CollHitUpper(hitPoint, objPos, helf))
-			{
-				if (m_velocity.y > 0.0f)
-				{
-					// 加速度が半分より大きかったら
-					if (m_acsel > 2.5f || m_velocity.y > 2.5f)
-					{
-						// 移動量を反転させ、半分にする
-						m_velocity.y *= -0.5f;
-					}
-				}
-			}
-
-			if (CollHitUnder(hitPoint, objPos, helf))
-			{
-				if (m_velocity.y < 0.0f)
-				{
-					m_velocity.y *= -1.0f;
-				}
-			}
-
-			if (CollHitLeft(hitPoint, objPos, helf) || CollHitRight(hitPoint, objPos, helf))
-			{
-				const auto& angle = cube->GetAngleType();
-				if (angle == CubeObject::Normal)
-				{
-					// 移動量を半減しつつ反転させる
-					m_velocity.x *= -0.5f;
-					m_dir *= -1.0f;
-				}
-			}
+		if (other->FindTag(L"Convayor"))
+		{
+			ConvayorEnter(other, hitPoint);
 		}
 
 		if (other->FindTag(L"Death"))
@@ -165,23 +133,151 @@ namespace basecross
 
 		if (other->FindTag(L"Block"))
 		{
-			// ブロックのパラメータを取得
-			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
-			Vec3 objPos = cube->GetSlopePos();
-			Vec3 helf = cube->GetScale() / 2.0f;
-			m_aliveBlockPos.push_back(objPos);
+			BlockExcute(other, hitPoint);
+		}
 
+		if (other->FindTag(L"Convayor"))
+		{
+			ConvayorExcute(other, hitPoint);
+		}
+	}
+
+	void Rabbit::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
+	{
+		if (m_isDeath) GetStage()->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
+
+		// ブロックのパラメータを取得
+		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
+		Vec3 objPos = cube->GetSlopePos();
+		Vec3 helf = cube->GetScale() / 2.0f;
+		m_aliveBlockPos.push_back(objPos);
+		m_isCannon = false;
+
+		if (CollHitUpper(hitPos, objPos, helf))
+		{
 			if (m_velocity.y > 0.0f)
 			{
-				m_acsel = 1.0f;
-				m_isAir = false;
-
-				const auto& angle = cube->GetAngleType();
-				if (angle == CubeObject::Normal)
+				// 加速度が半分より大きかったら
+				if (m_acsel > 2.5f || m_velocity.y > 2.5f)
 				{
-					SetPosition(GetPosition().x, objPos.y + helf.y + (m_scale.y / 2.0f) + 0.05f);
+					// 移動量を反転させ、半分にする
+					m_velocity.y *= -0.5f;
 				}
 			}
+		}
+
+		if (CollHitUnder(hitPos, objPos, helf))
+		{
+			if (m_velocity.y < 0.0f)
+			{
+				m_velocity.y *= -1.0f;
+			}
+		}
+
+		if (CollHitLeft(hitPos, objPos, helf) || CollHitRight(hitPos, objPos, helf))
+		{
+			const auto& angle = cube->GetAngleType();
+			if (angle == CubeObject::Normal)
+			{
+				// 移動量を半減しつつ反転させる
+				m_velocity.x *= -0.5f;
+				m_dir *= -1.0f;
+			}
+		}
+	}
+
+	void Rabbit::BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos)
+	{
+		// ブロックのパラメータを取得
+		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
+		Vec3 objPos = cube->GetSlopePos();
+		Vec3 helf = cube->GetScale() / 2.0f;
+		m_aliveBlockPos.push_back(objPos);
+
+		if (m_velocity.y > 0.0f)
+		{
+			m_acsel = 1.0f;
+			m_isAir = false;
+
+			const auto& angle = cube->GetAngleType();
+			if (angle == CubeObject::Normal)
+			{
+				SetPosition(GetPosition().x, objPos.y + helf.y + (m_scale.y / 2.0f) + 0.05f);
+			}
+		}
+	}
+
+	void Rabbit::ConvayorEnter(const shared_ptr<GameObject>& convayor, const Vec3& hitPos)
+	{
+		// ブロックのパラメータを取得
+		auto objTrans = convayor->GetComponent<Transform>();
+		Vec3 objPos = objTrans->GetPosition();
+		Vec3 helf = objTrans->GetScale() / 2.0f;
+
+		// コリジョンに対して上から衝突
+		if (CollHitUpper(hitPos, objPos, helf))
+		{
+			// 上にブロックがあるかのチェック
+			if (BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
+
+			// エアショック使用可能にする
+			m_velocity.y = 0.0f;
+			m_acsel = 1.0f;
+
+			// めり込みを修正
+			Vec3 pos = GetPosition();
+			pos.y = objPos.y + objTrans->GetScale().y + 0.1f;
+			SetPosition(pos);
+
+			// ベルトコンベア型にキャスト
+			const auto& ptr = dynamic_pointer_cast<Convayor>(convayor);
+			if (!ptr) return;
+
+			// 速度と向きを取得
+			const float& speed = ptr->GetConvayorSpeed();
+			const auto& angle = ptr->GetRotate();
+			switch (angle)
+			{
+			case Convayor::LeftRot:
+				m_velocity.x = speed;
+				break;
+
+			case Convayor::RightRot:
+				m_velocity.x = -speed;
+				break;
+
+			default:
+				break;
+			}
+
+			return;
+		}
+
+		// 上以外から衝突したなら
+		if (CollHitUnder(hitPos, objPos, helf) || CollHitLeft(hitPos, objPos, helf) || CollHitRight(hitPos, objPos, helf))
+		{
+			BlockEnter(convayor, hitPos);
+		}
+	}
+
+	void Rabbit::ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos)
+	{
+		// ブロックのパラメータを取得
+		auto objTrans = convayor->GetComponent<Transform>();
+		Vec3 objPos = objTrans->GetPosition();
+		Vec3 helf = objTrans->GetScale() / 2.0f;
+
+		// コリジョンに対して上から衝突
+		if (CollHitUpper(hitPos, objPos, helf))
+		{
+			// めり込みを解消
+			Vec3 pos = GetPosition();
+			pos.y = objPos.y + objTrans->GetScale().y + 0.1f;
+			SetPosition(pos);
+
+			// 上方向への移動を無くす(乗り続ける為に)
+			m_velocity.y = 0.0f;
+			m_acsel = 1.0f;
 		}
 	}
 

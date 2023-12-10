@@ -7,6 +7,7 @@ namespace basecross
 	{
 	protected:
 
+		shared_ptr<Transform> m_ptrTrans;
 		Vec3 m_position;
 		Vec3 m_rotation;
 		Vec3 m_scale;
@@ -34,6 +35,11 @@ namespace basecross
 
 		virtual ~TemplateObject() {}
 
+		virtual void OnCreate() override
+		{
+			m_ptrTrans = GetComponent<Transform>();
+		}
+
 		template <typename T>
 		const typename T::eStageState& GetStageState()
 		{
@@ -49,8 +55,7 @@ namespace basecross
 		virtual void SetPosition(const Vec3& position)
 		{
 			m_position = position;
-			auto ptrTrans = GetComponent<Transform>();
-			ptrTrans->SetPosition(m_position);
+			m_ptrTrans->SetPosition(m_position);
 		}
 
 		virtual void SetPosition(const Vec2& position)
@@ -70,15 +75,13 @@ namespace basecross
 
 		virtual Vec3 GetPosition() const
 		{
-			auto ptrTrans = GetComponent<Transform>();
-			return ptrTrans->GetPosition();
+			return m_ptrTrans->GetPosition();
 		}
 
 		virtual void SetRotation(const Vec3& rotation)
 		{
 			m_rotation = rotation;
-			auto ptrTrans = GetComponent<Transform>();
-			ptrTrans->SetRotation(m_rotation);
+			m_ptrTrans->SetRotation(m_rotation);
 		}
 
 		virtual void SetDegreeAngle(const Vec3& degree)
@@ -99,8 +102,7 @@ namespace basecross
 		virtual void SetScale(const Vec3& scale)
 		{
 			m_scale = scale;
-			auto ptrTrans = GetComponent<Transform>();
-			ptrTrans->SetScale(m_scale);
+			m_ptrTrans->SetScale(m_scale);
 		}
 
 		virtual void SetScale(const Vec2& scale)

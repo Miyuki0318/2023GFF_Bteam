@@ -13,6 +13,9 @@ namespace basecross
 {
 	void Player::OnCreate()
 	{
+		// 継承元の生成時の関数を実行する
+		TemplateObject::OnCreate();
+
 		// 腕モデル用オブジェクトの生成
 		m_arm = GetStage()->AddGameObject<TemplateObject>();
 
@@ -174,6 +177,20 @@ namespace basecross
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
+		// ステージとステージステートの取得
+		const auto& stage = GetTypeStage<GameStage>(false);
+		if (stage)
+		{
+			// ステートが開始演出移動なら
+			const auto& state = stage->GetStageState();
+			if (state == GameStage::StartMove)
+			{
+				// ステートをゲーム中に設定し、カメラにターゲット設定する
+				stage->SetStageState(GameStage::GameNow);
+				stage->GetGameCamera()->SetTargetObject(GetThis<Player>());
+			}
+		}
+
 		if (other->FindTag(L"Block"))
 		{
 			BlockEnter(other, hitPoint);
@@ -231,6 +248,10 @@ namespace basecross
 		if (other->FindTag(L"Spike"))
 		{
 			SpikeExcute(other, hitPoint);
+		}
+		if (other->FindTag(L"Rabbit"))
+		{
+			RabbitExcute(other, hitPoint);
 		}
 		if (other->FindTag(L"Cannon"))
 		{
@@ -720,20 +741,6 @@ namespace basecross
 	// ブロックに衝突した瞬間
 	void Player::BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos)
 	{
-		// ステージとステージステートの取得
-		const auto& stage = GetTypeStage<GameStage>(false);
-		if (stage)
-		{
-			// ステートが開始演出移動なら
-			const auto& state = stage->GetStageState();
-			if (state == GameStage::StartMove)
-			{
-				// ステートをゲーム中に設定し、カメラにターゲット設定する
-				stage->SetStageState(GameStage::GameNow);
-				stage->GetGameCamera()->SetTargetObject(GetThis<Player>());
-			}
-		}
-
 		// ブロックのパラメータを取得
 		const auto& cube = dynamic_pointer_cast<CubeObject>(block);
 		Vec3 objPos = cube->GetSlopePos();
@@ -1025,6 +1032,13 @@ namespace basecross
 			m_firePossible = true;
 			BlockExcute(obj, hitPos);
 		}
+		else
+		{
+			if (!m_isInvincible)
+			{
+				SpikeEnter(obj, hitPos);
+			}
+		}
 	}
 
 	// 大砲と衝突した時
@@ -1135,35 +1149,49 @@ namespace basecross
 		const auto& rabbit = dynamic_pointer_cast<Rabbit>(other);
 		if (rabbit)
 		{
-			// シールドが二枚以上あるなら
-			if (m_cannonFire)
+			if (!m_isInvincible)
 			{
-				// ウサギのステートを死亡に設定
-				rabbit->SetState(Rabbit::Death);
-				return;
-			}
-			if (m_shieldCount >= 2)
-			{
-				// ウサギのステートを死亡に設定
-				rabbit->SetState(Rabbit::Death);
-				m_shieldCount--;
-			}
-			else
-			{
-				// 衝突方向真偽
-				Vec3 helfScale = rabbit->GetScale() / 2.0f;
+				// シールドが二枚以上あるなら
+				if (m_cannonFire)
+				{
+					// ウサギのステートを死亡に設定
+					rabbit->SetState(Rabbit::Death);
+					return;
+				}
+				if (m_shieldCount >= 2)
+				{
+					// ウサギのステートを死亡に設定
+					rabbit->SetState(Rabbit::Death);
+					m_shieldCount--;
+				}
+				else
+				{
+					// 衝突方向真偽
+					Vec3 helfScale = rabbit->GetScale() / 2.0f;
 
-				if (CollHitLeft(hitPos, hitPos, helfScale))
-				{
-					DamageKnockBack(Vec2(1.5f, -0.5f));
-					return;
-				}
-				if (CollHitRight(hitPos, hitPos, helfScale))
-				{
-					DamageKnockBack(Vec2(-1.5f, -0.5f));
-					return;
+					if (CollHitLeft(hitPos, hitPos, helfScale))
+					{
+						DamageKnockBack(Vec2(1.5f, -0.5f));
+						return;
+					}
+					if (CollHitRight(hitPos, hitPos, helfScale))
+					{
+						DamageKnockBack(Vec2(-1.5f, -0.5f));
+						return;
+					}
 				}
 			}
+		}
+	}
+
+	// 敵のウサギと衝突し続けた時
+	void Player::RabbitExcute(const shared_ptr<GameObject>& rabbit, const Vec3& hitPos)
+	{
+		// 無敵中じゃなければ
+		if (!m_isInvincible)
+		{
+			// ウサギと衝突した時の関数を実行
+			RabbitEnter(rabbit, hitPos);
 		}
 	}
 

@@ -29,16 +29,16 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h">
-      <Filter>Sprite</Filter>
+      <Filter>DrawObject\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Number.h">
-      <Filter>Sprite</Filter>
+      <Filter>DrawObject\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h">
-      <Filter>Billboard</Filter>
+      <Filter>DrawObject\Billboard</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h">
-      <Filter>Billboard</Filter>
+      <Filter>DrawObject\Billboard</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)GameCamera.h">
       <Filter>Camera</Filter>
@@ -100,6 +100,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CubeObject.h">
       <Filter>CubeObject</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DrawObject.h">
+      <Filter>DrawObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -124,16 +127,16 @@
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp">
-      <Filter>Sprite</Filter>
+      <Filter>DrawObject\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp">
-      <Filter>Sprite</Filter>
+      <Filter>DrawObject\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Billboard.cpp">
-      <Filter>Billboard</Filter>
+      <Filter>DrawObject\Billboard</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp">
-      <Filter>Billboard</Filter>
+      <Filter>DrawObject\Billboard</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GameCamera.cpp">
       <Filter>Camera</Filter>
@@ -215,12 +218,6 @@
     <Filter Include="App">
       <UniqueIdentifier>{a3fbc840-37f9-4d31-a517-d54cc83c56e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sprite">
-      <UniqueIdentifier>{78f895cb-f76c-449d-a785-d6fe87f1592b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Billboard">
-      <UniqueIdentifier>{d3d1cc5f-1097-4d1d-909d-5d480bb921a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Camera">
       <UniqueIdentifier>{3a59888d-8a81-4153-83df-2ab9ca37f373}</UniqueIdentifier>
     </Filter>
@@ -286,6 +283,15 @@
     </Filter>
     <Filter Include="CubeObject">
       <UniqueIdentifier>{f764dc58-a25d-4652-b532-a6a9045e4b58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DrawObject">
+      <UniqueIdentifier>{e0cd6907-6967-45df-b7c8-e068ea3fe6da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DrawObject\Billboard">
+      <UniqueIdentifier>{d3d1cc5f-1097-4d1d-909d-5d480bb921a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DrawObject\Sprite">
+      <UniqueIdentifier>{78f895cb-f76c-449d-a785-d6fe87f1592b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

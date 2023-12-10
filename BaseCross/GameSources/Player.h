@@ -333,6 +333,12 @@ namespace basecross
 		void RabbitEnter(const shared_ptr<GameObject>& rabbit, const Vec3& hitPos);
 
 		/*!
+		@brief 敵のウサギに衝突し続けた時
+		@param ウサギのポインタ
+		*/
+		void RabbitExcute(const shared_ptr<GameObject>& rabbit, const Vec3& hitPos);
+
+		/*!
 		@brief リングに衝突した時
 		@param リングのポインタ
 		*/

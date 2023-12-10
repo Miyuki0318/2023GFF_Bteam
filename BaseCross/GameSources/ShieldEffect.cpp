@@ -5,6 +5,7 @@ namespace basecross
 {
 	void ShieldEffect::OnCreate()
 	{
+		TemplateObject::OnCreate();
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
 		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
 		m_ptrDraw->SetTextureResource(L"SHIELD_TX");
@@ -93,6 +94,7 @@ namespace basecross
 
 	void ShieldOutLine::OnCreate()
 	{
+		TemplateObject::OnCreate();
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
 		ptrDraw->SetRasterizerState(RasterizerState::CullFront);

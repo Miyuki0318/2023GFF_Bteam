@@ -5,6 +5,8 @@ namespace basecross
 {
 	void ArrowEffect::OnCreate()
 	{
+		TemplateObject::OnCreate();
+
 		if (m_ownerObject.lock())
 		{
 			SetPosition(m_ownerObject.lock()->GetPosition());

@@ -14,35 +14,17 @@ namespace basecross
 	*/
 	void Sprite::OnCreate()
 	{
-		// トランスフォームの設定
-		auto ptrTrans = GetComponent<Transform>();
-		ptrTrans->SetScale(m_scale.x, m_scale.y, 1.0f);
-		ptrTrans->SetRotation(Vec3(0.0f));
-		ptrTrans->SetPosition(m_position);
+		DrawObject::OnCreate();
 
 		// 描画コンポーネントの設定
-		auto ptrDraw = AddComponent<PCTSpriteDraw>(m_vertex);
-		ptrDraw->SetTextureResource(m_texWstr);
+		m_ptrDraw = AddComponent<PCTSpriteDraw>(m_vertex);
+		m_ptrDraw->SetTextureResource(m_texWstr);
 		m_verticesColor = COL_WHITE;
-		m_diffuseColor = ptrDraw->GetDiffuse();
-		m_emissiveColor = ptrDraw->GetEmissive();
+		m_diffuseColor = m_ptrDraw->GetDiffuse();
+		m_emissiveColor = m_ptrDraw->GetEmissive();
 
 		// 透明色の描画設定
 		SetAlphaActive(true);
-	}
-
-	/*!
-	@brief 色の範囲が0.0f～1.0fの間になってるかの修正関数
-	@param 色
-	*/
-	void Sprite::CorrectionColor(Col4& color)
-	{
-		// 色の範囲が0.0f～1.0fの間になってるかの修正
-		for (int i = 0; i < 4; i++)
-		{
-			color.setElem(i, min(color.getElem(i), 1.0f));
-			color.setElem(i, max(color.getElem(i), 0.0f));
-		}
 	}
 
 	/*!
@@ -54,9 +36,8 @@ namespace basecross
 		// 色の修正
 		CorrectionColor(color);
 
-		// 描画コンポーネントの取得してディヒューズ色に設定
-		auto ptrDraw = GetComponent<PCTSpriteDraw>();
-		ptrDraw->SetDiffuse(color);
+		// ディヒューズ色に設定
+		m_ptrDraw->SetDiffuse(color);
 
 		// 色を保持
 		m_diffuseColor = color;
@@ -71,9 +52,8 @@ namespace basecross
 		// 色の修正
 		CorrectionColor(color);
 
-		// 描画コンポーネントの取得してエミッシブ色に設定
-		auto ptrDraw = GetComponent<PCTSpriteDraw>();
-		ptrDraw->SetEmissive(color);
+		// エミッシブ色に設定
+		m_ptrDraw->SetEmissive(color);
 
 		// 色を保持
 		m_emissiveColor = color;
@@ -94,9 +74,8 @@ namespace basecross
 			v.color = color;
 		}
 
-		// 描画コンポーネントの取得して頂点データの更新
-		auto ptrDraw = GetComponent<PCTSpriteDraw>();
-		ptrDraw->UpdateVertices(m_vertex.vertices);
+		// 頂点データの更新
+		m_ptrDraw->UpdateVertices(m_vertex.vertices);
 
 		// 色を保持
 		m_verticesColor = color;

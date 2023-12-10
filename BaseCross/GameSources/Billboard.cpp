@@ -14,17 +14,13 @@ namespace basecross
 	*/
 	void Billboard::OnCreate()
 	{
-		// トランスフォームの設定
-		auto ptrTrans = GetComponent<Transform>();
-		ptrTrans->SetPosition(m_position);
-		ptrTrans->SetRotation(0.0f, 0.0f, 0.0f);
-		ptrTrans->SetScale(m_scale.x, m_scale.y, 1.0f);
+		DrawObject::OnCreate();
 
 		// 描画コンポーネントの設定
-		auto ptrDraw = AddComponent<PCTStaticDraw>();
-		ptrDraw->SetOriginalMeshUse(true);
-		ptrDraw->CreateOriginalMesh(m_vertex);
-		ptrDraw->SetTextureResource(m_texWstr);
+		m_ptrDraw = AddComponent<PCTStaticDraw>();
+		m_ptrDraw->SetOriginalMeshUse(true);
+		m_ptrDraw->CreateOriginalMesh(m_vertex);
+		m_ptrDraw->SetTextureResource(m_texWstr);
 
 		// 透明色の描画を可能に
 		SetAlphaActive(true);
@@ -38,8 +34,7 @@ namespace basecross
 		// カメラを元にビルボード関数でクォータニオンを設定
 		const auto& ptrCamera = GetStage()->GetView()->GetTargetCamera();
 		Quat qt = Utility::GetBillboardQuat(ptrCamera->GetAt() - ptrCamera->GetEye());
-		auto ptrTrans = GetComponent<Transform>();
-		ptrTrans->SetQuaternion(qt);
+		m_ptrTrans->SetQuaternion(qt);
 	}
 
 	/*!
@@ -49,8 +44,7 @@ namespace basecross
 	void Billboard::SetDiffuseColor(const Col4& color)
 	{
 		// 描画コンポーネントの取得してディヒューズ色に設定
-		auto ptrDraw = GetComponent<PCTStaticDraw>();
-		ptrDraw->SetDiffuse(color);
+		m_ptrDraw->SetDiffuse(color);
 
 		// 色を保持
 		m_diffuseColor = color;
@@ -63,8 +57,7 @@ namespace basecross
 	void Billboard::SetEmissiveColor(const Col4& color)
 	{
 		// 描画コンポーネントの取得してエミッシブ色に設定
-		auto ptrDraw = GetComponent<PCTStaticDraw>();
-		ptrDraw->SetEmissive(color);
+		m_ptrDraw->SetEmissive(color);
 
 		// 色を保持
 		m_emissiveColor = color;
@@ -83,8 +76,7 @@ namespace basecross
 		}
 
 		// 描画コンポーネントの取得して頂点データの更新
-		auto ptrDraw = GetComponent<PCTStaticDraw>();
-		ptrDraw->UpdateVertices(m_vertex.vertices);
+		m_ptrDraw->UpdateVertices(m_vertex.vertices);
 
 		// 色を保持
 		m_verticesColor = color;

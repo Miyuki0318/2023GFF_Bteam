@@ -5,6 +5,8 @@ namespace basecross
 {
 	void CubeObject::OnCreate()
 	{
+		TemplateObject::OnCreate();
+
 		SetPosition(m_position);
 		SetRotation(m_type != Normal ? Utility::DegToRad(m_angle.at(m_type)) : m_rotation);
 		SetScale(m_scale);
