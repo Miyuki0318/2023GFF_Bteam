@@ -626,7 +626,7 @@ namespace basecross
 	void Player::BlowerBetweenCheck()
 	{
 		// アップデートオブジェクトグループのポインタ配列の取得
-		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Update")->GetGroupVector();
+		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
 
 		// ギミックの角度と送風機の中に居るかの真偽
 		Gimmick::eAngle angle = Gimmick::Up;
@@ -657,10 +657,12 @@ namespace basecross
 			switch (angle)
 			{
 			case Gimmick::Up:
+				Debug::Log(L"送風機上");
 				UpMeddleVelocity();
 				break;
 
 			case Gimmick::Down:
+				Debug::Log(L"送風機下");
 				DownMeddleVelocity();
 				break;
 
