@@ -365,7 +365,20 @@ namespace basecross
 		}
 
 		// 大砲発射後で、加速度が最大加速度以下になったら　
-		if (m_cannonFire && m_acsel <= m_maxAcsel) m_cannonFire = false;
+		if (m_cannonFire && m_acsel <= m_maxAcsel) 
+		{
+			// 発射後状態を解除
+			m_cannonFire = false;
+		}
+
+		if (m_activeCannon.lock())
+		{
+			if (!m_activeCannon.lock()->GetFire())
+			{
+				// ポインタの保持を解除
+				m_activeCannon.reset();
+			}
+		}
 	}
 
 	void Player::RecoveryAirShock()
@@ -535,9 +548,6 @@ namespace basecross
 
 				// SEの再生
 				StartSE(L"CANNON_SE", 0.75f);
-
-				// ポインタの保持を解除
-				m_activeCannon.reset();
 			}
 			else
 			{
@@ -1000,7 +1010,7 @@ namespace basecross
 			}
 			if (left)
 			{
-				DamageKnockBack(Vec2(1.0f, 0.5f));
+				DamageKnockBack(Vec2(1.5f, -0.5f));
 				return;
 			}
 			if (right)
@@ -1048,20 +1058,24 @@ namespace basecross
 		const auto& ptr = dynamic_pointer_cast<Cannon>(cannon);
 		if (ptr)
 		{
-			// 発射準備関数
-			ptr->OnFire();
+			if (m_activeCannon.lock() != ptr)
+			{
+				// 発射準備関数
+				ptr->OnFire();
 
-			// 乗った大砲のポインタを保持
-			m_activeCannon = ptr;
+				// 乗った大砲のポインタを保持
+				m_activeCannon.reset();
+				m_activeCannon = ptr;
 
-			// パラメータの設定
-			m_isAir = false;
-			m_firePossible = false;
-			m_cannonStandby = true;
+				// パラメータの設定
+				m_isAir = false;
+				m_firePossible = false;
+				m_cannonStandby = true;
 
-			// 実質移動不可に設定
-			m_velocity = Vec2(0.0f);
-			m_acsel = 1.0f;
+				// 実質移動不可に設定
+				m_velocity = Vec2(0.0f);
+				m_acsel = 1.0f;
+			}
 		}
 	}
 

@@ -25,7 +25,7 @@ namespace basecross
 
 		// サウンドの取得
 		// ネクスト画面BGMの読み込み
-		app->RegisterWav(L"TITLE_BGM", BGMPath + L"TitleBGM");
+		app->RegisterWav(L"NEXT_BGM", BGMPath + L"NextBGM");
 	}
 
 	void NextStage::CreateViewLight()
@@ -174,7 +174,7 @@ namespace basecross
 			CreateBackGround();
 
 			// BGMの再生
-			CreateBGM(L"TITLE_BGM", 0.25f);
+			CreateBGM(L"NEXT_BGM", 0.25f);
 
 			// プレイヤーの作成
 			CreatePlayer();

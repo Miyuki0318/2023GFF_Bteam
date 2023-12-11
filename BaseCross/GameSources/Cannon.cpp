@@ -13,6 +13,7 @@ namespace basecross
 		m_ptrDraw->AddAnimation(L"RAPID", 30, 30, false);
 
 		auto ptrColl = GetComponent<CollisionObb>();
+		ptrColl->SetMakedSize(1.5f);
 		ptrColl->SetUpdateActive(true);
 		ptrColl->SetAfterCollision(AfterCollision::None);
 

@@ -83,8 +83,9 @@ namespace basecross
 		@param プレイヤーの座標
 		@param 描画範囲
 		@param 更新範囲
+		@param コリジョン範囲
 		*/
-		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& playerPos, float drawRange, float updateRange);
+		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float drawRange, float updateRange);
 
 		/*!
 		@brief オブジェクトのパフォーマンス管理関数

@@ -31,6 +31,8 @@ namespace basecross
 		app->RegisterTexture(L"SGAUGE_TX", texturePath + L"ShieldUI.png");
 		app->RegisterTexture(L"GAUGE_TX", texturePath + L"Gauge.png");
 		app->RegisterTexture(L"N_EFFECT_TX", texturePath + L"WhiteEffect.png");
+		app->RegisterTexture(L"GAMEOVER_TX", texturePath + L"GameOver.png");
+		app->RegisterTexture(L"CONTINUE_TX", texturePath + L"Continue.png");
 
 		// サウンドディレクトリパスの取得
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
@@ -87,11 +89,11 @@ namespace basecross
 	void GameStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
-		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
-		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
-		m_gameOver = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
-		m_continue = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
-		m_titleBack = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
+		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE * 1.25f, Vec3(-675.0f, 0.0f, 0.2f));
+		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE * 1.25f, Vec3(675.0f, 0.0f, 0.2f));
+		m_gameOver = AddGameObject<Sprite>(L"GAMEOVER_TX", WINDOW_SIZE * 0.75f, Vec3(0.0f, 600.0f, 0.2f));
+		m_continue = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
+		m_titleBack = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
 	}
 
 	void GameStage::CreateUI()
@@ -106,10 +108,17 @@ namespace basecross
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		const Vec3& goPos = m_gameOver.lock()->GetPosition();
+		const Vec3& coPos = m_continue.lock()->GetPosition();
+		const Vec3& tbPos = m_titleBack.lock()->GetPosition();
+
 		if (mLPos.x < 0.0f)
 		{
 			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
 			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
+			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, -DELTA_TIME * 545.0f, 0.0f));
+			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
+			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 		}
 		else
 		{
@@ -125,6 +134,9 @@ namespace basecross
 	{
 		const auto& player = GetSharedGameObject<Player>(L"Player");
 		const bool inputLStick = Input::IsInputLStickX();
+		const Vec2 deffScale = WINDOW_SIZE * 0.55f;
+		m_totalTime += DELTA_TIME * 5.0f;
+
 		if (inputLStick && !m_currentStickX)
 		{
 			m_totalTime = 0.0f;
@@ -132,18 +144,22 @@ namespace basecross
 			{
 			case GameStage::Continue:
 				m_select = TitleBack;
+				m_totalTime = 0.0f;
 				break;
 
 			case GameStage::TitleBack:
 				m_select = Continue;
+				m_totalTime = 0.0f;
 				break;
 
 			default:
 				break;
 			}
-
-			m_currentStickX = inputLStick;
 		}
+
+		m_continue.lock()->SetScale(deffScale * (m_select == Continue ? SinCurve(m_totalTime ,1.0f, 1.2f) : 1.0f));
+		m_titleBack.lock()->SetScale(deffScale * (m_select == TitleBack ? SinCurve(m_totalTime, 1.0f, 1.2f) : 1.0f));
+		m_currentStickX = inputLStick;
 
 		if (Input::GetPushA())
 		{
@@ -152,12 +168,15 @@ namespace basecross
 			case GameStage::Continue:
 				ResetStage();
 				player->Reset();
+				CreateSE(L"CANNON_SE", 1.0f);
 				CreateSE(L"METAL_SE", 0.75f);
+				m_totalTime = 0.0f;
 				m_stageState = Reset;
 				break;
 
 			case GameStage::TitleBack:
 				m_stageState = FadeOut;
+				CreateSE(L"GAMEOVER_SE", 1.0f);
 				break;
 
 			default:
@@ -170,16 +189,30 @@ namespace basecross
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		const Vec3& goPos = m_gameOver.lock()->GetPosition();
+		const Vec3& coPos = m_continue.lock()->GetPosition();
+		const Vec3& tbPos = m_titleBack.lock()->GetPosition();
+
 		if (mLPos.x > -WINDOW_WIDTH / 1.9f)
 		{
 			m_metalLeft.lock()->SetPosition(mLPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
 			m_metalRight.lock()->SetPosition(mRPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
+			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, DELTA_TIME * 545.0f, 0.0f));
+			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
+			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
 		}
 		else
 		{
 			StopSE(L"METAL_SE");
 			CreateSE(L"METAL_STOP_SE", 1.5f);
 			m_stageState = StartMove;
+			m_metalLeft.lock()->SetPosition(Vec3(-675.0f, 0.0f, 0.2f));
+			m_metalRight.lock()->SetPosition(Vec3(675.0f, 0.0f, 0.2f));
+			m_gameOver.lock()->SetPosition(Vec3(0.0f, 600.0f, 0.2f));
+			m_continue.lock()->SetPosition(Vec3(-300.0f, 600.0f, 0.2f));
+			m_titleBack.lock()->SetPosition(Vec3(300.0f, 600.0f, 0.2f));
+			m_continue.lock()->SetScale(WINDOW_SIZE * 0.55f);
+			m_titleBack.lock()->SetScale(WINDOW_SIZE * 0.55f);
 		}
 	}
 
@@ -334,6 +367,8 @@ namespace basecross
 		try
 		{
 			BaseStage::OnUpdate();
+
+			Debug::Log(m_gameOver.lock()->GetPosition());
 
 			switch (m_stageState)
 			{

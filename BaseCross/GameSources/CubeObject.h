@@ -93,6 +93,11 @@ namespace basecross
 
 		void CollisionPerformance(const float range);
 
+		void SetCollActive(bool b)
+		{
+			m_ptrColl->SetUpdateActive(b);
+		}
+
 		const eType& GetAngleType() const
 		{
 			return m_type;

@@ -80,6 +80,9 @@ namespace basecross
 		// ウサギのSE
 		app->RegisterWav(L"RABBIT_JUMP_SE", SEPath + L"RabbitJumpSE");
 		app->RegisterWav(L"RABBIT_SEARCH_SE", SEPath + L"RabbitSearchSE");
+
+		// ゲームオーバーSE
+		app->RegisterWav(L"GAMEOVER_SE", SEPath + L"GameOverSE");
 	}
 
 	void BaseStage::CreateViewLight() {}
@@ -319,7 +322,7 @@ namespace basecross
 				{
 					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
-					update = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), blowerScale, angle, 5.0f);
+					gimmick = AddGameObject<Blower>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), blowerScale, angle, 5.0f);
 				}
 
 				if (block)
@@ -453,9 +456,8 @@ namespace basecross
 		}
 	}
 
-	void BaseStage::ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& playerPos, float drawRange, float updateRange)
+	void BaseStage::ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float drawRange, float updateRange)
 	{
-		const auto& activeGroup = GetSharedObjectGroup(L"Active");
 		for (const auto& weakObj : groupVec)
 		{
 			// エラーチェック
@@ -470,6 +472,8 @@ namespace basecross
 
 			// 距離を比較するターゲット配列を取得
 			const auto& vec = cubeObj->GetTargetVec();
+			if (vec.empty()) continue;
+
 			for (const auto& v : vec)
 			{
 				// エラーチェックとアクティブかのチェック
@@ -487,11 +491,11 @@ namespace basecross
 					break;
 				}
 			}
-			cubeObj->SetUpdateActive(active);
 
 			// 描画するかはプレイヤーとの距離で行う
 			float length = (cubeObj->GetPosition() - playerPos).length();
 			cubeObj->SetDrawActive(length <= drawRange);
+			cubeObj->SetUpdateActive(active);
 		}
 	}
 
@@ -552,7 +556,7 @@ namespace basecross
 			const auto& activeGroup = GetSharedObjectGroup(L"Active");
 
 			// パフォーマンス管理関数を実行
-			ObjectPerformance<Enemy>(enemyVec, playerPos, range);
+			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 2.0f);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
 			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
 			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
@@ -560,8 +564,8 @@ namespace basecross
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
 			activeGroup->AllClear();
-			ObjectInToAvtiveGroup(stageVec, playerPos, range, cubeRange);
-			ObjectInToAvtiveGroup(updateVec, playerPos, range, cubeRange);
+			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, range, cubeRange);
+			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range, range / 2.0f);
 		}
 		catch (...)
 		{
