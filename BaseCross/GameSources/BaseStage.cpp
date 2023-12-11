@@ -290,7 +290,7 @@ namespace basecross
 				{
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
 					update = AddGameObject<Spike>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, angle);
-					block = AddGameObject<Alpha>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 0.9f, true);
+					update->AddTarget(enemyVec);
 				}
 
 				// ベルトコンベア
@@ -303,6 +303,7 @@ namespace basecross
 					const auto& beltType = static_cast<Convayor::eType>(checker.check);
 					const float& speed = static_cast<float>(atof(&m_csvData.at(i).at(j).at(3)));
 					update = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, rotate, beltType, speed);
+					update->AddTarget(enemyVec);
 				}
 
 				// 大砲
@@ -452,6 +453,48 @@ namespace basecross
 		}
 	}
 
+	void BaseStage::ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& playerPos, float drawRange, float updateRange)
+	{
+		const auto& activeGroup = GetSharedObjectGroup(L"Active");
+		for (const auto& weakObj : groupVec)
+		{
+			// エラーチェック
+			if (!weakObj.lock()) continue;
+
+			// 型キャストとエラーチェック
+			const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+			if (!cubeObj) continue;
+
+			// アクティブかの真偽
+			bool active = false;
+
+			// 距離を比較するターゲット配列を取得
+			const auto& vec = cubeObj->GetTargetVec();
+			for (const auto& v : vec)
+			{
+				// エラーチェックとアクティブかのチェック
+				if (!v.lock()) continue;
+				if (!v.lock()->GetUpdateActive()) continue;
+
+				// ターゲットの座標との距離を求める
+				const Vec3& pos = v.lock()->GetComponent<Transform>()->GetPosition();
+				float length = (cubeObj->GetPosition() - pos).length();
+				if (length <= updateRange)
+				{
+					// アクティブグループに追加
+					activeGroup->IntoGroup(cubeObj);
+					active = true;
+					break;
+				}
+			}
+			cubeObj->SetUpdateActive(active);
+
+			// 描画するかはプレイヤーとの距離で行う
+			float length = (cubeObj->GetPosition() - playerPos).length();
+			cubeObj->SetDrawActive(length <= drawRange);
+		}
+	}
+
 	void BaseStage::OnCreate()
 	{
 		try
@@ -517,43 +560,8 @@ namespace basecross
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
 			activeGroup->AllClear();
-			for (const auto& weakObj : stageVec)
-			{
-				// エラーチェック
-				if (!weakObj.lock()) continue;
-
-				// 型キャストとエラーチェック
-				const auto& cubeObj = dynamic_pointer_cast<CubeObject>(weakObj.lock());
-				if (!cubeObj) continue;
-
-				// アクティブかの真偽
-				bool active = false;
-
-				// 距離を比較するターゲット配列を取得
-				const auto& vec = cubeObj->GetTargetVec();
-				for (const auto& v : vec)
-				{
-					// エラーチェックとアクティブかのチェック
-					if (!v.lock()) continue;
-					if (!v.lock()->GetUpdateActive()) continue;
-
-					// ターゲットの座標との距離を求める
-					const Vec3& pos = v.lock()->GetComponent<Transform>()->GetPosition();
-					float length = (cubeObj->GetPosition() - pos).length();
-					if (length <= cubeRange)
-					{
-						// アクティブグループに追加
-						activeGroup->IntoGroup(cubeObj);
-						active = true;
-						break;
-					}
-				}
-				cubeObj->SetUpdateActive(active);
-
-				// 描画するかはプレイヤーとの距離で行う
-				float length = (cubeObj->GetPosition() - playerPos).length();
-				cubeObj->SetDrawActive(length <= range);
-			}
+			ObjectInToAvtiveGroup(stageVec, playerPos, range, cubeRange);
+			ObjectInToAvtiveGroup(updateVec, playerPos, range, cubeRange);
 		}
 		catch (...)
 		{

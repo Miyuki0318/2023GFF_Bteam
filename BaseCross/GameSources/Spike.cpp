@@ -11,7 +11,6 @@ namespace basecross
 		m_ptrDraw->SetMeshToTransformMatrix(m_angle != All ? m_modelMat : m_blockMat);
 		m_ptrDraw->AddAnimation(L"ATTACK", 0, 60, true);
 		m_ptrDraw->ChangeCurrentAnimation(L"ATTACK");
-
 		AddTag(L"Spike");
 	}
 

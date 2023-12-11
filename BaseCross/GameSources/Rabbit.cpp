@@ -84,7 +84,7 @@ namespace basecross
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
-		if (other->FindTag(L"Block"))
+		if (other->FindTag(L"Block") || other->FindTag(L"Spike"))
 		{
 			BlockEnter(other, hitPoint);
 		}
@@ -595,7 +595,7 @@ namespace basecross
 		Vec3 pos = GetPosition();
 
 		// ブロックオブジェクトグループの取得
-		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Stage")->GetGroupVector();
+		const auto& blockVec = GetStage()->GetSharedObjectGroup(L"Active")->GetGroupVector();
 		for (const auto& gameObj : blockVec)
 		{
 			// オブジェクトが無い、または非アクティブかのチェック

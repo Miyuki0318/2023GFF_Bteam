@@ -1268,5 +1268,4 @@ namespace basecross
 			}
 		}
 	}
-
 }

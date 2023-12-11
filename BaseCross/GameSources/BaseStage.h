@@ -78,6 +78,15 @@ namespace basecross
 		void CreateInstanceBlock(const string& fileName);
 
 		/*!
+		@brief オブジェクトのアクティブグループに追加する関数
+		@param オブジェクトのグループベクター配列
+		@param プレイヤーの座標
+		@param 描画範囲
+		@param 更新範囲
+		*/
+		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& playerPos, float drawRange, float updateRange);
+
+		/*!
 		@brief オブジェクトのパフォーマンス管理関数
 		@param オブジェクトのグループベクター配列
 		@param 描画範囲

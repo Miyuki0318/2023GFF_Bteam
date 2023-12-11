@@ -53,6 +53,9 @@ namespace basecross
 		weak_ptr<Sprite> m_fade;
 		weak_ptr<Sprite> m_metalLeft;
 		weak_ptr<Sprite> m_metalRight;
+		weak_ptr<Sprite> m_gameOver;
+		weak_ptr<Sprite> m_continue;
+		weak_ptr<Sprite> m_titleBack;
 
 		// ステージパス
 		string m_stagePath;
