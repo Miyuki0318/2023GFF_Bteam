@@ -100,4 +100,35 @@ namespace basecross
 
 		void EffectUpdate() override;
 	};
+
+	class TitleCannon : public Cannon
+	{
+	public:
+
+		enum eCannonType
+		{
+			Easy,
+			Normal,
+			Hard,
+		};
+
+	private:
+
+		eCannonType m_cannonType;
+
+	public:
+
+		TitleCannon(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale,
+			const eCannonType& cannonType
+		) :
+			Cannon(stagePtr, position, scale, Gimmick::Up, eFireType::Normal),
+			m_cannonType(cannonType)
+		{
+		}
+
+		virtual ~TitleCannon() {}
+
+		void OnCreate() override;
+	};
 }

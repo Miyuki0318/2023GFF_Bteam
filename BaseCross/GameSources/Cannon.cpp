@@ -18,9 +18,6 @@ namespace basecross
 		ptrColl->SetAfterCollision(AfterCollision::None);
 
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
-
-		SetAlphaActive(true);
-
 		AddTag(L"Cannon");
 	}
 
@@ -108,9 +105,6 @@ namespace basecross
 		ptrColl->SetAfterCollision(AfterCollision::None);
 
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
-
-		SetAlphaActive(true);
-
 		AddTag(L"Goal");
 	}
 
@@ -164,5 +158,45 @@ namespace basecross
 
 			sprite.m_Color = color;
 		}
+	}
+
+	void TitleCannon::OnCreate()
+	{
+		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
+
+		wstring meshKey = L"N_CANNON";
+		switch (m_cannonType)
+		{
+		case TitleCannon::Easy:
+			meshKey = L"EASY_CANNON";
+			m_angle = Gimmick::Uleft;
+			break;
+
+		case TitleCannon::Normal:
+			meshKey = L"NORMAL_CANNON";
+			m_angle = Gimmick::Up;
+			break;
+
+		case TitleCannon::Hard:
+			meshKey = L"HARD_CANNON";
+			m_angle = Gimmick::Uright;
+			break;
+
+		default:
+			break;
+		}
+
+		m_ptrDraw->SetMeshResource(meshKey);
+		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
+		m_ptrDraw->AddAnimation(L"FIRE", 0, 60, false);
+
+		Gimmick::OnCreate();
+
+		auto ptrColl = GetComponent<CollisionObb>();
+		ptrColl->SetUpdateActive(true);
+		ptrColl->SetAfterCollision(AfterCollision::None);
+
+		m_particle = GetStage()->AddGameObject<MultiParticle>();
+		AddTag(L"Cannon");
 	}
 }

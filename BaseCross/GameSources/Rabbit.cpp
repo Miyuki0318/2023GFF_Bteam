@@ -284,7 +284,7 @@ namespace basecross
 	void Rabbit::MoveRabbit()
 	{
 		// Œü‚«‚Ì•ÏX
-		if (m_velocity.x != 0.0f)
+		if (!m_isDeath && m_velocity.x != 0.0f)
 		{
 			m_dir = m_velocity.x > 0.0f ? 1.0f : -1.0f;
 			float rotY = (m_velocity.x > 0.0f) * XM_PI;
@@ -447,13 +447,36 @@ namespace basecross
 		if (!m_isDeath) 
 		{
 			m_isDeath = true;
+
+			if (m_type == Wall)
+			{
+				const auto& wallVec = GetStage()->GetSharedObjectGroup(L"Wall")->GetGroupVector();
+				Vec3 thisPos = GetPosition();
+				Vec3 scale = GetScale();
+
+				for (const auto& weakObj : wallVec)
+				{
+					if (!weakObj.lock()) continue;
+
+					const auto& wall = dynamic_pointer_cast<Rabbit>(weakObj.lock());
+					if (!wall) continue;
+					if (wall->GetIsDeath()) continue;
+
+					Vec3 pos = wall->GetPosition();
+					if (thisPos.x == pos.x)
+					{
+						wall->SetState(Death);
+					}
+				}
+			}
+
 			RemoveComponent<CollisionObb>();
 			RemoveTag(L"Rabbit");
 			SetMoveValue(Vec2(Utility::RangeRand(2.0f, 0.0f) - 1.0f, -1.5f), m_maxAcsel);
 		}
 		else
 		{
-			SetRotation(GetRotation() + Vec3(0.0f, 0.0f, DELTA_TIME * m_dir * 100.0f));
+			SetRotation(GetRotation() + Vec3(0.0f, 0.0f, DELTA_TIME * m_dir * Utility::RangeRand(15.0f, 5.0f)));
 		}
 	}
 

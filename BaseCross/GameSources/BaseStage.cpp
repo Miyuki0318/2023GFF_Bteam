@@ -313,8 +313,13 @@ namespace basecross
 				if (GetBetween(num, 2200, 2283))
 				{
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)) / 10);
-					const auto& fireType = static_cast<Cannon::eFireType> (atoi(&m_csvData.at(i).at(j).at(3)));
+					const auto& fireType = static_cast<Cannon::eFireType>(atoi(&m_csvData.at(i).at(j).at(3)));
 					gimmick = AddGameObject<Cannon>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 3.0f, angle, fireType);
+				}
+				if (GetBetween(num, 2290, 2292))
+				{
+					const auto& diffType = static_cast<TitleCannon::eCannonType>(atoi(&m_csvData.at(i).at(j).at(3)));
+					gimmick = AddGameObject<TitleCannon>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale * 3.0f, diffType);
 				}
 
 				// ‘—•—‹@

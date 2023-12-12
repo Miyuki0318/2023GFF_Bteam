@@ -83,6 +83,9 @@ namespace basecross{
 		// 大砲モデル
 		RegisterSingleMesh(L"N_CANNON", modelPath + L"Cannon/", L"Cannon", true);
 		RegisterSingleMesh(L"G_CANNON", modelPath + L"Cannon/", L"GoalCannon", true);
+		RegisterSingleMesh(L"EASY_CANNON", modelPath + L"Cannon/", L"cannonE", true);
+		RegisterSingleMesh(L"NORMAL_CANNON", modelPath + L"Cannon/", L"cannonN", true);
+		RegisterSingleMesh(L"HARD_CANNON", modelPath + L"Cannon/", L"cannonH", true);
 
 		// ベルトコンベアモデル
 		RegisterMultiMesh(L"MCONVAYOR", modelPath + L"Convayor/", L"m_Convayor", true);

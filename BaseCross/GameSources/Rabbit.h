@@ -199,5 +199,10 @@ namespace basecross
 		{
 			m_state = state;
 		}
+
+		bool GetIsDeath() const
+		{
+			return m_isDeath;
+		}
 	};
 }
