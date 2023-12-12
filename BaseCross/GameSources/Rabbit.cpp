@@ -467,6 +467,10 @@ namespace basecross
 					{
 						wall->SetState(Death);
 					}
+					if (thisPos.y == pos.y)
+					{
+						wall->SetState(Death);
+					}
 				}
 			}
 
