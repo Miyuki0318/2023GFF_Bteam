@@ -21,7 +21,7 @@ namespace basecross
 			if (state == TitleStage::ModeSelect)
 			{
 				// Aボタン入力有無での関数分岐
-				if (m_acsel <= 1.7f && m_firePossible && Input::GetReleaseA())
+				if (m_firePossible && Input::GetReleaseA())
 				{
 					OnRushA();
 				}
@@ -77,6 +77,11 @@ namespace basecross
 			// SEの再生
 			StartSE(L"AIRSHOCK_SE", 0.5f);
 
+			// ステージの分岐
+			const auto& scene = App::GetApp()->GetScene<Scene>();
+			if (m_velocity.x < 0.0f) scene->SetCurrentStage("Normal");
+			if (m_velocity.x == 0.0f) scene->SetCurrentStage("Easy");
+
 			// ステージステートを大砲待機に設定
 			SetStageState<TitleStage>(TitleStage::CannonStanby);
 		}
@@ -113,8 +118,14 @@ namespace basecross
 	{
 		if (m_activeCannon.lock())
 		{
-			const float& fireTime = m_activeCannon.lock()->GetFireTime();
-			const auto& drawPtr = m_activeCannon.lock()->GetComponent<PNTBoneModelDraw>();
+			// 大砲のシェアドポインタ
+			const auto& cannon = m_activeCannon.lock();
+
+			// 発射時の時間の取得
+			const float& fireTime = cannon->GetFireTime();
+
+			// 描画コンポーネントからアニメーションの再生時間を取得
+			const auto& drawPtr = cannon->GetComponent<PNTBoneModelDraw>();
 			if (drawPtr->GetCurrentAnimationTime() > fireTime)
 			{
 				m_acsel = m_activeCannon.lock()->GetAngle() == Gimmick::Up ? acsel * 2.0f : acsel;
@@ -128,8 +139,6 @@ namespace basecross
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
 
 				StartSE(L"CANNON_SE", 0.75f);
-
-				m_activeCannon.reset();
 
 				const auto& titleStage = GetTypeStage<TitleStage>();
 				if (titleStage->GetStageState() == TitleStage::CannonStanby)

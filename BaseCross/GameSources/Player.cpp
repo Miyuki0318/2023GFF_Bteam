@@ -278,6 +278,13 @@ namespace basecross
 				{
 					m_isAir = true;
 				}
+				else
+				{
+					if (hitPoint.y <= cube->GetPosition().y)
+					{
+						m_isAir = true;
+					}
+				}
 			}
 		}
 	}
