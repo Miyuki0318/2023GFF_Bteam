@@ -937,11 +937,12 @@ namespace basecross
 		Vec3 helfScale = spike->GetScale() / 2.0f;
 
 		// 衝突方向真偽
+		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Update")->GetGroupVector();
 		bool upper, under, left, right;
-		upper = CollHitUpper(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(0.0f, scale.y, 0.0f)));
-		under = CollHitUnder(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(0.0f, -scale.y, 0.0f)));
-		left = CollHitLeft(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(-scale.x, 0.0f, 0.0f)));
-		right = CollHitRight(hitPos, spikePos, helfScale) && !BlockCheck(Vec3(spikePos + Vec3(scale.x, 0.0f, 0.0f)));
+		upper = CollHitUpper(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(0.0f, scale.y, 0.0f)));
+		under = CollHitUnder(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(0.0f, -scale.y, 0.0f)));
+		left = CollHitLeft(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(-scale.x, 0.0f, 0.0f)));
+		right = CollHitRight(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(scale.x, 0.0f, 0.0f)));
 
 		// スパイクの方向に応じて処理
 		const auto& angle = spike->GetAngle();

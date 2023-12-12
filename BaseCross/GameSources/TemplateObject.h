@@ -150,6 +150,28 @@ namespace basecross
 			return check;
 		}
 
+		virtual bool BlockCheck(const vector<weak_ptr<GameObject>>& groupVec,const Vec3& checkPos)
+		{
+			bool check = false;
+
+			for (const auto& ptr : groupVec)
+			{
+				if (!ptr.lock()) continue;
+
+				const auto& block = dynamic_pointer_cast<TemplateObject>(ptr.lock());
+				if (!block) continue;
+
+				Vec3 pos = block->GetPosition();
+
+				if (pos == checkPos)
+				{
+					check = true;
+				}
+			}
+
+			return check;
+		}
+
 		// è„Ç©ÇÁè’ìÀÇµÇΩÇ©ÇÃåüèÿ
 		virtual bool CollHitUpper(const Vec3& hitPos, const Vec3& hitObjPos, const Vec3& helfScale)
 		{

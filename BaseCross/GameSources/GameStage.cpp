@@ -239,11 +239,15 @@ namespace basecross
 		const auto& enemyGroup = GetSharedObjectGroup(L"Enemy");
 		const auto& wallGroup = GetSharedObjectGroup(L"Wall");
 		const auto& stageVec = GetSharedObjectGroup(L"Stage")->GetGroupVector();
+		const auto& updateVec = GetSharedObjectGroup(L"Update")->GetGroupVector();
 		const auto& playerPtr = GetSharedGameObject<Player>(L"Player");
 
 		GroupObjectRemove(collectGroup);
 		GroupObjectRemove(enemyGroup);
 		GroupObjectRemove(wallGroup);
+		collectGroup->AllClear();
+		enemyGroup->AllClear();
+		wallGroup->AllClear();
 
 		const float under = -97.5f;
 		const float left = -49.0f;
@@ -320,7 +324,21 @@ namespace basecross
 			const auto& block = dynamic_pointer_cast<CubeObject>(weakObj.lock());
 			if (!block) continue;
 
+			block->RemoveTarget();
 			block->AddTarget(enemyGroup->GetGroupVector());
+			block->AddTarget(playerPtr);
+		}
+
+		for (const auto& weakObj : updateVec)
+		{
+			if (!weakObj.lock()) continue;
+
+			const auto& update = dynamic_pointer_cast<CubeObject>(weakObj.lock());
+			if (!update) continue;
+
+			update->RemoveTarget();
+			update->AddTarget(enemyGroup->GetGroupVector());
+			update->AddTarget(playerPtr);
 		}
 	}
 

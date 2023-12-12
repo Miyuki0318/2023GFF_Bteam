@@ -116,6 +116,11 @@ namespace basecross
 			}
 		}
 
+		void RemoveTarget()
+		{
+			m_targetObj.clear();
+		}
+
 		const vector<weak_ptr<GameObject>>& GetTargetVec() const
 		{
 			return m_targetObj;

@@ -77,6 +77,8 @@ namespace basecross
 	void NextStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
+		m_next = AddGameObject<Sprite>(L"WHITE_TX", Vec2(300.0f, 75.0f), Vec3(-300.0f, 600.0f, 0.2f));
+		m_back = AddGameObject<Sprite>(L"WHITE_TX", Vec2(300.0f, 75.0f), Vec3(300.0f, 600.0f, 0.2f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
 	}
@@ -92,6 +94,7 @@ namespace basecross
 
 	void NextStage::SelectState()
 	{
+		const Vec2 deffScale = Vec2(300.0f, 75.0f);
 		const bool inputLStick = Input::IsInputLStickX();
 
 		if (inputLStick && !m_currentStickX)
@@ -110,19 +113,24 @@ namespace basecross
 			default:
 				break;
 			}
-
-			m_currentStickX = inputLStick;
 		}
+		m_currentStickX = inputLStick;
+		m_next.lock()->SetScale(deffScale * (m_select == Next ? SinCurve(m_totalTime, 1.0f, 1.2f) : 1.0f));
+		m_back.lock()->SetScale(deffScale * (m_select == Back ? SinCurve(m_totalTime, 1.0f, 1.2f) : 1.0f));
 	}
 
 	void NextStage::BackFadeState()
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		const Vec3& nxPos = m_next.lock()->GetPosition();
+		const Vec3& tbPos = m_back.lock()->GetPosition();
 		if (mLPos.x < 0.0f)
 		{
 			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
 			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
+			m_next.lock()->SetPosition(nxPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
+			m_back.lock()->SetPosition(tbPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 		}
 		else
 		{
