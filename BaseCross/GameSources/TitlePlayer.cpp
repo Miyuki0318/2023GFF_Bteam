@@ -80,6 +80,7 @@ namespace basecross
 			// ステージの分岐
 			const auto& scene = App::GetApp()->GetScene<Scene>();
 			if (m_velocity.x < 0.0f) scene->SetCurrentStage("Normal");
+			if (m_velocity.x > 0.0f) scene->SetCurrentStage("Hard");
 			if (m_velocity.x == 0.0f) scene->SetCurrentStage("Easy");
 
 			// ステージステートを大砲待機に設定
