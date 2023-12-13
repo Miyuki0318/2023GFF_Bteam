@@ -849,6 +849,9 @@ namespace basecross
 		// 下にブロックがあるかのチェック
 		if (BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
 
+		// エアショック使用可能にする
+		m_firePossible = true;
+
 		// 移動量が上方向なら
 		if (m_velocity.y < 0.0f)
 		{

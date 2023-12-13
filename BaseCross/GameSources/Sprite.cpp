@@ -20,6 +20,7 @@ namespace basecross
 		// 描画コンポーネントの設定
 		m_ptrDraw = AddComponent<PCTSpriteDraw>(m_vertex);
 		m_ptrDraw->SetTextureResource(m_texWstr);
+		m_ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 
 		// 透明色の描画設定
 		SetAlphaActive(true);
@@ -180,5 +181,16 @@ namespace basecross
 
 		// フェードが完了したかの真偽を返す
 		return color.w <= alpha;
+	}
+
+	/*!
+	@brief テクスチャをベロシティに応じて回転させる関数
+	*/
+	void Sprite::RotateTexture()
+	{
+		for (auto& v : m_vertex.vertices)
+		{
+			v.textureCoordinate += m_velocity * DELTA_TIME;
+		}
 	}
 }

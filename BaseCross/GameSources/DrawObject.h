@@ -9,6 +9,7 @@ namespace basecross
 	protected:
 
 		Vec2 m_scale;			// スケール
+		Vec2 m_velocity;		// UV用ベロシティ
 		Vec3 m_position;		// ポジション
 		Vec3 m_rotation;		// ローテーション
 		Col4 m_diffuseColor;	// ディヒューズ色
@@ -29,6 +30,7 @@ namespace basecross
 			GameObject(stagePtr)
 		{
 			m_scale.zero();
+			m_velocity.zero();
 			m_position.zero();
 			m_rotation.zero();
 			m_texWstr = L"WHITE_TX";
@@ -55,6 +57,7 @@ namespace basecross
 			m_rotation(rotation),
 			m_scale(scale)
 		{
+			m_velocity.zero();
 			m_emissiveColor = COL_NONE;
 			m_diffuseColor = COL_WHITE;
 			m_verticesColor = COL_WHITE;
@@ -149,6 +152,24 @@ namespace basecross
 		void SetRotation(float x, float y, float z)
 		{
 			SetRotation(Vec3(x, y, z));
+		}
+
+		/*!
+		@brief ベロシティを変更する関数
+		@param ベロシティ
+		*/
+		void SetVelocity(const Vec2& velo)
+		{
+			m_velocity = velo;
+		}
+
+		/*!
+		@brief ベロシティを変更する関数
+		@param ベロシティ
+		*/
+		void SetVelocity(float x, float y)
+		{
+			SetVelocity(Vec2(x, y));
 		}
 
 		/*!

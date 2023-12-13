@@ -311,6 +311,12 @@ namespace basecross
 					update = AddGameObject<Convayor>(Vec2(left + (j * scale), under + ((m_csvData.size() - i) * scale)), scale, rotate, beltType, speed);
 					update->AddTarget(enemyVec);
 				}
+				if (num == 310)
+				{
+					const int& beltType = stoi(m_csvData.at(i - 1).at(j));
+					const auto& rotate = static_cast<ConvayorGuide::eRotate>((beltType - 2100) / 10);
+					AddGameObject<ConvayorGuide>(Vec2(left + (j * scale), under + ((m_csvData.size() - i - 1) * scale)), scale, rotate);
+				}
 
 				// 大砲
 				if (GetBetween(num, 2200, 2283))
@@ -592,6 +598,6 @@ namespace basecross
 		// デバック用文字列の表示非表示切り替え
 		const auto& debugStr = GetSharedObject(L"DebugString");
 		debugStr->SetDrawLayer(10);
-		debugStr->SetDrawActive(true);
+		debugStr->SetDrawActive(false);
 	}
 }

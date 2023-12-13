@@ -21,6 +21,7 @@ namespace basecross
 		m_ptrDraw->SetOriginalMeshUse(true);
 		m_ptrDraw->CreateOriginalMesh(m_vertex);
 		m_ptrDraw->SetTextureResource(m_texWstr);
+		m_ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 
 		// 透明色の描画を可能に
 		SetAlphaActive(true);
@@ -89,5 +90,18 @@ namespace basecross
 	void Billboard::SetTexture(const wstring& textureKey)
 	{
 		m_ptrDraw->SetTextureResource(textureKey);
+	}
+
+	/*!
+	@brief テクスチャをベロシティに応じて回転させる関数
+	*/
+	void Billboard::RotateTexture()
+	{
+		for (auto& v : m_vertex.vertices)
+		{
+			v.textureCoordinate += m_velocity * DELTA_TIME;
+		}
+
+		m_ptrDraw->UpdateVertices(m_vertex.vertices);
 	}
 }

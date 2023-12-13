@@ -98,7 +98,7 @@ namespace basecross
 		ConvayorGuide(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, const float scale, const eRotate& rotate
 		) :
-			Billboard(stagePtr, L"WHITE_TX", Vec2(scale), Vec3(position.x, position.y, 0.0f)),
+			Billboard(stagePtr, L"GUIDE_TX", Vec2(scale), Vec3(position.x, position.y, 0.0f)),
 			m_rotate(rotate)
 		{
 		}

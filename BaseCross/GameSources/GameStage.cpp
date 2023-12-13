@@ -33,6 +33,7 @@ namespace basecross
 		app->RegisterTexture(L"N_EFFECT_TX", texturePath + L"WhiteEffect.png");
 		app->RegisterTexture(L"GAMEOVER_TX", texturePath + L"GameOver.png");
 		app->RegisterTexture(L"CONTINUE_TX", texturePath + L"Continue.png");
+		app->RegisterTexture(L"GUIDE_TX", texturePath + L"ConvayorGuide.png");
 
 		// サウンドディレクトリパスの取得
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";

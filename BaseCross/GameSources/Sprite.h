@@ -125,5 +125,10 @@ namespace basecross
 		@return フェードが完了したかの真偽
 		*/
 		bool FadeOutColor(const float time, const float alpha);
+
+		/*!
+		@brief テクスチャをベロシティに応じて回転させる関数
+		*/
+		void RotateTexture();
 	};
 }

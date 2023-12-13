@@ -40,26 +40,22 @@ namespace basecross
 
 	void ConvayorGuide::OnCreate()
 	{
+		m_position.z = -1.0f;
 		Billboard::OnCreate();
-		float HELF = 0.5f;
 
-		VertexData vertex;
-		vertex.vertices = {
-			{Vec3(-HELF, HELF, 0.0f), COL_WHITE, Vec2(0.0f, 0.0f)},
-			{Vec3(HELF, 0.0f, 0.0f), COL_WHITE, Vec2(1.0f, 0.5f)},
-			{Vec3(-HELF, -HELF, 0.0f), COL_WHITE, Vec2(0.0f, 1.0f)},
-		};
-
-		vertex.indices = {
-			0, 1, 2
-		};
-
-		m_ptrDraw->CreateOriginalMesh(vertex);
-		SetVerticesColor(COL_RED);
+		if (m_rotate == RightRot) 
+		{
+			SetRotation(0.0f, 0.0f, XM_PI);
+			SetVelocity(1.0f, 0.0f);
+		}
+		else
+		{
+			SetVelocity(-1.0f, 0.0f);
+		}
 	}
 
 	void ConvayorGuide::OnUpdate()
 	{
-
+		Billboard::RotateTexture();
 	}
 }

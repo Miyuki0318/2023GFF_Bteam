@@ -98,5 +98,10 @@ namespace basecross
 		@param テクスチャキー
 		*/
 		void SetTexture(const wstring& textureKey);
+
+		/*!
+		@brief テクスチャをベロシティに応じて回転させる関数
+		*/
+		void RotateTexture();
 	};
 }
