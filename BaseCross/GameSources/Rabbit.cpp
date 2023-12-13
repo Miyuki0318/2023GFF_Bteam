@@ -28,41 +28,34 @@ namespace basecross
 	{
 		if (m_type == Normal)
 		{
-			// ステージとステージステートの取得
-			const auto& stage = GetTypeStage<GameStage>();
-			const auto& state = stage->GetStageState();
+			MoveRabbit();
+			MoveReduction();
+			m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
 
-			if (Utility::GetBetween(state, GameStage::GameNow, GameStage::Death))
+			bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_isAir && !m_isDeath;
+			if (jumpPossible)
 			{
-				MoveRabbit();
-				MoveReduction();
-				m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
-
-				bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_isAir && !m_isDeath;
-				if (jumpPossible)
+				m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
+				switch (m_state)
 				{
-					m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
-					switch (m_state)
-					{
-					case Patrol:
-						PatrolState();
-						break;
+				case Patrol:
+					PatrolState();
+					break;
 
-					case Seek:
-						SeekState();
-						break;
+				case Seek:
+					SeekState();
+					break;
 
-					case LostSight:
-						LostState();
-						break;
+				case LostSight:
+					LostState();
+					break;
 
-					default:
-						break;
-					}
+				default:
+					break;
 				}
-				if (m_state == CannonJump && !m_isDeath) CannonState();
-				if (m_state == Death) DeathState();
 			}
+			if (m_state == CannonJump && !m_isDeath) CannonState();
+			if (m_state == Death) DeathState();
 		}
 		if (m_type == Wall)
 		{

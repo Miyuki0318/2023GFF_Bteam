@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Gimmick.h"
+#include "Billboard.h"
 
 namespace basecross
 {
@@ -76,5 +77,36 @@ namespace basecross
 		{
 			return m_speed;
 		}
+	};
+
+	class ConvayorGuide : public Billboard
+	{
+	public:
+
+		enum eRotate
+		{
+			LeftRot,
+			RightRot,
+		};
+
+	private:
+
+		eRotate m_rotate;
+
+	public:
+
+		ConvayorGuide(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale, const eRotate& rotate
+		) :
+			Billboard(stagePtr, L"WHITE_TX", Vec2(scale), Vec3(position.x, position.y, 0.0f)),
+			m_rotate(rotate)
+		{
+		}
+
+		virtual ~ConvayorGuide() {}
+
+		void OnCreate() override;
+
+		void OnUpdate() override;
 	};
 }

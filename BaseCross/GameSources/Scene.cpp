@@ -42,7 +42,7 @@ namespace basecross{
 		}
 		if (event->m_MsgStr == L"GameStage")
 		{
-			ResetActiveStage<GameStage>("Normal");
+			ResetActiveStage<GameStage>("Hard");
 		}
 		if (event->m_MsgStr == L"NextStage")
 		{

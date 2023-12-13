@@ -37,4 +37,29 @@ namespace basecross
 		CubeObject::OnUpdate();
 		m_ptrDraw->UpdateAnimation(DELTA_TIME);
 	}
+
+	void ConvayorGuide::OnCreate()
+	{
+		Billboard::OnCreate();
+		float HELF = 0.5f;
+
+		VertexData vertex;
+		vertex.vertices = {
+			{Vec3(-HELF, HELF, 0.0f), COL_WHITE, Vec2(0.0f, 0.0f)},
+			{Vec3(HELF, 0.0f, 0.0f), COL_WHITE, Vec2(1.0f, 0.5f)},
+			{Vec3(-HELF, -HELF, 0.0f), COL_WHITE, Vec2(0.0f, 1.0f)},
+		};
+
+		vertex.indices = {
+			0, 1, 2
+		};
+
+		m_ptrDraw->CreateOriginalMesh(vertex);
+		SetVerticesColor(COL_RED);
+	}
+
+	void ConvayorGuide::OnUpdate()
+	{
+
+	}
 }

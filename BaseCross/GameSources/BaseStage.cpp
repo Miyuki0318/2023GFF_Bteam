@@ -564,7 +564,7 @@ namespace basecross
 			const auto& activeGroup = GetSharedObjectGroup(L"Active");
 
 			// パフォーマンス管理関数を実行
-			ObjectPerformance<Enemy>(enemyVec, playerPos, range);
+			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 2.0f);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
 			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
 			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
@@ -572,8 +572,8 @@ namespace basecross
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
 			activeGroup->AllClear();
-			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, range, cubeRange);
-			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range, range / 2.0f);
+			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, range / 1.5f, cubeRange);
+			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 1.5f, range / 2.0f);
 		}
 		catch (...)
 		{
