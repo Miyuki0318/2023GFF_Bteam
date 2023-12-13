@@ -82,7 +82,7 @@ namespace basecross
 	void NextStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
-		m_logo = AddGameObject<Sprite>(L"NEXT_TX", WINDOW_SIZE * 0.75f, Vec3(0.0f, 200.0f, 0.2f));
+		m_logo = AddGameObject<Sprite>(L"NEXT_TX", WINDOW_SIZE, Vec3(0.0f, 200.0f, 0.2f));
 		m_next = AddGameObject<Sprite>(L"GO_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
 		m_back = AddGameObject<Sprite>(L"QUIT_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
@@ -102,6 +102,7 @@ namespace basecross
 	{
 		const Vec2 deffScale = WINDOW_SIZE * 0.55f;
 		const bool inputLStick = Input::IsInputLStickX();
+		m_totalTime += DELTA_TIME * 5.0f;
 
 		if (inputLStick && !m_currentStickX)
 		{

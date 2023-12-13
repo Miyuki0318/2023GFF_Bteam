@@ -91,7 +91,7 @@ namespace basecross
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE * 1.25f, Vec3(-675.0f, 0.0f, 0.2f));
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE * 1.25f, Vec3(675.0f, 0.0f, 0.2f));
-		m_gameOver = AddGameObject<Sprite>(L"GAMEOVER_TX", WINDOW_SIZE * 0.75f, Vec3(0.0f, 600.0f, 0.2f));
+		m_gameOver = AddGameObject<Sprite>(L"GAMEOVER_TX", WINDOW_SIZE, Vec3(0.0f, 600.0f, 0.2f));
 		m_continue = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
 		m_titleBack = AddGameObject<Sprite>(L"QUIT_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
 	}
@@ -116,7 +116,7 @@ namespace basecross
 		{
 			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
 			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
-			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, -DELTA_TIME * 545.0f, 0.0f));
+			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, -DELTA_TIME * 600.0f, 0.0f));
 			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 		}
