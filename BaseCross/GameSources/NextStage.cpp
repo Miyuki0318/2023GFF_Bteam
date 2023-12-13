@@ -18,6 +18,11 @@ namespace basecross
 		// テクスチャディレクトリパスの取得
 		const wstring texturePath = mediaPath + L"Textures/";
 
+		// 次への選択肢の読み込み
+		app->RegisterTexture(L"GO_TX", texturePath + L"Go.png");
+		app->RegisterTexture(L"NEXT_TX", texturePath + L"NextStage.png");
+
+
 		// テクスチャの取得
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
@@ -77,8 +82,9 @@ namespace basecross
 	void NextStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
-		m_next = AddGameObject<Sprite>(L"WHITE_TX", Vec2(300.0f, 75.0f), Vec3(-300.0f, -100.0f, 0.2f));
-		m_back = AddGameObject<Sprite>(L"WHITE_TX", Vec2(300.0f, 75.0f), Vec3(300.0f, -100.0f, 0.2f));
+		m_logo = AddGameObject<Sprite>(L"NEXT_TX", WINDOW_SIZE * 0.75f, Vec3(0.0f, 200.0f, 0.2f));
+		m_next = AddGameObject<Sprite>(L"GO_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
+		m_back = AddGameObject<Sprite>(L"QUIT_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
 		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE, Vec3(-675.0f, 0.0f, 0.2f));
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE, Vec3(675.0f, 0.0f, 0.2f));
 	}
@@ -94,7 +100,7 @@ namespace basecross
 
 	void NextStage::SelectState()
 	{
-		const Vec2 deffScale = Vec2(300.0f, 75.0f);
+		const Vec2 deffScale = WINDOW_SIZE * 0.55f;
 		const bool inputLStick = Input::IsInputLStickX();
 
 		if (inputLStick && !m_currentStickX)
@@ -142,10 +148,32 @@ namespace basecross
 		}
 	}
 
+	void NextStage::FadeInState()
+	{
+		const auto& fade = m_fade.lock();
+		const Vec3& nextPos = m_next.lock()->GetPosition();
+		const Vec3& backPos = m_back.lock()->GetPosition();
+
+		if (fade->FadeOutColor(2.0f))
+		{
+			m_stageState = Select;
+		}
+		else
+		{
+			float y = Utility::Lerp(600.0f, -100.0f, 1.0f - fade->GetDiffuseColor().w);
+			m_next.lock()->SetPosition(nextPos.x, y, nextPos.z);
+			m_back.lock()->SetPosition(backPos.x, y, backPos.z);
+		}
+	}
+
 	void NextStage::FadeOutState()
 	{
+		const auto& fade = m_fade.lock();
 		const auto& scene = App::GetApp()->GetScene<Scene>();
-		if (m_fade.lock()->FadeInColor(1.0f))
+		const Vec3& nextPos = m_next.lock()->GetPosition();
+		const Vec3& backPos = m_back.lock()->GetPosition();
+
+		if (fade->FadeInColor(1.0f))
 		{
 			switch (m_select)
 			{
@@ -160,6 +188,12 @@ namespace basecross
 			default:
 				break;
 			}
+		}
+		else
+		{
+			float y = Utility::Lerp(-100.0f, 600.0f, fade->GetDiffuseColor().w);
+			m_next.lock()->SetPosition(nextPos.x, y, nextPos.z);
+			m_back.lock()->SetPosition(backPos.x, y, backPos.z);
 		}
 	}
 
@@ -205,7 +239,7 @@ namespace basecross
 			switch (m_stageState)
 			{
 			case NextStage::FadeIn:
-				if (m_fade.lock()->FadeOutColor(2.0f)) m_stageState = Select;
+				FadeInState();
 				break;
 
 			case NextStage::Select:

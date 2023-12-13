@@ -7,6 +7,8 @@ namespace Input
 {
 	const CONTROLER_STATE& GetPad();
 	
+	const KEYBOARD_STATE& GetKey();
+
 	bool GetPadConected();
 
 	bool GetPushA();

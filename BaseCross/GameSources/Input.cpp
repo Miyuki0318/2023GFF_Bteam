@@ -10,6 +10,11 @@ namespace Input
 		return App::GetApp()->GetInputDevice().GetControllerVec()[0];
 	}
 
+	const KEYBOARD_STATE& GetKey()
+	{
+		return App::GetApp()->GetInputDevice().GetKeyState();
+	}
+
 	bool GetPadConected()
 	{
 		return GetPad().bConnected;
@@ -21,6 +26,10 @@ namespace Input
 		{
 			return GetPad().wPressedButtons & XINPUT_GAMEPAD_A;
 		}
+		if (GetKey().m_bPressedKeyTbl[VK_SPACE])
+		{
+			return true;
+		}
 
 		return false;
 	}
@@ -31,6 +40,10 @@ namespace Input
 		{
 			return GetPad().wButtons & XINPUT_GAMEPAD_A;
 		}
+		if (GetKey().m_bPushKeyTbl[VK_SPACE])
+		{
+			return true;
+		}
 
 		return false;
 	}
@@ -40,6 +53,10 @@ namespace Input
 		if (GetPadConected())
 		{
 			return GetPad().wReleasedButtons & XINPUT_GAMEPAD_A;
+		}
+		if (GetKey().m_bUpKeyTbl[VK_SPACE])
+		{
+			return true;
 		}
 
 		return false;
@@ -54,6 +71,18 @@ namespace Input
 			Vec2 vec;
 			vec.x = pad.fThumbLX;
 			vec.y = pad.fThumbLY;
+
+			return vec;
+		}
+		else
+		{
+			const auto& key = GetKey();
+
+			Vec2 vec;
+			if (key.m_bPushKeyTbl['W']) vec.y += 1.0f;
+			if (key.m_bPushKeyTbl['A']) vec.x += -1.0f;
+			if (key.m_bPushKeyTbl['S']) vec.y += -1.0f;
+			if (key.m_bPushKeyTbl['D']) vec.x += 1.0f;
 
 			return vec;
 		}

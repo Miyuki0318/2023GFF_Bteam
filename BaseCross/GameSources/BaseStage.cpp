@@ -47,6 +47,9 @@ namespace basecross
 		// 矢印テクスチャ
 		app->RegisterTexture(L"ARROW_TX", texturePath + L"Arrow.png");
 
+		// タイトルに戻るテクスチャ
+		app->RegisterTexture(L"QUIT_TX", texturePath + L"Quit.tga");
+
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
@@ -561,7 +564,7 @@ namespace basecross
 			const auto& activeGroup = GetSharedObjectGroup(L"Active");
 
 			// パフォーマンス管理関数を実行
-			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 2.0f);
+			ObjectPerformance<Enemy>(enemyVec, playerPos, range);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
 			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
 			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
@@ -589,6 +592,6 @@ namespace basecross
 		// デバック用文字列の表示非表示切り替え
 		const auto& debugStr = GetSharedObject(L"DebugString");
 		debugStr->SetDrawLayer(10);
-		debugStr->SetDrawActive(false);
+		debugStr->SetDrawActive(true);
 	}
 }

@@ -451,8 +451,12 @@ namespace basecross
 			if (m_type == Wall)
 			{
 				const auto& wallVec = GetStage()->GetSharedObjectGroup(L"Wall")->GetGroupVector();
+				
+				// 隣のウサギを探して「一緒に死の？」ってメンヘル行動する
 				Vec3 thisPos = GetPosition();
 				Vec3 scale = GetScale();
+
+				vector<weak_ptr<Rabbit>> rabbitVec;
 
 				for (const auto& weakObj : wallVec)
 				{
@@ -463,13 +467,21 @@ namespace basecross
 					if (wall->GetIsDeath()) continue;
 
 					Vec3 pos = wall->GetPosition();
-					if (thisPos.x == pos.x)
+					if (pos == thisPos + Vec3(scale.x, 0.0f, 0.0f) || pos == thisPos - Vec3(scale.x, 0.0f, 0.0f))
 					{
-						wall->SetState(Death);
+						rabbitVec.push_back(wall);
 					}
-					if (thisPos.y == pos.y)
+					if (pos == thisPos + Vec3(0.0f, scale.y, 0.0f) || pos == thisPos - Vec3(0.0f, scale.y, 0.0f))
 					{
-						wall->SetState(Death);
+						rabbitVec.push_back(wall);
+					}
+				}
+
+				for (const auto& rabbit : rabbitVec)
+				{
+					if (rabbit.lock())
+					{
+						rabbit.lock()->SetState(Death);
 					}
 				}
 			}

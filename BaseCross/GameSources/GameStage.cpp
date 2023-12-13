@@ -93,7 +93,7 @@ namespace basecross
 		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE * 1.25f, Vec3(675.0f, 0.0f, 0.2f));
 		m_gameOver = AddGameObject<Sprite>(L"GAMEOVER_TX", WINDOW_SIZE * 0.75f, Vec3(0.0f, 600.0f, 0.2f));
 		m_continue = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
-		m_titleBack = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
+		m_titleBack = AddGameObject<Sprite>(L"QUIT_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
 	}
 
 	void GameStage::CreateUI()

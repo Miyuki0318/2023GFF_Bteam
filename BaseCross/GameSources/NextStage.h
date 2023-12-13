@@ -40,6 +40,7 @@ namespace basecross
 
 		// スプライト
 		weak_ptr<Sprite> m_fade;
+		weak_ptr<Sprite> m_logo;
 		weak_ptr<Sprite> m_next;
 		weak_ptr<Sprite> m_back;
 		weak_ptr<Sprite> m_metalLeft;
@@ -75,6 +76,8 @@ namespace basecross
 		void SelectState();
 
 		void BackFadeState();
+
+		void FadeInState();
 
 		void FadeOutState();
 
