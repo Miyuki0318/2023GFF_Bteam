@@ -43,10 +43,10 @@ namespace basecross
 		m_position.z = -1.0f;
 		Billboard::OnCreate();
 
-		if (m_rotate == RightRot) 
+		if (m_rotate == LeftRot) 
 		{
 			SetRotation(0.0f, 0.0f, XM_PI);
-			SetVelocity(1.0f, 0.0f);
+			SetVelocity(-1.0f, 0.0f);
 		}
 		else
 		{

@@ -313,7 +313,7 @@ namespace basecross
 				}
 				if (num == 310)
 				{
-					const int& beltType = stoi(m_csvData.at(i - 1).at(j));
+					const int& beltType = stoi(m_csvData.at(i + 1).at(j));
 					const auto& rotate = static_cast<ConvayorGuide::eRotate>((beltType - 2100) / 10);
 					AddGameObject<ConvayorGuide>(Vec2(left + (j * scale), under + ((m_csvData.size() - i - 1) * scale)), scale, rotate);
 				}
