@@ -578,7 +578,7 @@ namespace basecross
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
 			activeGroup->AllClear();
-			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, range / 1.5f, cubeRange);
+			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, cubeRange, cubeRange);
 			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 1.5f, range / 2.0f);
 		}
 		catch (...)
