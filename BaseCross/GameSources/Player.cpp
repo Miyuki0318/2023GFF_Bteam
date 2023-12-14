@@ -1183,12 +1183,14 @@ namespace basecross
 				{
 					// ウサギのステートを死亡に設定
 					rabbit->SetState(Rabbit::Death);
+					StartSE(L"RABBIT_DEATH_SE", 0.5f);
 					return;
 				}
 				if (m_shieldCount >= 2)
 				{
 					// ウサギのステートを死亡に設定
 					rabbit->SetState(Rabbit::Death);
+					StartSE(L"RABBIT_DEATH_SE", 0.5f);
 					m_shieldCount--;
 				}
 				else

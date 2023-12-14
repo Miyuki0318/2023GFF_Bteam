@@ -83,6 +83,7 @@ namespace basecross
 		// ウサギのSE
 		app->RegisterWav(L"RABBIT_JUMP_SE", SEPath + L"RabbitJumpSE");
 		app->RegisterWav(L"RABBIT_SEARCH_SE", SEPath + L"RabbitSearchSE");
+		app->RegisterWav(L"RABBIT_DEATH_SE", SEPath + L"RabbitDeathSE");
 
 		// ゲームオーバーSE
 		app->RegisterWav(L"GAMEOVER_SE", SEPath + L"GameOverSE");

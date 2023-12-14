@@ -481,7 +481,8 @@ namespace basecross
 
 			RemoveComponent<CollisionObb>();
 			RemoveTag(L"Rabbit");
-			SetMoveValue(Vec2(Utility::RangeRand(2.0f, 0.0f) - 1.0f, -1.5f), m_maxAcsel);
+			m_velocity = Vec2(Utility::RangeRand(2.0f, 0.0f) - 1.0f, -1.5f);
+			m_acsel = m_maxAcsel;
 		}
 		else
 		{
