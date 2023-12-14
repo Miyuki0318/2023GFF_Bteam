@@ -769,8 +769,8 @@ namespace basecross
 		bool upper, under, left, right;
 		upper = CollHitUpper(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f));
 		under = CollHitUnder(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(0.0f, -1.0f, 0.0f));
-		left = CollHitLeft(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(1.0f, 0.0f, 0.0f));
-		right = CollHitRight(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(-1.0f, 0.0f, 0.0f));
+		left = CollHitLeft(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(-1.0f, 0.0f, 0.0f));
+		right = CollHitRight(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(1.0f, 0.0f, 0.0f));
 
 		// ZŽ²‚ÌŠp“x‚ðŽæ“¾‚ÅƒXƒ[ƒv‚©‚Ç‚¤‚©‚ð”»’f
 		const float& deg = cube->GetDegreeAngle().z;
