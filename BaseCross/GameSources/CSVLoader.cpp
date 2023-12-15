@@ -6,16 +6,20 @@ vector<vector<string>> CSVLoader::LoadFile(const string& filePath)
 	ifstream ifs("../media/CSV/" + filePath + ".csv");
 	if (!ifs.is_open())
 	{
-		wstring file;
-		Util::ConvertUtf8toWstring(filePath, file);
-		throw BaseException(
-			L"CSVファイルが存在しません",
-			file + L".csv",
-			L"CSVLoader::LoadFile"
-		);
+		ifstream ifs("media/CSV/" + filePath + ".csv");
+		if (!ifs.is_open())
+		{
+			wstring file;
+			Util::ConvertUtf8toWstring(filePath, file);
+			throw BaseException(
+				L"CSVファイルが存在しません",
+				file + L".csv",
+				L"CSVLoader::LoadFile"
+			);
 
-		vector<vector<string>> empty;
-		return empty;
+			vector<vector<string>> empty;
+			return empty;
+		}
 	}
 
 	int rowCount = 0;
