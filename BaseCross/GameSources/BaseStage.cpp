@@ -42,7 +42,6 @@ namespace basecross
 
 		// 背景テクスチャ
 		app->RegisterTexture(L"BACKGROUND_TX", texturePath + L"BackGround.png");
-		app->RegisterTexture(L"NBACKGROUND_TX", texturePath + L"NewBackGround.png");
 
 		// 矢印テクスチャ
 		app->RegisterTexture(L"ARROW_TX", texturePath + L"Arrow.png");
