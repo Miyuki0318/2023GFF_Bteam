@@ -10,7 +10,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 //定数
 const wchar_t* pClassName = L"BaseCrossFullClass";
-const wchar_t* pWndTitle = L"エアプッシュ！";
+const wchar_t* pWndTitle = L"AiR Push!";
 
 
 //--------------------------------------------------------------------------------------
