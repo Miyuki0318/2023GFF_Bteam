@@ -571,7 +571,7 @@ namespace basecross
 			const auto& activeGroup = GetSharedObjectGroup(L"Active");
 
 			// パフォーマンス管理関数を実行
-			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 2.0f);
+			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 1.5f);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
 			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
 			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
