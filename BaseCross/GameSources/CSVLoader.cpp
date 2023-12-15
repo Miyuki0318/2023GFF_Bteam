@@ -6,7 +6,7 @@ vector<vector<string>> CSVLoader::LoadFile(const string& filePath)
 	ifstream ifs("../media/CSV/" + filePath + ".csv");
 	if (!ifs.is_open())
 	{
-		ifstream ifs("media/CSV/" + filePath + ".csv");
+		ifs.open("./media/CSV/" + filePath + ".csv");
 		if (!ifs.is_open())
 		{
 			wstring file;
