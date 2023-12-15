@@ -858,8 +858,11 @@ namespace basecross
 			// 反転させ、落下させる
 			m_velocity.y *= -1.0f;
 
-			// バウンド時のSEを再生
-			BlockBoundSE();
+			if (m_acsel > 2.5f)
+			{
+				// バウンド時のSEを再生
+				BlockBoundSE();
+			}
 		}
 	}
 
@@ -872,8 +875,11 @@ namespace basecross
 		// 移動量を半減しつつ反転させる
 		m_velocity.x *= -0.5f;
 
-		// バウンド時のSEを再生
-		BlockBoundSE();
+		if (m_acsel > 2.5f)
+		{
+			// バウンド時のSEを再生
+			BlockBoundSE();
+		}
 	}
 
 	// ブロックの右から衝突した時の応答処理
@@ -885,15 +891,18 @@ namespace basecross
 		// 移動量を半減しつつ反転させる
 		m_velocity.x *= -0.5f;
 
-		// バウンド時のSEを再生
-		BlockBoundSE();
+		if (m_acsel > 2.5f)
+		{
+			// バウンド時のSEを再生
+			BlockBoundSE();
+		}
 	}
 
 	// ブロックのバウンドのSE再生
 	void Player::BlockBoundSE()
 	{
 		// 速度の平均を移動量速度で割った値を音量としてSEを再生
-		float volume = ((m_velocity.y + m_meddleVelo.y + m_acsel) / 3.0f) / m_veloSpeed;
+		float volume = ((m_velocity.y + m_meddleVelo.y + m_acsel) / 3.0f) / m_veloSpeed / 2.0f;
 		StartSE(L"ROBOT_BOUND_SE", volume);
 	}
 
