@@ -85,12 +85,11 @@ namespace basecross
 		@param 更新範囲
 		@param コリジョン範囲
 		*/
-		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float drawRange, float updateRange);
+		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float updateRange);
 
 		/*!
 		@brief オブジェクトのパフォーマンス管理関数
 		@param オブジェクトのグループベクター配列
-		@param 描画範囲
 		@param 更新範囲
 		*/
 		template<class T>
@@ -107,11 +106,11 @@ namespace basecross
 				const auto& sharedObj = dynamic_pointer_cast<T>(weakObj.lock());
 				if (!sharedObj) continue;
 
-				bool alive = false;
-				float length = (sharedObj->GetPosition() - pos).length();
+				const Vec3& objPos = sharedObj->GetPosition();
+				float length = (objPos - pos).length();
 				sharedObj->SetUpdateActive(length <= updateRange);
 
-				Vec3 point = Utility::ConvertToWorldPosition(m_gameView, pos);
+				Vec3 point = Utility::ConvertToWorldPosition(m_gameView, objPos);
 				sharedObj->SetDrawActive(Utility::GetBetween(point, pLeft, pRight));
 			}
 		}

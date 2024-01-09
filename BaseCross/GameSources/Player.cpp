@@ -1290,6 +1290,7 @@ namespace basecross
 
 			case Ring::Small:
 				m_sRingCount++;
+				m_jumpRecoveryTime += m_jumpRecoveryLimit / 2.0f;
 				StartSE(L"RING_SE", 0.35f);
 				break;
 

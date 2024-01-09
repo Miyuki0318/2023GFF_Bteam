@@ -470,8 +470,12 @@ namespace basecross
 		}
 	}
 
-	void BaseStage::ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float drawRange, float updateRange)
+	void BaseStage::ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float updateRange)
 	{
+		const Vec2 margin = Vec2(25.0f);
+		const Vec3 pLeft = Vec3(WINDOW_SIZE + margin, 1.0f);
+		const Vec3 pRight = Vec3(-WINDOW_SIZE - margin, 0.0f);
+
 		for (const auto& weakObj : groupVec)
 		{
 			// エラーチェック
@@ -506,10 +510,12 @@ namespace basecross
 				}
 			}
 
-			// 描画するかはプレイヤーとの距離で行う
-			float length = (cubeObj->GetPosition() - playerPos).length();
-			cubeObj->SetDrawActive(length <= drawRange);
+			// 更新するかはターゲットとの距離で行う
 			cubeObj->SetUpdateActive(active);
+
+			// 描画するかは画面内かで行う
+			Vec3 point = Utility::ConvertToWorldPosition(m_gameView, cubeObj->GetPosition());
+			cubeObj->SetDrawActive(Utility::GetBetween(point, pLeft, pRight));
 		}
 	}
 
@@ -578,8 +584,8 @@ namespace basecross
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
 			activeGroup->AllClear();
-			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, cubeRange, cubeRange);
-			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 1.5f, range / 2.0f);
+			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, cubeRange);
+			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 2.0f);
 		}
 		catch (...)
 		{
