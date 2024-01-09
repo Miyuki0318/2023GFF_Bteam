@@ -316,6 +316,11 @@ namespace bsm {
 	{
 	}
 
+	inline Flt3::Flt3(const Flt2 & vec, float z) :
+		XMFLOAT3(vec.x, vec.y, z)
+	{
+	}
+
 
 	inline Flt3::Flt3(const Flt4 & vec) :
 		XMFLOAT3(vec.x, vec.y, vec.z)

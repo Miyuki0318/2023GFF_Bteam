@@ -94,8 +94,12 @@ namespace basecross
 		@param 更新範囲
 		*/
 		template<class T>
-		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float drawRange, float updateRange)
+		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float updateRange)
 		{
+			const Vec2 margin = Vec2(25.0f);
+			const Vec3 pLeft = Vec3(WINDOW_SIZE + margin, 1.0f);
+			const Vec3 pRight = Vec3(-WINDOW_SIZE - margin, 0.0f);
+
 			for (const auto& weakObj : groupVec)
 			{
 				if (!weakObj.lock()) continue;
@@ -105,20 +109,11 @@ namespace basecross
 
 				bool alive = false;
 				float length = (sharedObj->GetPosition() - pos).length();
-				sharedObj->SetDrawActive(length <= drawRange);
 				sharedObj->SetUpdateActive(length <= updateRange);
-			}
-		}
 
-		/*!
-		@brief オブジェクトのパフォーマンス管理関数
-		@param オブジェクトのグループベクター配列
-		@param 範囲と更新範囲
-		*/
-		template<class T>
-		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float range)
-		{
-			ObjectPerformance<T>(groupVec, pos, range, range);
+				Vec3 point = Utility::ConvertToWorldPosition(m_gameView, pos);
+				sharedObj->SetDrawActive(Utility::GetBetween(point, pLeft, pRight));
+			}
 		}
 
 		/*!

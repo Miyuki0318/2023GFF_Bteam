@@ -389,6 +389,10 @@ namespace basecross
 
 			Debug::Log(m_gameOver.lock()->GetPosition());
 
+			const auto& player = GetSharedGameObject<TemplateObject>(L"Player");
+			Vec3 pos = ConvertToWorldPosition(m_gameView, player->GetPosition());
+			Debug::Log(L"SpriteÇÃç¿ïW", pos);
+
 			switch (m_stageState)
 			{
 			case GameStage::FadeIn:

@@ -572,8 +572,8 @@ namespace basecross
 			// パフォーマンス管理関数を実行
 			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 1.5f);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
-			ObjectPerformance<Gimmick>(updateVec, playerPos, range, range / 2.0f);
-			ObjectPerformance<Gimmick>(collectVec, playerPos, range, range / 1.5f);
+			ObjectPerformance<Gimmick>(updateVec, playerPos, range / 2.0f);
+			ObjectPerformance<Gimmick>(collectVec, playerPos, range / 1.5f);
 
 			// ステージオブジェクトグループだけ特殊
 			// アクティブになっているオブジェクトのグループをリセット
@@ -598,6 +598,6 @@ namespace basecross
 		// デバック用文字列の表示非表示切り替え
 		const auto& debugStr = GetSharedObject(L"DebugString");
 		debugStr->SetDrawLayer(10);
-		debugStr->SetDrawActive(false);
+		debugStr->SetDrawActive(true);
 	}
 }
