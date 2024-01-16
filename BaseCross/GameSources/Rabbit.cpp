@@ -7,7 +7,6 @@ namespace basecross
 	{
 		TemplateObject::OnCreate();
 
-		m_ptrTrans = GetComponent<Transform>();
 		SetPosition(m_position);
 		SetRotation(m_rotation);
 		SetScale(m_scale);
@@ -90,6 +89,7 @@ namespace basecross
 		if (other->FindTag(L"Death"))
 		{
 			m_state = Death;
+			if (m_isDeath) GetStage()->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
 		}
 
 		if (other->FindTag(L"Rabbit"))
@@ -124,7 +124,7 @@ namespace basecross
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
-		if (other->FindTag(L"Block"))
+		if (other->FindTag(L"Block") || other->FindTag(L"Spike"))
 		{
 			BlockExcute(other, hitPoint);
 		}

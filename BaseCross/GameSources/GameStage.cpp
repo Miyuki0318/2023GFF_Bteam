@@ -26,6 +26,9 @@ namespace basecross
 		// テクスチャディレクトリパスの取得
 		const wstring texturePath = mediaPath + L"Textures/";
 
+		// 木箱テクスチャ
+		app->RegisterTexture(L"WOOD_TX", texturePath + L"Wood.png");
+
 		// UI用テクスチャ
 		app->RegisterTexture(L"JGAUGE_TX", texturePath + L"JumpUI.png");
 		app->RegisterTexture(L"SGAUGE_TX", texturePath + L"ShieldUI.png");
@@ -41,6 +44,9 @@ namespace basecross
 
 		// ゲーム用BGM
 		app->RegisterWav(L"GAME_BGM", BGMPath + L"GameBGM");
+
+		// クリア時のSE
+		app->RegisterWav(L"CLEAR_SE", SEPath + L"GameClearSE");
 	}
 
 	void GameStage::CreateViewLight() 

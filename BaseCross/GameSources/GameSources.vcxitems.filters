@@ -109,6 +109,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldCountUI.h">
       <Filter>UI\ShieldCount</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Button.h">
+      <Filter>Gimmick\Button</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -206,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldCountUI.cpp">
       <Filter>UI\ShieldCount</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Button.cpp">
+      <Filter>Gimmick\Button</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,9 @@
     </Filter>
     <Filter Include="UI\ShieldCount">
       <UniqueIdentifier>{3db18638-c717-4d7a-90bc-46f9e1252b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Button">
+      <UniqueIdentifier>{c544e4d6-90c3-4f73-aea8-5de03f33986b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

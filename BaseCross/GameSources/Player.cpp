@@ -134,18 +134,18 @@ namespace basecross
 		}
 
 
-		// デバッグ文字列
-		Debug::Log(L"座標 : ", m_position);
-		Debug::Log(L"移動量 : ", m_velocity);
-		Debug::Log(L"加算移動量 : ", m_meddleVelo);
-		Debug::Log(L"加速度 : ", m_acsel);
-		Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
-		Debug::Log(L"シールドの数 : ", m_shieldCount);
-		Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
-		Debug::Log(L"スモールリング : ", m_sRingCount);
-		Debug::Log(m_isAir != false ? L"空中" : L"接地");
-		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
-		Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
+		//// デバッグ文字列
+		//Debug::Log(L"座標 : ", m_position);
+		//Debug::Log(L"移動量 : ", m_velocity);
+		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
+		//Debug::Log(L"加速度 : ", m_acsel);
+		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
+		//Debug::Log(L"シールドの数 : ", m_shieldCount);
+		//Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
+		//Debug::Log(L"スモールリング : ", m_sRingCount);
+		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
+		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
+		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
 	}
 
 	// Aボタンを離した時
@@ -554,7 +554,14 @@ namespace basecross
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
 
 				// SEの再生
-				StartSE(L"CANNON_SE", 0.75f);
+				if (cannon->FindTag(L"Goal"))
+				{
+					StartSE(L"CLEAR_SE", 1.0f);
+				}
+				else
+				{
+					StartSE(L"CANNON_SE", 0.75f);
+				}
 			}
 			else
 			{
@@ -1289,8 +1296,7 @@ namespace basecross
 				break;
 
 			case Ring::Small:
-				m_sRingCount++;
-				m_jumpRecoveryTime += m_jumpRecoveryLimit / 2.0f;
+				GetSmallRing();
 				StartSE(L"RING_SE", 0.35f);
 				break;
 

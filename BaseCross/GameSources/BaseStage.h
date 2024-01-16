@@ -81,9 +81,7 @@ namespace basecross
 		@brief オブジェクトのアクティブグループに追加する関数
 		@param オブジェクトのグループベクター配列
 		@param プレイヤーの座標
-		@param 描画範囲
 		@param 更新範囲
-		@param コリジョン範囲
 		*/
 		void ObjectInToAvtiveGroup(const vector<weak_ptr<GameObject>>& groupVec, const shared_ptr<GameObjectGroup>& activeGroup, const Vec3& playerPos, float updateRange);
 

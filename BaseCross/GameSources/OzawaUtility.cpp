@@ -10,6 +10,32 @@
 namespace Utility
 {
 	/*!
+	@brief 値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
+	bool GetBetween(int value, int a, int b)
+	{
+		return a > b ? value <= a && value >= b : value <= b && value >= a;
+	}
+
+	/*!
+	@brief 値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
+	bool GetBetween(float value, float a, float b)
+	{
+		return a > b ? value <= a && value >= b : value <= b && value >= a;
+	}
+
+#if BASECROSS
+
+	/*!
 	@brief シンプルな頂点データと頂点インデックスを作成
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
@@ -332,56 +358,6 @@ namespace Utility
 	}
 
 	/*!
-	@brief ディグリー角をラジアン角に変換
-	@param (deg) ディグリー角
-	@return ラジアン角に変換されたディグリー角
-	*/
-	float DegToRad(const float& deg)
-	{
-		return deg * (XM_PI / 180.0f);
-	}
-
-	Vec2 DegToRad(const Vec2& deg)
-	{
-		return deg * (XM_PI / 180.0f);
-	}
-
-	Vec3 DegToRad(const Vec3& deg)
-	{
-		return deg * (XM_PI / 180.0f);
-	}
-
-	Vec4 DegToRad(const Vec4& deg)
-	{
-		return deg * (XM_PI / 180.0f);
-	}
-
-	/*!
-	@brief ラジアン角をディグリー角に変換
-	@param (rad) ラジアン角
-	@return ディグリー角に変換されたラジアン角
-	*/
-	float RadToDeg(const float& rad)
-	{
-		return rad * (180.0f / XM_PI);
-	}
-
-	Vec2 RadToDeg(const Vec2& rad)
-	{
-		return rad * (180.0f / XM_PI);
-	}
-
-	Vec3 RadToDeg(const Vec3& rad)
-	{
-		return rad * (180.0f / XM_PI);
-	}
-
-	Vec4 RadToDeg(const Vec4& rad)
-	{
-		return rad * (180.0f / XM_PI);
-	}
-
-	/*!
 	@brief ビルボードをクォータニオンで作成し返す
 	@param (Line)　カメラの注視点 - カメラの位置
 	@return 作成されたクォータニオン
@@ -427,23 +403,22 @@ namespace Utility
 	@param (b)　範囲の値２
 	@return 範囲内かの真偽
 	*/
-	bool GetBetween(int value, int a, int b)
-	{
-		return a > b ? value <= a && value >= b : value <= b && value >= a;
-	}
-
-	bool GetBetween(float value, float a, float b)
-	{
-		return a > b ? value <= a && value >= b : value <= b && value >= a;
-	}
-
 	bool GetBetween(const Vec2& value, const Vec2& a, const Vec2& b)
 	{
 		return GetBetween(value.x, a.x, b.x) && GetBetween(value.y, a.y, b.y);
 	}
 
+	/*!
+	@brief 値が範囲内かを返す
+	@param (value)　確認する値
+	@param (a)　範囲の値１
+	@param (b)　範囲の値２
+	@return 範囲内かの真偽
+	*/
 	bool GetBetween(const Vec3& value, const Vec3& a, const Vec3& b)
 	{
 		return GetBetween(value.x, a.x, b.x) && GetBetween(value.y, a.y, b.y) && GetBetween(value.z, a.z, b.z);
 	}
+#endif
+
 }

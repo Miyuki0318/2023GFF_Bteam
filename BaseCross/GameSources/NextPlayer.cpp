@@ -87,6 +87,7 @@ namespace basecross
 			if (inputA)
 			{
 				OnRushA();
+				StartSE(L"AIRSHOCK_SE", 1.0f);
 				stage->SetStageState(NextStage::StageMove);
 			}
 			break;
@@ -95,6 +96,7 @@ namespace basecross
 			if (inputA)
 			{
 				DeathSetup();
+				StartSE(L"DAMAGE_SE", 1.0f);
 				stage->SetStageState(NextStage::TitleBack);
 			}
 			break;

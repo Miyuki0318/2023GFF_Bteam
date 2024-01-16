@@ -21,6 +21,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Blower.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Button.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Convayor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)BillboardNumber.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Blower.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Button.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Cannon.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Convayor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp" />

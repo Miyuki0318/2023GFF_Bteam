@@ -366,6 +366,15 @@ namespace basecross
 		}
 
 		/*!
+		@brief シールド追加処理
+		*/
+		void GetSmallRing()
+		{
+			m_sRingCount++;
+			m_jumpCount > 0 ? m_jumpCount-- : m_jumpCount = 0;
+		}
+
+		/*!
 		@brief シールドの枚数取得関数
 		@return m_shieldCount
 		*/

@@ -96,6 +96,9 @@ namespace basecross{
 
 		// 送風機モデル
 		RegisterMultiMesh(L"BLOWER", modelPath + L"Blower/", L"Blower", true);
+
+		// ボタンモデル
+		RegisterMultiMesh(L"BUTTON", modelPath + L"Button/", L"Button", true);
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)

@@ -30,6 +30,7 @@
 #include "Convayor.h"
 #include "Ring.h"
 #include "Blower.h"
+#include "Button.h"
 #include "Enemy.h"
 #include "Rabbit.h"
 #include "ArrowEffect.h"

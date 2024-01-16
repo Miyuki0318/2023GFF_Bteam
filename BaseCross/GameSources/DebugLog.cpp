@@ -140,6 +140,18 @@ wstring Debug::GetWss(const wchar_t str[])
 
 /*!
 @brief ’l‚ğwstringŒ^‚É•ÏŠ·‚µ•Ô‚·ŠÖ”
+@param boolŒ^‚ğ•ÏŠ·‚·‚é’l
+@return wstringŒ^‚É•ÏŠ·‚³‚ê‚½’l
+*/
+wstring Debug::GetWss(const bool str)
+{
+	wstringstream wstr;
+	wstr << (str == true ? L"true" : L"false");
+	return wstr.str();
+}
+
+/*!
+@brief ’l‚ğwstringŒ^‚É•ÏŠ·‚µ•Ô‚·ŠÖ”
 @param wstringŒ^‚Ì•ÏŠ·‚·‚é’l
 @return wstringŒ^‚É•ÏŠ·‚³‚ê‚½’l
 */

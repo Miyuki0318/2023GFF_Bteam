@@ -28,6 +28,7 @@ private:
 	@return wstringŒ^‚É•ÏŠ·‚³‚ê‚½’l
 	*/
 	static wstring GetWss();
+	static wstring GetWss(const bool str);
 	static wstring GetWss(const int str);
 	static wstring GetWss(const int str[]);
 	static wstring GetWss(const float str);
