@@ -302,10 +302,11 @@ namespace basecross
 		m_sRingCount = 0;
 		m_shieldCount = 1;
 		m_damageTime = 0.0f;
-		m_acsel = 10.0f;
+		m_acsel = 7.5f;
 		m_jumpRecoveryTime = 0.0f;
 		m_isAir = true;
 		m_isBlower = false;
+		m_isHighJump = false;
 		m_isInvincible = false;
 		m_firePossible = true;
 		m_cannonFire = false;
