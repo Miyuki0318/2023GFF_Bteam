@@ -58,10 +58,10 @@ namespace basecross
 		const int& shieldCount = player->GetShieldCount();
 		const int& shieldLimit = player->GetShieldLimit();
 		const int& smallRingCount = player->GetSRingCount();
-		const int& smallRingLimit = player->GetSRingLimit();
+		const vector<int>& smallRingLimit = player->GetSRingLimit();
 
 		float scaleY = m_scale.y / shieldLimit;
-		float ratio = static_cast<float>(smallRingCount) / static_cast<float>(smallRingLimit);
+		float ratio = static_cast<float>(smallRingCount) / static_cast<float>(smallRingLimit.at(shieldCount));
 		float nScaleY = Utility::Lerp(0.0f, scaleY, ratio);
 		nScaleY = min(nScaleY, scaleY);
 

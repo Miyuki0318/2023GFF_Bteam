@@ -134,9 +134,9 @@ namespace basecross
 		}
 
 
-		//// デバッグ文字列
+		// デバッグ文字列
 		//Debug::Log(L"座標 : ", m_position);
-		//Debug::Log(L"移動量 : ", m_velocity);
+		Debug::Log(L"移動量 : ", m_velocity);
 		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
 		//Debug::Log(L"加速度 : ", m_acsel);
 		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
@@ -154,6 +154,8 @@ namespace basecross
 		// スティック入力を取得し移動ベクトルに保持
 		Vec2 stick = GetLStickValue();
 		m_velocity = (IsInputLStick() ? stick.round(1) : m_deffVelo) * m_veloSpeed;
+
+		// 地面に居るときに地面に向かって入力していたらY軸を反転
 		if (!m_isAir && stick.y > 0.0f) m_velocity.y = -stick.round(1).y * m_veloSpeed;
 		
 		// メンバ変数の設定
@@ -163,6 +165,7 @@ namespace basecross
 		m_meddleVelo.zero();
 		m_jumpCount++;
 		m_jumpRecoveryTime = 0.0f;
+		m_isHighJump = (stick.y <= -0.75f);
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
@@ -299,7 +302,7 @@ namespace basecross
 		m_sRingCount = 0;
 		m_shieldCount = 1;
 		m_damageTime = 0.0f;
-		m_acsel = 7.5f;
+		m_acsel = 10.0f;
 		m_jumpRecoveryTime = 0.0f;
 		m_isAir = true;
 		m_isBlower = false;
@@ -354,7 +357,18 @@ namespace basecross
 			tempVelo.x = 0.0f;
 
 			// 送風機に当たっていなく、加算移動量Yが正負とわず0.0より大きかったら
-			if (!m_isBlower && !(tempVelo.length() > 0.0f)) m_velocity.y -= m_gravity * deltaTime;
+			if (!m_isBlower && !(tempVelo.length() > 0.0f))
+			{
+				if (GetBetween(m_velocity.y, 0.0f, 1.5f))
+				{
+					float dropVal = m_isHighJump ? 0.5f : 1.0f;
+					m_velocity.y -= m_gravity * deltaTime * dropVal;
+				}
+				else
+				{
+					m_velocity.y -= m_gravity * deltaTime;
+				}
+			}
 		}
 		else
 		{
@@ -632,7 +646,6 @@ namespace basecross
 		{
 			// ステートを死亡にし、SEを再生
 			stage->SetStageState(GameStage::Death);
-			stage->CreateSE(L"METAL_SE", 0.75f);
 		}
 	}
 
@@ -1305,7 +1318,7 @@ namespace basecross
 			}
 
 			// 小さいリングの取得個数が25個以上になったら
-			if (m_sRingCount >= m_sRingLimit)
+			if (m_sRingCount >= m_sRingLimit.at(m_shieldCount))
 			{
 				// シールドを増やしてカウンタをリセット
 				AddShield();

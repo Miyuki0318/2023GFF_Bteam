@@ -37,7 +37,6 @@ namespace basecross
 
 		const int m_jumpLimit;			 // 規定ジャンプ回数
 		const int m_shieldLimit;		 // 規定シールド枚数
-		const int m_sRingLimit;			 // スモールリング規定個数
 		const float m_speed;			 // 速度
 		const float m_gravity;			 // 重力
 		const float m_maxAcsel;			 // 最大加速度
@@ -46,6 +45,7 @@ namespace basecross
 		const float m_timeSpeed;		 // 時間乗算速度
 		const float m_invincibleTime;	 // 規定無敵時間
 		const float m_jumpRecoveryLimit; // 規定ジャンプ回復時間
+		vector<int> m_sRingLimit;		 // スモールリング規定個数
 
 		int m_jumpCount;			// ジャンプ回数
 		int m_sRingCount;			// スモールリング回収個数
@@ -56,6 +56,7 @@ namespace basecross
 		
 		bool m_isAir;			// 空中かの真偽
 		bool m_isBlower;		// 送風機に当たっているかの真偽
+		bool m_isHighJump;		// 上方向に高く飛んだかの真偽
 		bool m_isInvincible;	// 無敵中かの真偽
 		bool m_firePossible;	// エアショック使用可能かの真偽
 		bool m_cannonFire;		// 大砲発射後かの真偽
@@ -74,14 +75,13 @@ namespace basecross
 			m_startPos(position),
 			m_jumpLimit(2),
 			m_shieldLimit(3),
-			m_sRingLimit(25),
 			m_speed(4.0f),
 			m_gravity(-5.0f),
 			m_maxAcsel(4.5f),
 			m_veloSpeed(2.5f),
 			m_damageAcsel(2.5f),
 			m_timeSpeed(1.5f),
-			m_invincibleTime(0.5f),
+			m_invincibleTime(1.5f),
 			m_jumpRecoveryLimit(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
@@ -98,10 +98,15 @@ namespace basecross
 			m_jumpRecoveryTime = 0.0f;
 			m_isAir = true;
 			m_isBlower = false;
+			m_isHighJump = false;
 			m_isInvincible = false;
 			m_firePossible = true;
 			m_cannonFire = false;
 			m_cannonStandby = false;
+
+			m_sRingLimit = {
+				5, 20, 25
+			};
 
 			m_bodyMat.affineTransformation(
 				Vec3(1.0f),
@@ -405,7 +410,7 @@ namespace basecross
 		@brief スモールリング獲得上限数取得関数
 		@return m_sRingLimit
 		*/
-		const int& GetSRingLimit() const
+		const vector<int>& GetSRingLimit() const
 		{
 			return m_sRingLimit;
 		}
