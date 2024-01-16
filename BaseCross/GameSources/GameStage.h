@@ -27,6 +27,7 @@ namespace basecross
 			DeathDrop,
 			Death,
 			Select,
+			Metal,
 			Reset,
 			FadeOut,
 		};
@@ -102,6 +103,11 @@ namespace basecross
 		@brief セレクトステート
 		*/
 		void SelectState();
+
+		/*!
+		@brief メタルウィンドウステート
+		*/
+		void MetalState();
 
 		/*!
 		@brief コンティニューリセットステート

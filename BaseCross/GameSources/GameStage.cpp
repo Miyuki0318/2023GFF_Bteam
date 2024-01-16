@@ -96,8 +96,8 @@ namespace basecross
 	void GameStage::CreateSprites()
 	{
 		m_fade = AddGameObject<Sprite>(L"WHITE_TX", WINDOW_SIZE, Vec3(0.0f));
-		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE * 1.25f, Vec3(-675.0f, 0.0f, 0.2f));
-		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE * 1.25f, Vec3(675.0f, 0.0f, 0.2f));
+		m_metalLeft = AddGameObject<Sprite>(L"METAL_LEFT", WINDOW_SIZE * 1.25f, Vec3(-675.0f, 0.0f, 0.1f));
+		m_metalRight = AddGameObject<Sprite>(L"METAL_RIGHT", WINDOW_SIZE * 1.25f, Vec3(675.0f, 0.0f, 0.1f));
 		m_gameOver = AddGameObject<Sprite>(L"GAMEOVER_TX", WINDOW_SIZE, Vec3(0.0f, 600.0f, 0.2f));
 		m_continue = AddGameObject<Sprite>(L"CONTINUE_TX", WINDOW_SIZE * 0.55f, Vec3(-300.0f, 600.0f, 0.2f));
 		m_titleBack = AddGameObject<Sprite>(L"QUIT_TX", WINDOW_SIZE * 0.55f, Vec3(300.0f, 600.0f, 0.2f));
@@ -113,33 +113,24 @@ namespace basecross
 
 	void GameStage::DeathFadeState()
 	{
-		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
-		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
 		const Vec3& goPos = m_gameOver.lock()->GetPosition();
 		const Vec3& coPos = m_continue.lock()->GetPosition();
 		const Vec3& tbPos = m_titleBack.lock()->GetPosition();
 
-		if (mLPos.x < 0.0f)
+		if (goPos.y >= 51.0f)
 		{
-			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
-			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
 			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, -DELTA_TIME * 600.0f, 0.0f));
 			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, -DELTA_TIME * 800.0f, 0.0f));
 		}
 		else
 		{
-			StopSE(L"METAL_SE");
-			CreateSE(L"METAL_STOP_SE", 1.5f);
-			m_metalLeft.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.2f));
-			m_metalRight.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.2f));
 			m_stageState = Select;
 		}
 	}
 	
 	void GameStage::SelectState()
 	{
-		const auto& player = GetSharedGameObject<Player>(L"Player");
 		const bool inputLStick = Input::IsInputLStickX();
 		const Vec2 deffScale = WINDOW_SIZE * 0.55f;
 		m_totalTime += DELTA_TIME * 5.0f;
@@ -170,12 +161,45 @@ namespace basecross
 
 		if (Input::GetPushA())
 		{
+			m_stageState = Metal;
+			CreateSE(L"METAL_SE", 0.75f);
+		}
+	}
+
+	void GameStage::MetalState()
+	{
+		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
+		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
+		const Vec3& goPos = m_gameOver.lock()->GetPosition();
+		const Vec3& coPos = m_continue.lock()->GetPosition();
+		const Vec3& tbPos = m_titleBack.lock()->GetPosition();
+
+		if (mLPos.x <= 0.0f)
+		{
+			m_metalLeft.lock()->SetPosition(mLPos + Vec3(DELTA_TIME * 850.0f, 0.0f, 0.0f));
+			m_metalRight.lock()->SetPosition(mRPos + Vec3(-DELTA_TIME * 850.0f, 0.0f, 0.0f));
+			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, DELTA_TIME * 545.0f, 0.0f));
+			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
+			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
+		}
+		else
+		{
+			StopSE(L"METAL_SE");
+			CreateSE(L"METAL_STOP_SE", 1.5f);
+			m_metalLeft.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.1f));
+			m_metalRight.lock()->SetPosition(Vec3(0.0f, 0.0f, 0.1f));
+			m_gameOver.lock()->SetPosition(Vec3(0.0f, 600.0f, 0.2f));
+			m_continue.lock()->SetPosition(Vec3(-300.0f, 600.0f, 0.2f));
+			m_titleBack.lock()->SetPosition(Vec3(300.0f, 600.0f, 0.2f));
+			m_continue.lock()->SetScale(WINDOW_SIZE * 0.55f);
+			m_titleBack.lock()->SetScale(WINDOW_SIZE * 0.55f);
+
+			const auto& player = GetSharedGameObject<Player>(L"Player");
 			switch (m_select)
 			{
 			case GameStage::Continue:
 				ResetStage();
 				player->Reset();
-				CreateSE(L"CANNON_SE", 1.0f);
 				CreateSE(L"METAL_SE", 0.75f);
 				m_totalTime = 0.0f;
 				m_stageState = Reset;
@@ -196,30 +220,20 @@ namespace basecross
 	{
 		const Vec3& mLPos = m_metalLeft.lock()->GetPosition();
 		const Vec3& mRPos = m_metalRight.lock()->GetPosition();
-		const Vec3& goPos = m_gameOver.lock()->GetPosition();
-		const Vec3& coPos = m_continue.lock()->GetPosition();
-		const Vec3& tbPos = m_titleBack.lock()->GetPosition();
 
 		if (mLPos.x > -WINDOW_WIDTH / 1.9f)
 		{
-			m_metalLeft.lock()->SetPosition(mLPos + Vec3(-DELTA_TIME * 750.0f, 0.0f, 0.0f));
-			m_metalRight.lock()->SetPosition(mRPos + Vec3(DELTA_TIME * 750.0f, 0.0f, 0.0f));
-			m_gameOver.lock()->SetPosition(goPos + Vec3(0.0f, DELTA_TIME * 545.0f, 0.0f));
-			m_continue.lock()->SetPosition(coPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
-			m_titleBack.lock()->SetPosition(tbPos + Vec3(0.0f, DELTA_TIME * 800.0f, 0.0f));
+			m_metalLeft.lock()->SetPosition(mLPos + Vec3(-DELTA_TIME * 850.0f, 0.0f, 0.0f));
+			m_metalRight.lock()->SetPosition(mRPos + Vec3(DELTA_TIME * 850.0f, 0.0f, 0.0f));
 		}
 		else
 		{
 			StopSE(L"METAL_SE");
 			CreateSE(L"METAL_STOP_SE", 1.5f);
+			CreateSE(L"CANNON_SE", 1.0f);
 			m_stageState = StartMove;
-			m_metalLeft.lock()->SetPosition(Vec3(-675.0f, 0.0f, 0.2f));
-			m_metalRight.lock()->SetPosition(Vec3(675.0f, 0.0f, 0.2f));
-			m_gameOver.lock()->SetPosition(Vec3(0.0f, 600.0f, 0.2f));
-			m_continue.lock()->SetPosition(Vec3(-300.0f, 600.0f, 0.2f));
-			m_titleBack.lock()->SetPosition(Vec3(300.0f, 600.0f, 0.2f));
-			m_continue.lock()->SetScale(WINDOW_SIZE * 0.55f);
-			m_titleBack.lock()->SetScale(WINDOW_SIZE * 0.55f);
+			m_metalLeft.lock()->SetPosition(Vec3(-675.0f, 0.0f, 0.1f));
+			m_metalRight.lock()->SetPosition(Vec3(675.0f, 0.0f, 0.1f));
 		}
 	}
 
@@ -393,11 +407,7 @@ namespace basecross
 		{
 			BaseStage::OnUpdate();
 
-			Debug::Log(m_gameOver.lock()->GetPosition());
-
-			const auto& player = GetSharedGameObject<TemplateObject>(L"Player");
-			Vec3 pos = ConvertToWorldPosition(m_gameView, player->GetPosition());
-			Debug::Log(L"Spriteの座標", pos);
+			Debug::Log(L"ゲームオーバー", m_gameOver.lock()->GetPosition());
 
 			switch (m_stageState)
 			{
@@ -416,6 +426,10 @@ namespace basecross
 
 			case GameStage::Select:
 				SelectState();
+				break;
+
+			case GameStage::Metal:
+				MetalState();
 				break;
 
 			case GameStage::Reset:
