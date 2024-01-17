@@ -84,6 +84,9 @@ namespace basecross
 		app->RegisterWav(L"RABBIT_SEARCH_SE", SEPath + L"RabbitSearchSE");
 		app->RegisterWav(L"RABBIT_DEATH_SE", SEPath + L"RabbitDeathSE");
 
+		// バンパーのSE
+		app->RegisterWav(L"BUMPER_SE", SEPath + L"BumperSE");
+
 		// ゲームオーバーSE
 		app->RegisterWav(L"GAMEOVER_SE", SEPath + L"GameOverSE");
 	}
@@ -344,6 +347,13 @@ namespace basecross
 					const Vec3 blowerScale = Vec3(scale * 5.0f, scale, scale * 5.0f);
 					const auto& angle = static_cast<Gimmick::eAngle>(atoi(&m_csvData.at(i).at(j).at(2)));
 					gimmick = AddGameObject<Blower>(position, blowerScale, angle, 5.0f);
+				}
+
+				if (num == 250)
+				{
+					shared_ptr<TemplateObject> bumper = nullptr;
+					bumper = AddGameObject<Bumper>(position, scale * 3.0f);
+					gimmickGroup->IntoGroup(bumper);
 				}
 
 				if (block)

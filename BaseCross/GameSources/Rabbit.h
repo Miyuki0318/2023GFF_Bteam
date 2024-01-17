@@ -114,7 +114,13 @@ namespace basecross
 		@brief 衝突している間呼び出される関数
 		*/
 		void OnCollisionExcute(const CollisionPair& Pair) override;
-		
+
+		/*!
+		@brief 衝突している間呼び出される関数
+		@param コリジョンペア(コリジョン情報)
+		*/
+		void OnCollisionExit(const CollisionPair& Pair) override;
+
 		/*!
 		@brief ブロックに衝突した時
 		@param ブロックのポインタ
@@ -142,6 +148,13 @@ namespace basecross
 		@param 衝突座標
 		*/
 		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
+
+		/*!
+		@brief バンパーに衝突した時
+		@param バンパーのポインタ
+		@param 衝突座標
+		*/
+		void BumperEnter(const shared_ptr<GameObject>& bumper, const Vec3& hitPos);
 
 		void MoveRabbit();
 

@@ -334,6 +334,13 @@ namespace basecross
 		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
 
 		/*!
+		@brief バンパーに衝突した時
+		@param バンパーのポインタ
+		@param 衝突座標
+		*/
+		void BumperEnter(const shared_ptr<GameObject>& bumper, const Vec3& hitPos);
+
+		/*!
 		@brief 敵のウサギに衝突した時
 		@param ウサギのポインタ
 		*/

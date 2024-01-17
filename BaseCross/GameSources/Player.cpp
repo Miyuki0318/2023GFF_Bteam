@@ -221,6 +221,10 @@ namespace basecross
 		{
 			ConvayorEnter(other, hitPoint);
 		}
+		if (other->FindTag(L"Bumper"))
+		{
+			BumperEnter(other, hitPoint);
+		}
 		if (other->FindTag(L"Ring"))
 		{
 			RingEnter(other);
@@ -1199,6 +1203,23 @@ namespace basecross
 		}
 	}
 
+	void Player::BumperEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)	
+	{
+		const auto& bumper = dynamic_pointer_cast<Bumper>(other);
+		if (bumper)
+		{
+			const Vec3& bumperPos = bumper->GetPosition();
+			float rad = -atan2f(hitPos.y - bumperPos.y, hitPos.x - bumperPos.x);
+			Vec2 velo = Vec2(-cos(rad), sin(rad)).normalize();
+
+			m_velocity = velo * m_speed;
+			m_acsel = m_maxAcsel;
+			m_isAir = true;
+
+			bumper->OnHit();
+		}
+	}
+		
 	// “G‚ÌƒEƒTƒM‚ÆÕ“Ë‚µ‚½
 	void Player::RabbitEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)
 	{			

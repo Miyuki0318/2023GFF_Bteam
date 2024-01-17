@@ -99,6 +99,9 @@ namespace basecross{
 
 		// ボタンモデル
 		RegisterMultiMesh(L"BUTTON", modelPath + L"Button/", L"Button", true);
+
+		// バンパーモデル
+		RegisterMultiMesh(L"BUMPER", modelPath + L"Bumper/", L"Bumper", true);
 	}
 
 	void Scene::RegisterSingleMesh(const wstring& registerKey, const wstring& path, const wstring& fileName, bool boneUse)

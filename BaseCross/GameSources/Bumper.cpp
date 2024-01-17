@@ -16,10 +16,12 @@ namespace basecross
 
 		m_ptrColl = AddComponent<CollisionSphere>();
 		m_ptrColl->SetAfterCollision(AfterCollision::None);
+
+		AddTag(L"Bumper");
 	}
 
 	void Bumper::OnUpdate()
 	{
-
+		m_ptrDraw->UpdateAnimation(DELTA_TIME);
 	}
 }

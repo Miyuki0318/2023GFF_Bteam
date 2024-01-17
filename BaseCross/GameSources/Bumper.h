@@ -4,9 +4,10 @@
 
 namespace basecross
 {
-	class Bumper : TemplateObject
+	class Bumper : public TemplateObject
 	{
 		vector<weak_ptr<GameObject>> m_targetObj;
+
 		shared_ptr<CollisionSphere> m_ptrColl;
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 		Mat4x4 m_modelMat;
@@ -21,8 +22,8 @@ namespace basecross
 			m_modelMat.affineTransformation(
 				Vec3(1.35f),
 				Vec3(0.0f),
-				Vec3(0.0f),
-				Vec3(0.0f, -0.5f, 0.0f)
+				Vec3(-XM_PIDIV2, 0.0f, 0.0f),
+				Vec3(0.0f, 0.0f, 0.5f)
 			);
 		}
 
@@ -46,6 +47,7 @@ namespace basecross
 		*/
 		void OnHit()
 		{
+			StartSE(L"BUMPER_SE", 1.0f);
 			m_ptrDraw->ChangeCurrentAnimation(L"PUSH");
 		}
 	};

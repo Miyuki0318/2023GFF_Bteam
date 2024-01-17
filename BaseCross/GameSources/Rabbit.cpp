@@ -96,6 +96,11 @@ namespace basecross
 			ConvayorEnter(other, hitPoint);
 		}
 
+		if (other->FindTag(L"Bumper"))
+		{
+			BumperEnter(other, hitPoint);
+		}
+
 		if (other->FindTag(L"Death"))
 		{
 			m_state = Death;
@@ -146,6 +151,31 @@ namespace basecross
 		if (other->FindTag(L"Convayor"))
 		{
 			ConvayorExcute(other, hitPoint);
+		}
+	}
+
+	void Rabbit::OnCollisionExit(const CollisionPair& Pair)
+	{
+		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
+		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+		if (other->FindTag(L"Block"))
+		{
+			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
+			if (cube)
+			{
+				const auto& type = cube->GetAngleType();
+				if (type == CubeObject::Normal)
+				{
+					m_isAir = true;
+				}
+				else
+				{
+					if (hitPoint.y <= cube->GetPosition().y)
+					{
+						m_isAir = true;
+					}
+				}
+			}
 		}
 	}
 
@@ -288,6 +318,22 @@ namespace basecross
 		}
 	}
 
+	void Rabbit::BumperEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)
+	{
+		const auto& bumper = dynamic_pointer_cast<Bumper>(other);
+		if (bumper)
+		{
+			const Vec3& bumperPos = bumper->GetPosition();
+			float rad = -atan2f(hitPos.y - bumperPos.y, hitPos.x - bumperPos.x);
+			Vec2 velo = Vec2(-cos(rad), sin(rad)).normalize();
+
+			m_velocity = velo * m_speed;
+			m_acsel = m_maxAcsel;
+			m_isAir = true;
+
+			bumper->OnHit();
+		}
+	}
 	void Rabbit::MoveRabbit()
 	{
 		// Œü‚«‚Ì•ÏX
