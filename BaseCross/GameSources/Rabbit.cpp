@@ -73,6 +73,12 @@ namespace basecross
 		m_aliveBlockPos.clear();
 	}
 
+	void Rabbit::OnDestroy()
+	{
+		const auto& stage = GetStage();
+		stage->RemoveGameObject<Billboard>(m_discovered.lock());
+	}
+
 	void Rabbit::OnCollisionEnter(const CollisionPair& Pair)
 	{
 		if (m_type != Normal) return;
@@ -97,7 +103,6 @@ namespace basecross
 			{
 				const auto& stage = GetStage();
 				stage->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
-				stage->RemoveGameObject<Billboard>(m_discovered.lock());
 			}
 		}
 

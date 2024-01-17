@@ -112,6 +112,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Button.h">
       <Filter>Gimmick\Button</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bumper.h">
+      <Filter>Gimmick\Bumper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -212,6 +215,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Button.cpp">
       <Filter>Gimmick\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Bumper.cpp">
+      <Filter>Gimmick\Bumper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +328,9 @@
     </Filter>
     <Filter Include="Gimmick\Button">
       <UniqueIdentifier>{c544e4d6-90c3-4f73-aea8-5de03f33986b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\Bumper">
+      <UniqueIdentifier>{b6e32315-5648-43ef-9a97-f50d86ada44b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -7,7 +7,6 @@ namespace basecross
 	class Button : public Gimmick
 	{
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
-		Mat4x4 m_modelMat;
 
 		bool m_active;
 		bool m_current;

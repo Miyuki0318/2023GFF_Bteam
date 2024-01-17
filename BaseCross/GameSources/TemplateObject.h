@@ -120,6 +120,14 @@ namespace basecross
 			return m_scale;
 		}
 
+
+		virtual void SetTransParam()
+		{
+			SetPosition(m_position);
+			SetRotation(m_rotation);
+			SetScale(m_scale);
+		}
+
 		virtual void StartSE(const wstring& seKey, float volume)
 		{
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();

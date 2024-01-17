@@ -99,6 +99,11 @@ namespace basecross
 		@brief 毎フレーム度に呼び出される関数
 		*/
 		void OnUpdate() override;
+		
+		/*!
+		@brief 破棄される時に呼び出される関数
+		*/
+		void OnDestroy() override;
 
 		/*!
 		@brief 衝突した瞬間に呼び出される関数
