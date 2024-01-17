@@ -45,7 +45,20 @@ namespace basecross
 
 		SetVelocity(-1.0f, 0.0f);
 
-		if (m_rotate == LeftRot) SetRotation(0.0f, 0.0f, XM_PI);
+		switch (m_rotate)
+		{
+		case ConvayorGuide::LeftRot:
+			SetRotation(0.0f, 0.0f, XM_PI);
+			SetVerticesColor(COL_BLUE);
+			break;
+		
+		case ConvayorGuide::RightRot:
+			SetVerticesColor(COL_RED);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	void ConvayorGuide::OnUpdate()
