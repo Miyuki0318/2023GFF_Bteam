@@ -27,7 +27,7 @@ namespace basecross
 		const wstring texturePath = mediaPath + L"Textures/";
 
 		// 木箱テクスチャ
-		app->RegisterTexture(L"WOOD_TX", texturePath + L"Wood.png");
+		app->RegisterTexture(L"DISCOVER_TX", texturePath + L"Discovered.png");
 
 		// UI用テクスチャ
 		app->RegisterTexture(L"JGAUGE_TX", texturePath + L"JumpUI.png");

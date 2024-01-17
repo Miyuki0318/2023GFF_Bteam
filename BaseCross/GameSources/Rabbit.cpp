@@ -18,7 +18,11 @@ namespace basecross
 		m_ptrDraw->ChangeCurrentAnimation(L"JUMP");
 
 		auto ptrColl = AddComponent<CollisionObb>();
-		m_targetObj = GetStage()->GetSharedGameObject<TemplateObject>(L"Player");
+
+		const auto& stage = GetStage();
+		m_targetObj = stage->GetSharedGameObject<TemplateObject>(L"Player");
+		m_discovered = stage->AddGameObject<Billboard>(L"DISCOVER_TX", Vec2(2.0f), Vec3(0.0f));
+		m_discovered.lock()->SetDrawActive(false);
 
 		AddTag(L"Rabbit");
 	}
@@ -89,7 +93,12 @@ namespace basecross
 		if (other->FindTag(L"Death"))
 		{
 			m_state = Death;
-			if (m_isDeath) GetStage()->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
+			if (m_isDeath)
+			{
+				const auto& stage = GetStage();
+				stage->RemoveGameObject<Rabbit>(GetThis<Rabbit>());
+				stage->RemoveGameObject<Billboard>(m_discovered.lock());
+			}
 		}
 
 		if (other->FindTag(L"Rabbit"))
@@ -293,6 +302,10 @@ namespace basecross
 
 		// 座標の更新
 		m_ptrTrans->SetPosition(m_position);
+
+		// エフェクトのビルボード表示
+		m_discovered.lock()->SetPosition(m_position + Vec3(0.0f, 2.5f, 0.0f));
+		m_discovered.lock()->UpdateBillboard();
 	}
 
 	void Rabbit::MoveReduction()
@@ -344,9 +357,11 @@ namespace basecross
 			if (SearchPlayer())
 			{
 				m_state = Rabbit::Seek;
+				m_discovered.lock()->SetDrawActive(true);
 				return;
 			}
 
+			m_discovered.lock()->SetDrawActive(false);
 			JumpRabbit();
 		}
 	}

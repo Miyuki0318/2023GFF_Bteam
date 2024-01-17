@@ -31,6 +31,7 @@ namespace basecross
 		Vec3 m_currentTargetPos;
 		vector<Vec3> m_aliveBlockPos;		
 		weak_ptr<Cannon> m_activeCannon;
+		weak_ptr<Billboard> m_discovered;
 		vector<vector<Vec3>> m_jumpTargetPos;
 
 		int m_lostJumpCount;
