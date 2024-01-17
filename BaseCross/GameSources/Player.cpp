@@ -1319,7 +1319,7 @@ namespace basecross
 			}
 
 			// 小さいリングの取得個数が25個以上になったら
-			if (m_sRingCount >= m_sRingLimit.at(m_shieldCount))
+			if (m_shieldLimit > m_shieldCount && m_sRingCount >= m_sRingLimit.at(m_shieldCount))
 			{
 				// シールドを増やしてカウンタをリセット
 				AddShield();

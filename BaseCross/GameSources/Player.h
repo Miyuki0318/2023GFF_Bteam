@@ -105,7 +105,7 @@ namespace basecross
 			m_cannonStandby = false;
 
 			m_sRingLimit = {
-				5, 20, 25
+				5, 20, 25, 0
 			};
 
 			m_bodyMat.affineTransformation(
