@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Sprite.h"
+#include "Timer.h"
 #include "TemplateObject.h"
 
 namespace basecross
@@ -46,6 +47,9 @@ namespace basecross
 
 		// ビュー
 		shared_ptr<SingleView> m_gameView;
+
+		// タイマーオブジェクト
+		shared_ptr<Timer> m_timer;
 
 		// BGM・SE
 		weak_ptr<SoundItem> m_bgm;
@@ -183,6 +187,15 @@ namespace basecross
 		const shared_ptr<SingleView>& GetGameView() const
 		{
 			return m_gameView;
+		}
+
+		/*!
+		@brief タイマークラス取得関数
+		@return const shared_ptr<Timer>
+		*/
+		const shared_ptr<Timer>& GetTimer() const
+		{
+			return m_timer;
 		}
 	};
 }

@@ -353,6 +353,12 @@ namespace Utility
 #define WINDOW_SIZE Vec2(WINDOW_WIDTH, WINDOW_HEIGHT)
 
 	 /*!
+	 @brief Thisポインタ
+	 @return GameObject::GetThis<GameObject>()
+	 */
+#define This GameObject::GetThis<GameObject>()
+
+	 /*!
 	 @brief シンプルな頂点データと頂点インデックスを作成
 	 @param (vertices) 頂点データ
 	 @param (indices) 頂点インデックス

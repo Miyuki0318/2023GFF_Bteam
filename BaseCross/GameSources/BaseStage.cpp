@@ -553,6 +553,9 @@ namespace basecross
 			CreateSharedObjectGroup(L"Collect");
 			CreateSharedObjectGroup(L"Enemy");
 			CreateSharedObjectGroup(L"Wall");
+
+			// タイマーオブジェクトの生成
+			m_timer = AddGameObject<Timer>();
 		}
 		catch (...)
 		{
@@ -567,6 +570,10 @@ namespace basecross
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
 			audioPtr->Stop(m_bgm.lock());
 		}
+		if (m_timer)
+		{
+			m_timer.reset();
+		}
 	}
 
 	void BaseStage::OnUpdate()
@@ -576,7 +583,7 @@ namespace basecross
 			// FPSの描画
 			const auto& fps = App::GetApp()->GetStepTimer().GetFramesPerSecond();
 			Debug::Log(L"FPS : ", fps);
-
+			
 			// 範囲
 			const float range = 55.0f;
 			const float cubeRange = 4.0f;

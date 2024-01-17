@@ -41,7 +41,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Number.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Params.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Rabbit.h" />
@@ -50,6 +49,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitlePlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
   </ItemGroup>
@@ -85,6 +85,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitlePlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />

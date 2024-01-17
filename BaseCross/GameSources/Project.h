@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "Params.h"
 #include "OzawaUtility.h"
 #include "DebugLog.h"
 #include "CSVLoader.h"
 #include "Input.h"
+#include "Timer.h"
 #include "Scene.h"
 #include "GameCamera.h"
 #include "BaseStage.h"

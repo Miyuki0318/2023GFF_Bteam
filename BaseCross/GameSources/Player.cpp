@@ -1,4 +1,4 @@
-/*! 
+/*!
 @file Player.cpp
 @brief プレイヤーなど実体
 */
@@ -146,6 +146,13 @@ namespace basecross
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
+
+		const auto& timer = GetTypeStage<BaseStage>()->GetTimer();
+		
+		if (timer->SetTimer(This, 3.0f))
+		{
+			Debug::Log(L"unti");
+		}
 	}
 
 	// Aボタンを離した時

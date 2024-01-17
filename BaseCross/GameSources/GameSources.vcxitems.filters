@@ -13,18 +13,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h">
       <Filter>Block</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Params.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h">
       <Filter>App</Filter>
     </ClInclude>
@@ -115,6 +103,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Bumper.h">
       <Filter>Gimmick\Bumper</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CSVLoader.h">
+      <Filter>Utility\CSV</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h">
+      <Filter>Utility\DebugLog</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)OzawaUtility.h">
+      <Filter>Utility\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Timer.h">
+      <Filter>Utility\Timer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -125,15 +125,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp">
       <Filter>Block</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp">
-      <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp">
       <Filter>App</Filter>
@@ -218,6 +209,18 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Bumper.cpp">
       <Filter>Gimmick\Bumper</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CSVLoader.cpp">
+      <Filter>Utility\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DebugLog.cpp">
+      <Filter>Utility\DebugLog</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)OzawaUtility.cpp">
+      <Filter>Utility\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Timer.cpp">
+      <Filter>Utility\Timer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +334,18 @@
     </Filter>
     <Filter Include="Gimmick\Bumper">
       <UniqueIdentifier>{b6e32315-5648-43ef-9a97-f50d86ada44b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\CSV">
+      <UniqueIdentifier>{6b6ee45f-e870-40f1-a5db-b0beeb19fd25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\DebugLog">
+      <UniqueIdentifier>{d26e791c-95c0-4ef9-9662-63f99589cbc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Utility">
+      <UniqueIdentifier>{0f3e504f-8f65-449e-b7ac-1e9392e68f44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Timer">
+      <UniqueIdentifier>{933bfc74-959f-420f-bc39-c304976756a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
