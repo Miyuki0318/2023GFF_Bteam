@@ -153,6 +153,10 @@ namespace basecross
 		{
 			Debug::Log(L"unti");
 		}
+		if (timer->SetTimer(This, 4.0f))
+		{
+			Debug::Log(L"unti");
+		}
 	}
 
 	// Aƒ{ƒ^ƒ“‚ð—£‚µ‚½Žž

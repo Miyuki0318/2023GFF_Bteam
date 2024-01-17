@@ -32,18 +32,22 @@ namespace basecross
 		// 同じオブジェクトから送られたかのチェック
 		for (size_t i = 0; i < m_timers.size(); i++)
 		{
-			// ポインタが一致なら
+			// ポインタが一致で設定時間まで同一なら
 			if (m_timers.at(i).objectPtr.lock() == ptr.lock())
 			{
-				elem = i;
-				check = true;
-				break;
+				if (m_timers.at(i).limitTime == time)
+				{
+					elem = i;
+					check = true;
+					break;
+				}
 			}
 		}
 
-		// 同一オブジェクトが無いなら新規登録
+		// 同一が無いなら新規登録
 		if (!check)
 		{
+			// 配列に空きがあるなら空きに入れる
 			for (auto& timer : m_timers)
 			{
 				if (!timer.objectPtr.lock())
@@ -53,15 +57,16 @@ namespace basecross
 				}
 			}
 
+			// 無ければ追加
 			TimerParam nTimer = { ptr, time };
 			m_timers.push_back(nTimer);
 			return false;
 		}
 
-		// リセットするなら
+		// 経過時間を無視してSetしたタイミングでリセットするなら
 		if (reset)
 		{
-			// 時間を設定
+			// 時間を再設定
 			m_timers.at(elem).Set(time);
 			return false;
 		}

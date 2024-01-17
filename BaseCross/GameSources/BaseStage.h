@@ -49,7 +49,7 @@ namespace basecross
 		shared_ptr<SingleView> m_gameView;
 
 		// タイマーオブジェクト
-		shared_ptr<Timer> m_timer;
+		weak_ptr<Timer> m_timer;
 
 		// BGM・SE
 		weak_ptr<SoundItem> m_bgm;
@@ -193,9 +193,9 @@ namespace basecross
 		@brief タイマークラス取得関数
 		@return const shared_ptr<Timer>
 		*/
-		const shared_ptr<Timer>& GetTimer() const
+		const shared_ptr<Timer> GetTimer() const
 		{
-			return m_timer;
+			return m_timer.lock();
 		}
 	};
 }

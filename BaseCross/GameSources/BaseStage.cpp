@@ -570,10 +570,6 @@ namespace basecross
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
 			audioPtr->Stop(m_bgm.lock());
 		}
-		if (m_timer)
-		{
-			m_timer.reset();
-		}
 	}
 
 	void BaseStage::OnUpdate()
