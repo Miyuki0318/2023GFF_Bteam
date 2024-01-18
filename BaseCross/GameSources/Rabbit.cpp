@@ -75,8 +75,11 @@ namespace basecross
 
 	void Rabbit::OnDestroy()
 	{
+		m_discovered.lock()->SetDrawActive(false);
+
 		const auto& stage = GetStage();
 		stage->RemoveGameObject<Billboard>(m_discovered.lock());
+		m_discovered.reset();
 	}
 
 	void Rabbit::OnCollisionEnter(const CollisionPair& Pair)
