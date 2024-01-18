@@ -50,7 +50,6 @@ namespace basecross
 		int m_jumpCount;			// ジャンプ回数
 		int m_sRingCount;			// スモールリング回収個数
 		int m_shieldCount;			// シールド枚数
-		float m_damageTime;			// ダメージ後の経過時間
 		float m_acsel;				// 加速度
 		float m_jumpRecoveryTime;	// ジャンプ時の回復までの経過時間
 		
@@ -81,7 +80,7 @@ namespace basecross
 			m_veloSpeed(2.5f),
 			m_damageAcsel(2.5f),
 			m_timeSpeed(1.5f),
-			m_invincibleTime(1.5f),
+			m_invincibleTime(1.0f),
 			m_jumpRecoveryLimit(0.5f),
 			m_deffVelo(0.0f, -1.0f)
 		{
@@ -93,7 +92,6 @@ namespace basecross
 			m_jumpCount = 0;
 			m_sRingCount = 0;
 			m_shieldCount = 1;
-			m_damageTime = 0.0f;
 			m_acsel = 7.5f;
 			m_jumpRecoveryTime = 0.0f;
 			m_isAir = true;

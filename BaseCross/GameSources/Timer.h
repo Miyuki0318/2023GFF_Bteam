@@ -7,17 +7,18 @@ namespace basecross
 	{
 		struct TimerParam
 		{
-			weak_ptr<ObjectInterface> objectPtr;
+			unsigned long long objectPtr = NULL;
 			float totalTime = 0.0f;
 			float limitTime = 0.0f;
 
 			TimerParam()
 			{
+				objectPtr = NULL;
 				totalTime = 0.0f;
 				limitTime = 0.0f;
 			}
 
-			TimerParam(const weak_ptr<ObjectInterface>& ptr, float limit) :
+			TimerParam(unsigned long long ptr, float limit) :
 				objectPtr(ptr),
 				limitTime(limit)
 			{
@@ -28,7 +29,7 @@ namespace basecross
 
 			void Reset()
 			{
-				objectPtr.reset();
+				objectPtr = NULL;
 				totalTime = 0.0f;
 				limitTime = 0.0f;
 			}
@@ -39,7 +40,7 @@ namespace basecross
 				limitTime = limit;
 			}
 
-			void Set(const weak_ptr<ObjectInterface>& ptr, float limit)
+			void Set(unsigned long long ptr, float limit)
 			{
 				objectPtr = ptr;
 				totalTime = 0.0f;
@@ -61,6 +62,8 @@ namespace basecross
 
 		void OnUpdate() override;
 
-		bool SetTimer(const weak_ptr<ObjectInterface>& ptr, float time, bool reset = false);
+		bool SetTimer(unsigned long long ptr, float time, bool reset = false);
+
+		float GetTime(unsigned long long ptr, float time);
 	};
 }

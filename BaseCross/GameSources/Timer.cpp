@@ -7,7 +7,7 @@ namespace basecross
 	{
 		for (auto& timer : m_timers)
 		{
-			if (!timer.objectPtr.lock())
+			if (timer.objectPtr == NULL)
 			{
 				timer.Reset();
 				continue;
@@ -17,10 +17,10 @@ namespace basecross
 		}
 	}
 
-	bool Timer::SetTimer(const weak_ptr<ObjectInterface>& ptr, float time, bool reset)
+	bool Timer::SetTimer(unsigned long long ptr, float time, bool reset)
 	{
 		// 存在しないポインタかどうかの真偽
-		if (!ptr.lock()) return false;
+		if (ptr == NULL) return false;
 
 		// 設定された時間が0.0f以下だったらそもそもタイマーとして意味がない
 		if (time <= 0.0f) return false;
@@ -33,7 +33,7 @@ namespace basecross
 		for (size_t i = 0; i < m_timers.size(); i++)
 		{
 			// ポインタが一致で設定時間まで同一なら
-			if (m_timers.at(i).objectPtr.lock() == ptr.lock())
+			if (m_timers.at(i).objectPtr == ptr)
 			{
 				if (m_timers.at(i).limitTime == time)
 				{
@@ -50,7 +50,7 @@ namespace basecross
 			// 配列に空きがあるなら空きに入れる
 			for (auto& timer : m_timers)
 			{
-				if (!timer.objectPtr.lock())
+				if (timer.objectPtr == NULL)
 				{
 					timer.Set(ptr, time);
 					return false;
@@ -81,5 +81,34 @@ namespace basecross
 		}
 
 		return false;
+	}
+
+	float Timer::GetTime(unsigned long long ptr, float time)
+	{
+		// チェッカー
+		size_t elem = 0;
+		bool check = false;
+
+		// 同じオブジェクトから送られたかのチェック
+		for (size_t i = 0; i < m_timers.size(); i++)
+		{
+			// ポインタが一致で設定時間まで同一なら
+			if (m_timers.at(i).objectPtr == ptr)
+			{
+				if (m_timers.at(i).limitTime == time)
+				{
+					elem = i;
+					check = true;
+					break;
+				}
+			}
+		}
+
+		if (check)
+		{
+			return m_timers.at(elem).totalTime;
+		}
+
+		return 0.0f;
 	}
 }

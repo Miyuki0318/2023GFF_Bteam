@@ -85,6 +85,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TemplateObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitlePlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />

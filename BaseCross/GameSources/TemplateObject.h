@@ -35,10 +35,7 @@ namespace basecross
 
 		virtual ~TemplateObject() {}
 
-		virtual void OnCreate() override
-		{
-			m_ptrTrans = GetComponent<Transform>();
-		}
+		virtual void OnCreate() override;
 
 		template <typename T>
 		const typename T::eStageState& GetStageState()
@@ -120,7 +117,6 @@ namespace basecross
 			return m_scale;
 		}
 
-
 		virtual void SetTransParam()
 		{
 			SetPosition(m_position);
@@ -133,6 +129,10 @@ namespace basecross
 			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
 			audioPtr->Start(seKey, 0, volume);
 		}
+
+		virtual bool SetTimer(float time, bool reset = false);
+
+		virtual float GetTime(float time);
 
 		virtual bool BlockCheck(const Vec3& checkPos)
 		{

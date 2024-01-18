@@ -146,17 +146,6 @@ namespace basecross
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
-
-		const auto& timer = GetTypeStage<BaseStage>()->GetTimer();
-		
-		if (timer->SetTimer(This, 3.0f))
-		{
-			Debug::Log(L"unti");
-		}
-		if (timer->SetTimer(This, 4.0f))
-		{
-			Debug::Log(L"unti");
-		}
 	}
 
 	// Aボタンを離した時
@@ -316,7 +305,6 @@ namespace basecross
 		m_jumpCount = 0;
 		m_sRingCount = 0;
 		m_shieldCount = 1;
-		m_damageTime = 0.0f;
 		m_acsel = 7.5f;
 		m_jumpRecoveryTime = 0.0f;
 		m_isAir = true;
@@ -565,11 +553,8 @@ namespace basecross
 			// 発射時の時間の取得
 			const float& fireTime = cannon->GetFireTime();
 
-			// 描画コンポーネントからアニメーションの再生時間を取得
-			const auto& drawPtr = cannon->GetComponent<PNTBoneModelDraw>();
-
 			// 再生時間が発射時の時間を過ぎたら
-			if (drawPtr->GetCurrentAnimationTime() > fireTime)
+			if (SetTimer(fireTime))
 			{
 				// メンバ変数の設定
 				m_acsel = acsel;
@@ -604,14 +589,10 @@ namespace basecross
 	// 無敵時間経過
 	void Player::InvincibleTimer()
 	{
-		// ダメージからの経過時間をデルタタイムで加算
-		m_damageTime += DELTA_TIME;
-
-		// 経過時間が無敵時間以上になったら
-		if (m_invincibleTime <= m_damageTime)
+		// 無敵時間でタイマーを設定
+		if (SetTimer(m_isInvincible))
 		{
 			// 経過時間のリセットと無敵の解除
-			m_damageTime = 0.0f;
 			m_isInvincible = false;
 		}
 	}
@@ -983,6 +964,13 @@ namespace basecross
 	// スパイクと衝突した瞬間
 	void Player::SpikeEnter(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
+		// 無敵中ならブロックとして扱う
+		if (m_invincibleTime)
+		{
+			BlockEnter(obj, hitPos);
+			return;
+		}
+
 		// スパイクオブジェクトにキャスト
 		const auto& spike = dynamic_pointer_cast<Spike>(obj);
 

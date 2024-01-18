@@ -359,6 +359,12 @@ namespace Utility
 #define This GameObject::GetThis<GameObject>()
 
 	 /*!
+	 @brief Thisポインタ
+	 @return sizeof(static_cast<void*>(ObjectInterface::shared_from_this().get()))
+	 */
+#define ThisPtr sizeof(static_cast<void*>(shared_from_this().get()))
+
+	 /*!
 	 @brief シンプルな頂点データと頂点インデックスを作成
 	 @param (vertices) 頂点データ
 	 @param (indices) 頂点インデックス

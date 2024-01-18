@@ -222,6 +222,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Timer.cpp">
       <Filter>Utility\Timer</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TemplateObject.cpp">
+      <Filter>TemplateObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
