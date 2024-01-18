@@ -552,9 +552,10 @@ namespace basecross
 
 			// ”­Ë‚ÌŠÔ‚Ìæ“¾
 			const float& fireTime = cannon->GetFireTime();
-
+			const auto& drawPtr = cannon->GetComponent<PNTBoneModelDraw>();
+			
 			// Ä¶ŠÔ‚ª”­Ë‚ÌŠÔ‚ğ‰ß‚¬‚½‚ç
-			if (SetTimer(fireTime))
+			if (drawPtr->GetCurrentAnimationTime() > fireTime)
 			{
 				// ƒƒ“ƒo•Ï”‚Ìİ’è
 				m_acsel = acsel;

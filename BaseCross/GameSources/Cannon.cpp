@@ -23,20 +23,24 @@ namespace basecross
 
 	void Cannon::OnUpdate()
 	{
+		if (m_isFire && !m_isRotate)
+		{
+			FireAnimation();
+		}
+
 		if (m_fireType >= eFireType::NRotate)
 		{
 			RotateCannon();
-		}
-
-		if (m_isFire)
-		{
-			FireAnimation();
 		}
 	}
 
 	void Cannon::RotateCannon()
 	{
-		if (!m_isRotate)
+		if (!m_isRotate && m_isFire)
+		{
+			return;
+		}
+		if (!m_isRotate && !m_isFire)
 		{
 			if (SetTimer(1.5f))
 			{
@@ -59,8 +63,11 @@ namespace basecross
 
 	void Cannon::FireAnimation()
 	{
+		const float animeTime = m_ptrDraw->GetCurrentAnimationTime();
+		const float fireTime = GetFireTime();
+
 		bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(m_select);
-		bool fireEffect = m_ptrDraw->GetCurrentAnimationTime() > GetFireTime() && m_ptrDraw->GetCurrentAnimationTime() < GetFireTime() + m_particleTime;;
+		bool fireEffect = animeTime > fireTime && animeTime < fireTime + m_particleTime;;
 
 		if (animaEnd)
 		{
