@@ -20,6 +20,8 @@ namespace basecross
 
 		int m_select;
 		bool m_isFire;
+		bool m_isRotate;
+		float m_currentRot;
 		const float m_particleTime;
 		const eFireType m_fireType;
 		vector<float> m_fireTime;
@@ -39,6 +41,8 @@ namespace basecross
 		{
 			m_select = static_cast<int>(m_fireType) % 2;
 			m_isFire = false;
+			m_isRotate = false;
+			m_currentRot = 0.0f;
 
 			m_fireTime = {
 				1.4f,
@@ -63,6 +67,10 @@ namespace basecross
 		virtual void OnCreate() override;
 
 		void OnUpdate() override;
+
+		void RotateCannon();
+
+		void FireAnimation();
 
 		virtual void EffectUpdate();
 

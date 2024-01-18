@@ -40,7 +40,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices)
+	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -66,7 +66,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(VertexData& vertex)
+	void SimpleVerticesIndices(basecross::VertexData& vertex)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -93,7 +93,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (color) 固定色
 	*/
-	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color)
+	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HELF_SIZE = 0.5f;
@@ -119,7 +119,7 @@ namespace Utility
 	@param (vertices) 頂点データ
 	@param (indices) 頂点インデックス
 	*/
-	void SimpleVerticesIndices(VertexData& vertex, const Col4& color)
+	void SimpleVerticesIndices(basecross::VertexData& vertex, const Col4& color)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -146,7 +146,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
+	void NumberVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -174,7 +174,7 @@ namespace Utility
 	@param (vertex) 頂点データと頂点インデックス構造体
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(VertexData& vertex, const int number)
+	void NumberVerticesIndices(basecross::VertexData& vertex, const int number)
 	{
 		// 半分のサイズとデフォルトの色
 		const float HALF_SIZE = 0.5f;
@@ -206,7 +206,7 @@ namespace Utility
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
 	*/
-	bool RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
+	bool RibonVerticesIndices(const vector<Vec3>& point, vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
 	{
 		const int& size = static_cast<int>(point.size());
 		if (size == 0) return false;
@@ -222,11 +222,11 @@ namespace Utility
 			Vec3 cross = dir.cross(axisVec).normalize();
 		
 			Vec3 pos = point.at(i) - cross * weight;
-			VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / size * loop));
+			basecross::VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexLeft);
 
 			pos = point.at(i) + cross * weight;
-			VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / size * loop));
+			basecross::VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexRight);
 		}
 
@@ -256,7 +256,7 @@ namespace Utility
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
 	*/
-	bool RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
+	bool RibonVerticesIndices(const vector<Vec3>& point, basecross::VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
 	{
 		return RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
 	}
@@ -267,7 +267,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void CircleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum)
+	void CircleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum)
 	{
 		const float HELF_SIZE = 0.5f;
 		const Col4 DEFAULT_COLOR = Col4(1.0f);
@@ -275,7 +275,7 @@ namespace Utility
 		vertices.clear();
 		indices.clear();
 
-		VertexPositionColorTexture first(Vec3(0.0f), DEFAULT_COLOR, Vec2(HELF_SIZE));
+		basecross::VertexPositionColorTexture first(Vec3(0.0f), DEFAULT_COLOR, Vec2(HELF_SIZE));
 		vertices.push_back(first);
 
 		for (int i = 0; i < squareNum + 1; i++)
@@ -286,7 +286,7 @@ namespace Utility
 			Vec3 position = Vec3(x, y, 0.0f);
 			Vec2 uvPos = Vec2(HELF_SIZE) + Vec2(x, -y);
 
-			VertexPositionColorTexture v(position, DEFAULT_COLOR, uvPos);
+			basecross::VertexPositionColorTexture v(position, DEFAULT_COLOR, uvPos);
 			vertices.push_back(v);
 		}
 
@@ -305,7 +305,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void CircleVerticesIndices(VertexData& vertex, const int squareNum)
+	void CircleVerticesIndices(basecross::VertexData& vertex, const int squareNum)
 	{
 		CircleVerticesIndices(vertex.vertices, vertex.indices, squareNum);
 	}
@@ -316,7 +316,7 @@ namespace Utility
 	@param (position) ワールド座標
 	@return 変換されたスクリーン座標
 	*/
-	Vec3 ConvertToWorldPosition(const shared_ptr<ViewBase>& viewPtr, const Vec3& position)
+	Vec3 ConvertToWorldPosition(const shared_ptr<basecross::ViewBase>& viewPtr, const Vec3& position)
 	{
 		// ビューからカメラとビューポートを取得
 		const auto& ptrCamera = viewPtr->GetTargetCamera();
@@ -420,5 +420,4 @@ namespace Utility
 		return GetBetween(value.x, a.x, b.x) && GetBetween(value.y, a.y, b.y) && GetBetween(value.z, a.z, b.z);
 	}
 #endif
-
 }

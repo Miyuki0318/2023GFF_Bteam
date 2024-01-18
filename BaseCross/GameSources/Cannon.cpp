@@ -23,31 +23,55 @@ namespace basecross
 
 	void Cannon::OnUpdate()
 	{
-		float deltaTime = DELTA_TIME * 1.5f;
-
 		if (m_fireType >= eFireType::NRotate)
 		{
-			Vec3 rot = GetRotation();
-			rot.z -= deltaTime;
-			SetRotation(rot);
+			RotateCannon();
 		}
 
 		if (m_isFire)
 		{
-			bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(m_select);
-			bool fireEffect = m_ptrDraw->GetCurrentAnimationTime() > GetFireTime() && m_ptrDraw->GetCurrentAnimationTime() < GetFireTime() + m_particleTime;;
-
-			if (animaEnd)
-			{
-				m_isFire = false;
-			}
-			if (fireEffect)
-			{
-				EffectUpdate();
-			}
-
-			m_ptrDraw->UpdateAnimation(deltaTime);
+			FireAnimation();
 		}
+	}
+
+	void Cannon::RotateCannon()
+	{
+		if (!m_isRotate)
+		{
+			if (SetTimer(1.5f))
+			{
+				m_isRotate = true;
+				m_currentRot = GetRotation().z;
+			}
+		}
+		if (m_isRotate)
+		{
+			SetTimer(0.55f);
+			float time = GetTime(0.55f) * 2.0f;
+			float end = m_currentRot - XM_PIDIV2;
+			float rad = Utility::Lerp(m_currentRot, end, time);
+			max(rad, end);
+			SetRotation(Vec3(0.0f, 0.0f, rad));
+
+			if (rad == end) m_isRotate = false;
+		}
+	}
+
+	void Cannon::FireAnimation()
+	{
+		bool animaEnd = m_ptrDraw->IsTargetAnimeEnd() && m_ptrDraw->GetCurrentAnimation() == m_animeKey.at(m_select);
+		bool fireEffect = m_ptrDraw->GetCurrentAnimationTime() > GetFireTime() && m_ptrDraw->GetCurrentAnimationTime() < GetFireTime() + m_particleTime;;
+
+		if (animaEnd)
+		{
+			m_isFire = false;
+		}
+		if (fireEffect)
+		{
+			EffectUpdate();
+		}
+
+		m_ptrDraw->UpdateAnimation(DELTA_TIME * 1.5f);
 	}
 
 	void Cannon::EffectUpdate()

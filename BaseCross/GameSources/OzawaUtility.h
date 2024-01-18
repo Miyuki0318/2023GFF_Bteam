@@ -8,7 +8,6 @@
 #include "stdafx.h"
 #define BASECROSS __has_include("WinMain.cpp")
 
-
 namespace Utility
 {
 	/*!
@@ -276,8 +275,6 @@ namespace Utility
 
 #if BASECROSS
 
-	using namespace basecross;
-
 	/*!
 	@brief 無色透明
 	 */
@@ -321,7 +318,7 @@ namespace Utility
 	 /*!
 	 @brief 青緑色
 	 */
-#define COL_BG	Col4(0.0f, 1.0f, 1.0f, 1.0f)
+#define COL_BG		Col4(0.0f, 1.0f, 1.0f, 1.0f)
 
 	 /*!
 	 @brief 灰色
@@ -332,19 +329,19 @@ namespace Utility
 	 @brief デルタタイム
 	 @return App::GetApp()->GetElapsedTime()
 	 */
-#define DELTA_TIME App::GetApp()->GetElapsedTime()
+#define DELTA_TIME basecross::App::GetApp()->GetElapsedTime()
 
 	 /*!
 	 @brief ウィンドウの幅
 	 @return App::GetApp()->GetGameWidth()
 	 */
-#define WINDOW_WIDTH static_cast<float>(App::GetApp()->GetGameWidth())
+#define WINDOW_WIDTH static_cast<float>(basecross::App::GetApp()->GetGameWidth())
 
 	 /*!
 	 @brief ウィンドウの高さ
 	 @return App::GetApp()->GetGameHeight()
 	 */
-#define WINDOW_HEIGHT static_cast<float>(App::GetApp()->GetGameHeight())
+#define WINDOW_HEIGHT static_cast<float>(basecross::App::GetApp()->GetGameHeight())
 
 	 /*!
 	 @brief ウィンドウのサイズ
@@ -356,7 +353,7 @@ namespace Utility
 	 @brief Thisポインタ
 	 @return GameObject::GetThis<GameObject>()
 	 */
-#define This GameObject::GetThis<GameObject>()
+#define This basecross::GameObject::GetThis<GameObject>()
 
 	 /*!
 	 @brief Thisポインタ
@@ -369,13 +366,13 @@ namespace Utility
 	 @param (vertices) 頂点データ
 	 @param (indices) 頂点インデックス
 	 */
-	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices);
+	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices);
 
 	/*!
 	@brief シンプルな頂点データと頂点インデックスを作成
 	@param (vertex) 頂点データと頂点インデックス構造体
 	*/
-	void SimpleVerticesIndices(VertexData& vertex);
+	void SimpleVerticesIndices(basecross::VertexData& vertex);
 
 	/*!
 	@brief シンプルな頂点データと頂点インデックスを作成
@@ -383,7 +380,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (color) 固定色
 	*/
-	void SimpleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color);
+	void SimpleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Col4& color);
 
 	/*!
 	@brief シンプルな頂点データと頂点インデックスを作成
@@ -391,7 +388,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (color) 固定色
 	*/
-	void SimpleVerticesIndices(VertexData& vertex, const Col4& color);
+	void SimpleVerticesIndices(basecross::VertexData& vertex, const Col4& color);
 
 	/*!
 	@brief 数字用頂点データと頂点インデックスを作成
@@ -399,14 +396,14 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number);
+	void NumberVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int number);
 
 	/*!
 	@brief 数字用頂点データと頂点インデックスを作成
 	@param (vertex) 頂点データと頂点インデックス構造体
 	@param (number) 数字
 	*/
-	void NumberVerticesIndices(VertexData& vertex, const int number);
+	void NumberVerticesIndices(basecross::VertexData& vertex, const int number);
 
 	/*!
 	@brief リボン用頂点データと頂点インデックスを作成
@@ -417,7 +414,7 @@ namespace Utility
 	@param (weight) 幅のサイズ
 	@param (texLoop) テクスチャのループ数
 	*/
-	bool RibonVerticesIndices(const vector<Vec3>& point, vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop);
+	bool RibonVerticesIndices(const vector<Vec3>& point, vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop);
 
 	/*!
 	@brief リボン用頂点データと頂点インデックスを作成
@@ -427,7 +424,7 @@ namespace Utility
 	@param (weight) 幅のサイズ
 	@param (texLoop) テクスチャのループ数
 	*/
-	bool RibonVerticesIndices(const vector<Vec3>& point, VertexData& vertex, const Vec3& axisVec, float weight, int texLoop);
+	bool RibonVerticesIndices(const vector<Vec3>& point, basecross::VertexData& vertex, const Vec3& axisVec, float weight, int texLoop);
 
 	/*!
 	@brief 円型用頂点データと頂点インデックスを作成
@@ -435,7 +432,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void CircleVerticesIndices(vector<VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum);
+	void CircleVerticesIndices(vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const int squareNum);
 
 	/*!
 	@brief 円型用頂点データと頂点インデックスを作成
@@ -443,7 +440,7 @@ namespace Utility
 	@param (indices) 頂点インデックス
 	@param (number) 数字
 	*/
-	void CircleVerticesIndices(VertexData& vertex, const int squareNum);
+	void CircleVerticesIndices(basecross::VertexData& vertex, const int squareNum);
 
 	/*!
 	@brief ワールド座標をスクリーン座標に変換(BaseCrossの座標用、それ以外はDirectX付属の関数を備考)
@@ -451,7 +448,7 @@ namespace Utility
 	@param (position) ワールド座標
 	@return 変換されたスクリーン座標
 	*/
-	Vec3 ConvertToWorldPosition(const shared_ptr<ViewBase>& viewPtr, const Vec3& position);
+	Vec3 ConvertToWorldPosition(const shared_ptr<basecross::ViewBase>& viewPtr, const Vec3& position);
 
 	/*!
 	@brief ビルボードをクォータニオンで作成し返す

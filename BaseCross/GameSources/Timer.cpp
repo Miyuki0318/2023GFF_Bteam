@@ -73,7 +73,7 @@ namespace basecross
 		else
 		{
 			// 経過時間が設定時間以上になったらリセットしてtrueを返す
-			if (m_timers.at(elem).totalTime >= m_timers.at(elem).limitTime)
+			if (m_timers.at(elem).totalTime > m_timers.at(elem).limitTime)
 			{
 				m_timers.at(elem).Reset();
 				return true;
