@@ -12,12 +12,30 @@ namespace basecross
 				timer.Reset();
 				continue;
 			}
+			if (timer.totalTime > timer.limitTime)
+			{
+				timer.Reset();
+				continue;
+			}
 
+#if BASECROSS
+
+			const auto& obj = static_cast<GameObject*>(timer.objectPtr);
+			if (!obj)
+			{
+				continue;
+			}
+			if (!obj->GetUpdateActive())
+			{
+				continue;
+			}
+#endif
+			// 経過時間をデルタタイムで加算
 			timer.totalTime += DELTA_TIME;
 		}
 	}
 
-	bool Timer::SetTimer(unsigned long long ptr, float time, bool reset)
+	bool Timer::SetTimer(void* ptr, float time, bool reset)
 	{
 		// 存在しないポインタかどうかの真偽
 		if (ptr == NULL) return false;
@@ -83,7 +101,7 @@ namespace basecross
 		return false;
 	}
 
-	float Timer::GetTime(unsigned long long ptr, float time)
+	float Timer::GetTime(void* ptr, float time)
 	{
 		// チェッカー
 		size_t elem = 0;

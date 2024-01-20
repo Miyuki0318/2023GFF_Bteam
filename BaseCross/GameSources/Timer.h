@@ -7,7 +7,7 @@ namespace basecross
 	{
 		struct TimerParam
 		{
-			unsigned long long objectPtr = NULL;
+			void* objectPtr = NULL;
 			float totalTime = 0.0f;
 			float limitTime = 0.0f;
 
@@ -18,7 +18,7 @@ namespace basecross
 				limitTime = 0.0f;
 			}
 
-			TimerParam(unsigned long long ptr, float limit) :
+			TimerParam(void* ptr, float limit) :
 				objectPtr(ptr),
 				limitTime(limit)
 			{
@@ -40,7 +40,7 @@ namespace basecross
 				limitTime = limit;
 			}
 
-			void Set(unsigned long long ptr, float limit)
+			void Set(void* ptr, float limit)
 			{
 				objectPtr = ptr;
 				totalTime = 0.0f;
@@ -62,8 +62,8 @@ namespace basecross
 
 		void OnUpdate() override;
 
-		bool SetTimer(unsigned long long ptr, float time, bool reset = false);
+		bool SetTimer(void*, float time, bool reset = false);
 
-		float GetTime(unsigned long long ptr, float time);
+		float GetTime(void* ptr, float time);
 	};
 }

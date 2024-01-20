@@ -359,7 +359,7 @@ namespace Utility
 	 @brief Thisポインタ
 	 @return sizeof(static_cast<void*>(ObjectInterface::shared_from_this().get()))
 	 */
-#define ThisPtr sizeof(static_cast<void*>(shared_from_this().get()))
+#define ThisPtr static_cast<void*>(shared_from_this().get())
 
 	 /*!
 	 @brief シンプルな頂点データと頂点インデックスを作成

@@ -591,7 +591,7 @@ namespace basecross
 	void Player::InvincibleTimer()
 	{
 		// 無敵時間でタイマーを設定
-		if (SetTimer(m_isInvincible))
+		if (SetTimer(m_invincibleTime))
 		{
 			// 経過時間のリセットと無敵の解除
 			m_isInvincible = false;
@@ -966,7 +966,7 @@ namespace basecross
 	void Player::SpikeEnter(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
 		// 無敵中ならブロックとして扱う
-		if (m_invincibleTime)
+		if (m_isInvincible)
 		{
 			BlockEnter(obj, hitPos);
 			return;

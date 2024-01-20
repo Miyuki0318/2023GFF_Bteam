@@ -308,6 +308,15 @@ namespace basecross
 					update = AddGameObject<Spike>(position, scale, angle);
 					update->AddTarget(enemyVec);
 				}
+				if (GetBetween(num, 20000, 20200))
+				{
+					const auto type = static_cast<MoveSpike::eMoveType>(atoi(&m_csvData.at(i).at(j).at(2)) / 100);
+					const auto length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)) / 10);
+					const auto speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(4)));
+					
+					gimmick = AddGameObject<MoveSpike>(position, scale, type, speed, length);
+					gimmick->AddTarget(enemyVec);
+				}
 
 				// ベルトコンベア
 				if (GetBetween(num, 2101, 2119))
