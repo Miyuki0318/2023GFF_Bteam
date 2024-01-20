@@ -287,10 +287,6 @@ namespace basecross
 					collect = AddGameObject<Ring>(position, scale, Ring::Small);
 					break;
 
-				case 320:
-					gimmick = AddGameObject<Button>(position, scale);
-					break;
-
 				case 400:
 					AddGameObject<GoalCannon>(position, scale * 5.0f);
 					break;
@@ -311,8 +307,8 @@ namespace basecross
 				if (GetBetween(num, 20000, 20200))
 				{
 					const auto type = static_cast<MoveSpike::eMoveType>(atoi(&m_csvData.at(i).at(j).at(2)) / 100);
-					const auto length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)) / 10);
-					const auto speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(4)));
+					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)) / 10);
+					const float speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(4)));
 					
 					gimmick = AddGameObject<MoveSpike>(position, scale, type, speed, length);
 					gimmick->AddTarget(enemyVec);
@@ -358,6 +354,23 @@ namespace basecross
 					gimmick = AddGameObject<Blower>(position, blowerScale, angle, 5.0f);
 				}
 
+				// ボタンと動く壁
+				if (GetBetween(num, 3110, 3119))
+				{
+					const int number = atoi(&m_csvData.at(i).at(j).at(3));
+					gimmick = AddGameObject<Button>(position, scale, number);
+					gimmick->AddTarget(enemyVec);
+				}
+				if (GetBetween(num, 5000, 5999))
+				{
+					const int number = atoi(&m_csvData.at(i).at(j).at(1)) / 100;
+					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(2)) / 10);
+					const float speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)));
+					gimmick = AddGameObject<MoveWall>(position, scale, number, speed, length);
+					gimmick->AddTarget(enemyVec);
+				}
+
+				// バンパー
 				if (num == 250)
 				{
 					shared_ptr<TemplateObject> bumper = nullptr;

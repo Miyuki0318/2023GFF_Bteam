@@ -53,13 +53,14 @@ namespace basecross
 		float m_acsel;				// 加速度
 		float m_jumpRecoveryTime;	// ジャンプ時の回復までの経過時間
 		
-		bool m_isAir;			// 空中かの真偽
-		bool m_isBlower;		// 送風機に当たっているかの真偽
-		bool m_isHighJump;		// 上方向に高く飛んだかの真偽
-		bool m_isInvincible;	// 無敵中かの真偽
-		bool m_firePossible;	// エアショック使用可能かの真偽
-		bool m_cannonFire;		// 大砲発射後かの真偽
-		bool m_cannonStandby;	// 大砲発射待機中かの真偽
+		bool m_isAir;			 // 空中かの真偽
+		bool m_isBlower;		 // 送風機に当たっているかの真偽
+		bool m_isHighJump;		 // 上方向に高く飛んだかの真偽
+		bool m_isInvincible;	 // 無敵中かの真偽
+		bool m_isAliveMoveBlock; // 動く壁の上に居るかの真偽
+		bool m_firePossible;	 // エアショック使用可能かの真偽
+		bool m_cannonFire;		 // 大砲発射後かの真偽
+		bool m_cannonStandby;	 // 大砲発射待機中かの真偽
 
 	public:
 
@@ -355,6 +356,12 @@ namespace basecross
 		@param リングのポインタ
 		*/
 		void RingEnter(const shared_ptr<GameObject>& ring);
+
+		/*!
+		@brief 動く壁に衝突した時
+		@param 動く壁のポインタ
+		*/
+		void MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
 
 		/*!
 		@brief ダメージノックバック処理

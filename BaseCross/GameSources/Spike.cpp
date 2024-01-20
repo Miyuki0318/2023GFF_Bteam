@@ -116,12 +116,13 @@ namespace basecross
 
 	bool MoveSpike::PointState(const Vec3& start, const Vec3& end, float time)
 	{
+		bool achiev = false;
 		float totalTime = GetTime(time) / time;
 		Vec3 pos = Utility::Lerp(start, end, totalTime);
 		if (totalTime >= 1.0f)
 		{
 			pos = end;
-			return true;
+			achiev = true;
 		}
 		else
 		{
@@ -129,6 +130,6 @@ namespace basecross
 		}
 
 		SetPosition(pos);
-		return false;
+		return achiev;
 	}
 }

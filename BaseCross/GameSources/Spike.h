@@ -14,7 +14,7 @@ namespace basecross
 		Spike(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, const float scale, const eAngle& angle
 		) :
-			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), angle)
+			Gimmick(stagePtr, Vec3(position), Vec3(scale), angle)
 		{
 			m_modelMat.affineTransformation(
 				Vec3(1.35f),

@@ -8,9 +8,10 @@ namespace basecross
 	{
 		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
 
+		const int m_number;
+
 		bool m_active;
 		bool m_current;
-		bool m_aliveTarget;
 		float m_reverseTime;
 
 	public:
@@ -20,13 +21,13 @@ namespace basecross
 		@param ステージポインタ
 		*/
 		Button(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, float scale
+			const Vec2& position, float scale, int number
 		) :
-			Gimmick(stagePtr, Vec3(position), Vec3(scale), Gimmick::Up)
+			Gimmick(stagePtr, Vec3(position), Vec3(scale), Gimmick::Up),
+			m_number(number)
 		{
 			m_active = false;
 			m_current = m_active;
-			m_aliveTarget = false;
 			m_reverseTime = 0.0f;
 
 			m_modelMat.affineTransformation(
@@ -60,32 +61,37 @@ namespace basecross
 		{
 			for (const auto& objPtr : m_targetObj)
 			{
-				if (objPtr.lock())
+				// エラーチェック
+				if (!objPtr.lock()) continue;
+
+				// 型キャスト
+				const auto& targetPtr = dynamic_pointer_cast<TemplateObject>(objPtr.lock());
+				if (!targetPtr) continue;
+
+				// 座標の定義
+				const Vec2 pos = Vec2(targetPtr->GetPosition());
+				if ((pos - Vec2(GetPosition())).length() <= Vec2(GetScale()).length())
 				{
-					// 型キャスト
-					const auto& targetPtr = dynamic_pointer_cast<TemplateObject>(objPtr.lock());
-					if (targetPtr)
+					const Vec2 left = Vec2(GetPosition() - GetScale() / 2.0f);
+					const Vec2 right = Vec2(GetPosition() + GetScale() / 2.0f);
+					if (Utility::GetBetween(pos, left, right))
 					{
-						// 座標の定義
-						const Vec2 pos = Vec2(targetPtr->GetPosition());
-						if ((pos - Vec2(GetPosition())).length() <= Vec2(GetScale()).length())
+						return true;
+					}
+
+					const Vec2 helfScale = Vec2(targetPtr->GetScale()) / 2.0f;
+					vector<Vec2> points = {
+						(pos + Vec2(-helfScale.x, helfScale.y)),
+						(pos - helfScale),
+						(pos + helfScale),
+						(pos + Vec2(helfScale.x, -helfScale.y))
+					};
+
+					for (const auto& point : points)
+					{
+						if (Utility::GetBetween(point, left, right))
 						{
-							const Vec2 left = Vec2(GetPosition() - GetScale() / 2.0f);
-							const Vec2 right = Vec2(GetPosition() + GetScale() / 2.0f);
-
-							const float degAngle = 4.0f;
-							const int loopNum = 360 / static_cast<int>(degAngle);
-
-							// 360度を90回のループで処理する
-							for (size_t i = 0; i < loopNum; i++)
-							{
-								float rad = Utility::DegToRad(i * degAngle);
-								Vec2 circle = Vec2(cos(rad), sin(rad)).normalize() * 0.5f;
-								if (Utility::GetBetween(pos + circle, left, right))
-								{
-									return true;
-								}
-							}
+							return true;
 						}
 					}
 				}
@@ -93,14 +99,14 @@ namespace basecross
 			return false;
 		}
 
-		void SetTargetAlive(bool b)
+		int GetButtonNumber() const
 		{
-			m_aliveTarget = b;
+			return m_number;
 		}
 
-		bool GetTargetAlive() const
+		bool GetInput() const
 		{
-			return m_aliveTarget;
+			return m_active;
 		}
 	};
 }

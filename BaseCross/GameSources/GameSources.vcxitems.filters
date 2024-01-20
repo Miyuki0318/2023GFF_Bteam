@@ -115,6 +115,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Timer.h">
       <Filter>Utility\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MoveWall.h">
+      <Filter>Gimmick\MoveWall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)TemplateObject.cpp">
       <Filter>TemplateObject</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MoveWall.cpp">
+      <Filter>Gimmick\MoveWall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -349,6 +355,9 @@
     </Filter>
     <Filter Include="Utility\Timer">
       <UniqueIdentifier>{933bfc74-959f-420f-bc39-c304976756a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gimmick\MoveWall">
+      <UniqueIdentifier>{28496720-58ec-486b-877b-05dc7735e0b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

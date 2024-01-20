@@ -1,4 +1,4 @@
-/*!
+/*! 
 @file Player.cpp
 @brief プレイヤーなど実体
 */
@@ -136,7 +136,7 @@ namespace basecross
 
 		// デバッグ文字列
 		//Debug::Log(L"座標 : ", m_position);
-		Debug::Log(L"移動量 : ", m_velocity);
+		//Debug::Log(L"移動量 : ", m_velocity);
 		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
 		//Debug::Log(L"加速度 : ", m_acsel);
 		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
@@ -146,6 +146,7 @@ namespace basecross
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
+		Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
 	}
 
 	// Aボタンを離した時
@@ -233,6 +234,10 @@ namespace basecross
 		{
 			RabbitEnter(other, hitPoint);
 		}
+		if (other->FindTag(L"MoveWall"))
+		{
+			MoveWallEnter(other, hitPoint);
+		}
 		if (other->FindTag(L"Death"))
 		{
 			// 死亡時の設定をする
@@ -264,6 +269,10 @@ namespace basecross
 		{
 			if (!m_cannonStandby) CannonEnter(other);
 		}
+		if (other->FindTag(L"MoveWall"))
+		{
+			MoveWallEnter(other, hitPoint);
+		}
 		if (other->FindTag(L"Convayor"))
 		{
 			ConvayorExcute(other, hitPoint);
@@ -292,6 +301,12 @@ namespace basecross
 						m_isAir = true;
 					}
 				}
+			}
+
+			const auto& wall = dynamic_pointer_cast<MoveWall>(other);
+			if (wall)
+			{
+				m_isAliveMoveBlock = false;
 			}
 		}
 	}
@@ -882,6 +897,14 @@ namespace basecross
 				BlockBoundSE();
 			}
 		}
+
+		if (m_isAliveMoveBlock)
+		{
+			// 死亡時の設定をする
+			m_shieldCount = 0;
+			StartSE(L"SHIELD_D_SE", 1.5f);
+			DeathSetup();
+		}
 	}
 
 	// ブロックの左から衝突した時の応答処理
@@ -1346,6 +1369,33 @@ namespace basecross
 				AddShield();
 				m_sRingCount = 0;
 			}
+		}
+	}
+
+	void Player::MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos)
+	{
+		// ブロックのパラメータを取得
+		const auto& cube = dynamic_pointer_cast<CubeObject>(wall);
+		Vec3 objPos = cube->GetSlopePos();
+		Vec3 helf = cube->GetScale() / 2.0f;
+
+		if (BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f))) return;
+
+		Vec3 left = objPos + Vec3(-helf.x, helf.y, 0.0f);
+		Vec3 right = objPos + Vec3(helf.x, 0.0f, 0.0f);
+
+		// 上から衝突していたら
+		if (GetBetween(hitPos, left, right))
+		{
+			// パラメータの設定
+			m_velocity.y = 0.25f;
+			m_acsel = 1.0f;
+			m_isAir = false;
+			m_isAliveMoveBlock = true;
+
+			Vec3 pos = GetPosition();
+			pos.y = objPos.y + cube->GetScale().y;
+			SetPosition(pos);
 		}
 	}
 }

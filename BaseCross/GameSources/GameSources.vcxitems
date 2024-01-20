@@ -30,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DrawObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)JumpCountUI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MoveWall.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldCountUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
@@ -73,6 +74,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Gimmick.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)JumpCountUI.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MoveWall.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NextPlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NextStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Number.cpp" />
