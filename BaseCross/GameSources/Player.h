@@ -486,5 +486,16 @@ namespace basecross
 		{
 			return m_velocity;
 		}
+
+		void CompressedDeath()
+		{
+			if (m_isAliveMoveBlock)
+			{
+				// €–S‚Ìİ’è‚ğ‚·‚é
+				m_shieldCount = 0;
+				StartSE(L"SHIELD_D_SE", 1.5f);
+				DeathSetup();
+			}
+		}
 	};
 }

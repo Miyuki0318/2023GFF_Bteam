@@ -632,7 +632,6 @@ namespace basecross
 			activeGroup->AllClear();
 			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, cubeRange);
 			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 2.0f);
-			ObjectInToAvtiveGroup(gimmickVec, activeGroup, playerPos, range / 2.0f);
 		}
 		catch (...)
 		{

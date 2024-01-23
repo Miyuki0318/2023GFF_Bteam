@@ -150,7 +150,7 @@ namespace basecross
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
-		//Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
+		Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
 	}
 
 	// Aボタンを離した時
@@ -836,6 +836,12 @@ namespace basecross
 				BlockUnderHit(objPos, helf);
 				return;
 			}
+
+			// 動く壁に挟まれたら
+			if (!BlockCheck(objPos + DOWN_VEC))
+			{
+				CompressedDeath();
+			}
 		}
 
 		// 左から衝突
@@ -899,13 +905,7 @@ namespace basecross
 			}
 		}
 
-		if (m_isAliveMoveBlock)
-		{
-			// 死亡時の設定をする
-			m_shieldCount = 0;
-			StartSE(L"SHIELD_D_SE", 1.5f);
-			DeathSetup();
-		}
+		CompressedDeath();
 	}
 
 	// ブロックの左から衝突した時の応答処理
@@ -1380,9 +1380,11 @@ namespace basecross
 		Vec3 objPos = cube->GetSlopePos();
 		Vec3 helf = cube->GetScale() / 2.0f;
 
+		const auto& gimmickVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
+
 		int count = 0;
 		Vec3 leftPos = objPos;
-		while (BlockCheck(leftPos))
+		while (BlockCheck(gimmickVec, leftPos))
 		{
 			count++;
 			leftPos += LEFT_VEC * count;
@@ -1390,7 +1392,7 @@ namespace basecross
 
 		count = 0;
 		Vec3 rightPos = objPos;
-		while (BlockCheck(rightPos))
+		while (BlockCheck(gimmickVec, rightPos))
 		{
 			count++;
 			rightPos += RIGHT_VEC * count;
@@ -1400,9 +1402,9 @@ namespace basecross
 		Vec3 right = rightPos + Vec3(helf.x, 0.0f, 0.0f);
 
 		// 上から衝突していたら
-		if (GetBetween(hitPos, left, right))
+		if (!BlockCheck(gimmickVec, objPos + UP_VEC))
 		{
-			if (BlockCheck(objPos + UP_VEC)) return;
+			if (!GetBetween(hitPos, left, right)) return;
 
 			// パラメータの設定
 			m_velocity.y = 0.25f;
