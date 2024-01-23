@@ -47,9 +47,6 @@ namespace basecross
 	{
 		Spike::OnUpdate();
 		UpdateMove();
-
-		Debug::Log(L"座標 : ", GetPosition());
-		Debug::Log(L"棘ステート", m_moveState);
 	}
 
 	void MoveSpike::UpdateMove()

@@ -97,6 +97,12 @@ namespace basecross
 				RecoveryAirShock();
 			}
 
+			// 動く壁から離れたか
+			if (m_currentWall.lock())
+			{
+				MoveWallExit();
+			}
+
 			// 死亡時のドロップステートなら
 			if (state == GameStage::DeathDrop)
 			{
@@ -141,12 +147,10 @@ namespace basecross
 		//Debug::Log(L"加速度 : ", m_acsel);
 		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
 		//Debug::Log(L"シールドの数 : ", m_shieldCount);
-		//Debug::Log(L"無敵時間 : ", m_invincibleTime - m_damageTime);
-		//Debug::Log(L"スモールリング : ", m_sRingCount);
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
-		Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
+		//Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
 	}
 
 	// Aボタンを離した時
@@ -284,7 +288,7 @@ namespace basecross
 	{
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
-		if (other->FindTag(L"Block"))
+		if (other->FindTag(L"Block") || other->FindTag(L"MoveWall"))
 		{
 			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
 			if (cube)
@@ -301,12 +305,6 @@ namespace basecross
 						m_isAir = true;
 					}
 				}
-			}
-
-			const auto& wall = dynamic_pointer_cast<MoveWall>(other);
-			if (wall)
-			{
-				m_isAliveMoveBlock = false;
 			}
 		}
 	}
@@ -326,6 +324,7 @@ namespace basecross
 		m_isBlower = false;
 		m_isHighJump = false;
 		m_isInvincible = false;
+		m_isAliveMoveBlock = false;
 		m_firePossible = true;
 		m_cannonFire = false;
 		m_cannonStandby = false;
@@ -582,6 +581,8 @@ namespace basecross
 
 				// 大砲のZ軸をラジアンに変換し、移動量を設定する
 				float rad = cannon->GetRotation().z - XM_PIDIV2;
+				if (floor(RadToDeg(rad)) == 90.0f) m_acsel -= 2.5f;
+
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
 
 				// SEの再生
@@ -1379,23 +1380,56 @@ namespace basecross
 		Vec3 objPos = cube->GetSlopePos();
 		Vec3 helf = cube->GetScale() / 2.0f;
 
-		if (BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f))) return;
+		int count = 0;
+		Vec3 leftPos = objPos;
+		while (BlockCheck(leftPos))
+		{
+			count++;
+			leftPos += Vec3(-1.0f * count, 0.0f, 0.0f);
+		}
 
-		Vec3 left = objPos + Vec3(-helf.x, helf.y, 0.0f);
-		Vec3 right = objPos + Vec3(helf.x, 0.0f, 0.0f);
+		count = 0;
+		Vec3 rightPos = objPos;
+		while (BlockCheck(rightPos))
+		{
+			count++;
+			rightPos += Vec3(1.0f * count, 0.0f, 0.0f);
+		}
+
+		Vec3 left = leftPos + Vec3(-helf.x, helf.y, 0.0f);
+		Vec3 right = rightPos + Vec3(helf.x, 0.0f, 0.0f);
 
 		// 上から衝突していたら
 		if (GetBetween(hitPos, left, right))
 		{
+			if (BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f))) return;
+
 			// パラメータの設定
 			m_velocity.y = 0.25f;
 			m_acsel = 1.0f;
 			m_isAir = false;
 			m_isAliveMoveBlock = true;
+			m_currentWall = cube;
 
 			Vec3 pos = GetPosition();
 			pos.y = objPos.y + cube->GetScale().y;
 			SetPosition(pos);
+		}
+		else
+		{
+			BlockEnter(wall, hitPos);
+		}
+	}
+
+	void Player::MoveWallExit()
+	{
+		Vec3 pos = m_currentWall.lock()->GetPosition();
+
+		float length = (GetPosition() - pos).length();
+		if (length >= 2.0f)
+		{
+			m_currentWall.reset();
+			m_isAliveMoveBlock = false;
 		}
 	}
 }

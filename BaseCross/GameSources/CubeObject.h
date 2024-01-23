@@ -158,7 +158,7 @@ namespace basecross
 			}
 			else
 			{
-				return m_position;
+				return GetPosition();
 			}
 		}
 	};

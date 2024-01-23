@@ -407,8 +407,6 @@ namespace basecross
 		{
 			BaseStage::OnUpdate();
 
-			Debug::Log(L"ゲームオーバー", m_gameOver.lock()->GetPosition());
-
 			switch (m_stageState)
 			{
 			case GameStage::FadeIn:

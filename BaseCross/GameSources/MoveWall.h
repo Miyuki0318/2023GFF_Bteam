@@ -8,7 +8,7 @@ namespace basecross
 	class MoveWall : public Gimmick
 	{
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
-		weak_ptr<Button> m_button;
+		vector<weak_ptr<Button>> m_buttons;
 
 		const int m_number;
 		const float m_moveSpeed;

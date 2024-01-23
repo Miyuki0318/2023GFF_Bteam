@@ -7,7 +7,6 @@ namespace basecross
 	{
 		Gimmick::OnCreate();
 		
-		m_ptrColl->SetDrawActive(true);
 		m_ptrColl->SetUpdateActive(true);
 		m_ptrColl->SetAfterCollision(AfterCollision::None);
 

@@ -7,7 +7,7 @@ namespace basecross
 	{
 		Gimmick::OnCreate();
 		m_ptrDraw = AddComponent<PNTBoneModelDraw>();
-		m_ptrDraw->SetMeshResource(L"N_CANNON");
+		m_ptrDraw->SetMeshResource(m_fireType >= eFireType::NRotate ? L"R_CANNON" : L"N_CANNON");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 		m_ptrDraw->AddAnimation(L"FIRE", 0, 60, false);
 		m_ptrDraw->AddAnimation(L"RAPID", 30, 30, false);

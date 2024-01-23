@@ -34,6 +34,7 @@ namespace basecross
 		weak_ptr<Cannon> m_activeCannon;		// 大砲ポインタ一時保持用
 		weak_ptr<MultiParticle> m_particle;		// パーティクル
 		weak_ptr<ArrowEffect> m_aligment;		// 軌道描画
+		weak_ptr<TemplateObject> m_currentWall; // 前回衝突した動く壁
 
 		const int m_jumpLimit;			 // 規定ジャンプ回数
 		const int m_shieldLimit;		 // 規定シールド枚数
@@ -362,6 +363,11 @@ namespace basecross
 		@param 動く壁のポインタ
 		*/
 		void MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
+
+		/*!
+		@brief 動く壁から離れたか
+		*/
+		void MoveWallExit();
 
 		/*!
 		@brief ダメージノックバック処理

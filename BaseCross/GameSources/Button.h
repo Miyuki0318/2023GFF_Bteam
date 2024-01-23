@@ -23,7 +23,7 @@ namespace basecross
 		Button(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, float scale, int number
 		) :
-			Gimmick(stagePtr, Vec3(position), Vec3(scale), Gimmick::Up),
+			Gimmick(stagePtr, Vec3(position), Vec3(scale * 2.0f, scale, scale), Gimmick::Up),
 			m_number(number)
 		{
 			m_active = false;

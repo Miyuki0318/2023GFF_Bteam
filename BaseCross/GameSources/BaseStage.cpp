@@ -49,6 +49,9 @@ namespace basecross
 		// タイトルに戻るテクスチャ
 		app->RegisterTexture(L"QUIT_TX", texturePath + L"Quit.tga");
 
+		// メタルブロックテクスチャ
+		app->RegisterTexture(L"METAL_TX", texturePath + L"Metal.png");
+
 		// サウンドディレクトリパス
 		const wstring BGMPath = mediaPath + L"Sounds/BGM/";
 		const wstring SEPath = mediaPath + L"Sounds/SE/";
@@ -628,6 +631,7 @@ namespace basecross
 			activeGroup->AllClear();
 			ObjectInToAvtiveGroup(stageVec, activeGroup, playerPos, cubeRange);
 			ObjectInToAvtiveGroup(updateVec, activeGroup, playerPos, range / 2.0f);
+			ObjectInToAvtiveGroup(gimmickVec, activeGroup, playerPos, range / 2.0f);
 		}
 		catch (...)
 		{

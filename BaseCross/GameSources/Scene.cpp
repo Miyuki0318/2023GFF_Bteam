@@ -82,7 +82,8 @@ namespace basecross{
 
 		// ‘å–Cƒ‚ƒfƒ‹
 		RegisterSingleMesh(L"N_CANNON", modelPath + L"Cannon/", L"Cannon", true);
-		RegisterSingleMesh(L"G_CANNON", modelPath + L"Cannon/", L"GoalCannon", true);
+		RegisterSingleMesh(L"G_CANNON", modelPath + L"Cannon/", L"cannonG", true);
+		RegisterSingleMesh(L"R_CANNON", modelPath + L"Cannon/", L"cannonR", true);
 		RegisterSingleMesh(L"EASY_CANNON", modelPath + L"Cannon/", L"cannonE", true);
 		RegisterSingleMesh(L"NORMAL_CANNON", modelPath + L"Cannon/", L"cannonN", true);
 		RegisterSingleMesh(L"HARD_CANNON", modelPath + L"Cannon/", L"cannonH", true);

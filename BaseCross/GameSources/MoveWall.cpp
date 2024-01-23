@@ -7,16 +7,13 @@ namespace basecross
 	{
 		Gimmick::OnCreate();
 		
-		m_ptrColl->SetDrawActive(true);
-
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
 		m_ptrDraw->SetMeshResource(L"BLOCK");
-		m_ptrDraw->SetTextureResource(L"ROCK_TX");
+		m_ptrDraw->SetTextureResource(L"METAL_TX");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 		
 		m_movePoint += Vec3(0.0f, -1.0f, 0.0f) * (m_moveLength * 2.0f);
 
-		AddTag(L"Block");
 		AddTag(L"MoveWall");
 	}
 
@@ -24,7 +21,7 @@ namespace basecross
 	{
 		Gimmick::OnUpdate();
 
-		if (!m_button.lock())
+		if (m_buttons.empty())
 		{
 			SetTargetButton();
 		}
@@ -46,15 +43,24 @@ namespace basecross
 
 			if (button->GetButtonNumber() == m_number)
 			{
-				m_button = button;
-				break;
+				m_buttons.push_back(button);
 			}
 		}
 	}
 
 	void MoveWall::MoveWallBlock(const Vec3& start, const Vec3& end)
 	{
-		m_moveRatio += m_button.lock()->GetInput() ? DELTA_TIME * m_moveSpeed : -DELTA_TIME;
+		bool input = false;
+		for (const auto& button : m_buttons)
+		{
+			if (button.lock()->GetInput())
+			{
+				input = true;
+				break;
+			}
+		}
+
+		m_moveRatio += input ? DELTA_TIME * m_moveSpeed : -DELTA_TIME;
 		m_moveRatio = min(m_moveRatio, m_moveSpeed);
 		m_moveRatio = max(m_moveRatio, 0.0f);
 
