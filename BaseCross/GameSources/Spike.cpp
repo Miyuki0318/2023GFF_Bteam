@@ -29,13 +29,13 @@ namespace basecross
 		switch (m_moveType)
 		{
 		case MoveSpike::UpDown:
-			m_movePointA += Vec3(0.0f, 1.0f, 0.0f) * m_moveLength;
-			m_movePointB += Vec3(0.0f, -1.0f, 0.0f) * m_moveLength;
+			m_movePointA += UP_VEC * m_moveLength;
+			m_movePointB += DOWN_VEC * m_moveLength;
 			break;
 
 		case MoveSpike::LeftRight:
-			m_movePointA += Vec3(1.0f, 0.0f, 0.0f) * m_moveLength;
-			m_movePointB += Vec3(-1.0f, 0.0f, 0.0f) * m_moveLength;
+			m_movePointA += RIGHT_VEC * m_moveLength;
+			m_movePointB += LEFT_VEC * m_moveLength;
 			break;
 
 		default:

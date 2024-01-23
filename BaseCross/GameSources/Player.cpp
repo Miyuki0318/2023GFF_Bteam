@@ -801,10 +801,10 @@ namespace basecross
 
 		// 衝突方向真偽
 		bool upper, under, left, right;
-		upper = CollHitUpper(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f));
-		under = CollHitUnder(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(0.0f, -1.0f, 0.0f));
-		left = CollHitLeft(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(-1.0f, 0.0f, 0.0f));
-		right = CollHitRight(hitPos, objPos, helf) && !BlockCheck(objPos + Vec3(1.0f, 0.0f, 0.0f));
+		upper = CollHitUpper(hitPos, objPos, helf) && !BlockCheck(objPos + UP_VEC);
+		under = CollHitUnder(hitPos, objPos, helf) && !BlockCheck(objPos + DOWN_VEC);
+		left = CollHitLeft(hitPos, objPos, helf) && !BlockCheck(objPos + LEFT_VEC);
+		right = CollHitRight(hitPos, objPos, helf) && !BlockCheck(objPos + RIGHT_VEC);
 
 		// Z軸の角度を取得でスロープかどうかを判断
 		const float& deg = cube->GetDegreeAngle().z;
@@ -1385,7 +1385,7 @@ namespace basecross
 		while (BlockCheck(leftPos))
 		{
 			count++;
-			leftPos += Vec3(-1.0f * count, 0.0f, 0.0f);
+			leftPos += LEFT_VEC * count;
 		}
 
 		count = 0;
@@ -1393,7 +1393,7 @@ namespace basecross
 		while (BlockCheck(rightPos))
 		{
 			count++;
-			rightPos += Vec3(1.0f * count, 0.0f, 0.0f);
+			rightPos += RIGHT_VEC * count;
 		}
 
 		Vec3 left = leftPos + Vec3(-helf.x, helf.y, 0.0f);
@@ -1402,7 +1402,7 @@ namespace basecross
 		// 上から衝突していたら
 		if (GetBetween(hitPos, left, right))
 		{
-			if (BlockCheck(objPos + Vec3(0.0f, 1.0f, 0.0f))) return;
+			if (BlockCheck(objPos + UP_VEC)) return;
 
 			// パラメータの設定
 			m_velocity.y = 0.25f;

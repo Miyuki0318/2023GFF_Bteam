@@ -12,7 +12,27 @@ namespace basecross
 		m_ptrDraw->SetTextureResource(L"METAL_TX");
 		m_ptrDraw->SetMeshToTransformMatrix(m_modelMat);
 		
-		m_movePoint += Vec3(0.0f, -1.0f, 0.0f) * (m_moveLength * 2.0f);
+		switch (m_moveType)
+		{
+		case MoveWall::eMoveType::Down:
+			m_movePoint += DOWN_VEC * (m_moveLength * 2.0f);
+			break;
+
+		case MoveWall::eMoveType::Up:
+			m_movePoint += UP_VEC * (m_moveLength * 2.0f);
+			break;
+
+		case MoveWall::eMoveType::Left:
+			m_movePoint += LEFT_VEC * (m_moveLength * 2.0f);
+			break;
+
+		case MoveWall::eMoveType::Right:
+			m_movePoint += RIGHT_VEC * (m_moveLength * 2.0f);
+			break;
+
+		default:
+			break;
+		}
 
 		AddTag(L"MoveWall");
 	}

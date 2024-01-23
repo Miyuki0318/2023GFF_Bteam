@@ -364,12 +364,13 @@ namespace basecross
 					gimmick = AddGameObject<Button>(position, scale, number);
 					gimmick->AddTarget(enemyVec);
 				}
-				if (GetBetween(num, 5000, 5999))
+				if (GetBetween(num, 50000, 53999))
 				{
-					const int number = atoi(&m_csvData.at(i).at(j).at(1)) / 100;
-					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(2)) / 10);
-					const float speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)));
-					gimmick = AddGameObject<MoveWall>(position, scale, number, speed, length);
+					const auto type = static_cast<MoveWall::eMoveType>(atoi(&m_csvData.at(i).at(j).at(1)) / 1000);
+					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(2)) / 100);
+					const float speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)) / 10);
+					const int number = atoi(&m_csvData.at(i).at(j).at(4));
+					gimmick = AddGameObject<MoveWall>(position, scale, type, speed, length, number);
 					gimmick->AddTarget(enemyVec);
 				}
 

@@ -7,9 +7,22 @@ namespace basecross
 {
 	class MoveWall : public Gimmick
 	{
+	public:
+
+		enum eMoveType
+		{
+			Down,
+			Up,
+			Left,
+			Right
+		};
+
+	private:
+
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		vector<weak_ptr<Button>> m_buttons;
 
+		const eMoveType m_moveType;
 		const int m_number;
 		const float m_moveSpeed;
 		const float m_moveLength;
@@ -22,12 +35,14 @@ namespace basecross
 
 		MoveWall(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, const float scale,
-			const int number, const float speed, const float length
+			const eMoveType& type, const float speed, 
+			const float length, const int number
 		) :
 			Gimmick(stagePtr, Vec3(position), Vec3(scale), eAngle::All),
-			m_number(number),
+			m_moveType(type),
 			m_moveSpeed(speed),
 			m_moveLength(length),
+			m_number(number),
 			m_startPos(position)
 		{
 			m_movePoint = position;
