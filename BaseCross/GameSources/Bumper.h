@@ -51,4 +51,66 @@ namespace basecross
 			m_ptrDraw->ChangeCurrentAnimation(L"PUSH");
 		}
 	};
+
+	class MoveBumper : public Bumper
+	{
+	public:
+
+		enum eMoveType
+		{
+			UpDown,
+			LeftRight,
+		};
+
+		enum eMoveState
+		{
+			StandBy,
+			StartPos,
+			MoveA,
+			MoveB,
+		};
+
+	private:
+
+		eMoveType m_moveType;
+		eMoveState m_moveState;
+		eMoveState m_currentState;
+
+		const Vec3 m_startPos;
+		Vec3 m_movePointA;
+		Vec3 m_movePointB;
+
+		const float m_moveSpeed;
+		const float m_moveLength;
+
+	public:
+
+		MoveBumper(const shared_ptr<Stage>& stagePtr,
+			const Vec2& position, const float scale,
+			eMoveType type, const float speed, const float length
+		) :
+			Bumper(stagePtr, position, scale),
+			m_moveType(type),
+			m_moveSpeed(speed),
+			m_moveLength(length),
+			m_startPos(position)
+		{
+			m_moveState = StartPos;
+			m_currentState = StandBy;
+			m_movePointA = position;
+			m_movePointB = position;
+		}
+
+		virtual ~MoveBumper() {}
+
+		void OnCreate() override;
+
+		void OnUpdate() override;
+
+		void UpdateMove();
+
+		void StandbyState();
+
+		bool PointState(const Vec3& start, const Vec3& end, float time);
+	};
 }

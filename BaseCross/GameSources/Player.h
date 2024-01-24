@@ -59,6 +59,7 @@ namespace basecross
 		bool m_isHighJump;		 // 上方向に高く飛んだかの真偽
 		bool m_isInvincible;	 // 無敵中かの真偽
 		bool m_isAliveMoveBlock; // 動く壁の上に居るかの真偽
+		bool m_isHitMoveBlock;	 // 動く壁の左右に居るかの真偽
 		bool m_firePossible;	 // エアショック使用可能かの真偽
 		bool m_cannonFire;		 // 大砲発射後かの真偽
 		bool m_cannonStandby;	 // 大砲発射待機中かの真偽
@@ -103,6 +104,8 @@ namespace basecross
 			m_firePossible = true;
 			m_cannonFire = false;
 			m_cannonStandby = false;
+			m_isAliveMoveBlock = false;
+			m_isHitMoveBlock = false;
 
 			m_sRingLimit = {
 				5, 20, 25, 0
@@ -361,8 +364,49 @@ namespace basecross
 		/*!
 		@brief 動く壁に衝突した時
 		@param 動く壁のポインタ
+		@param 衝突座標
 		*/
-		void MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
+		void MoveWallLeftRight(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
+
+		/*!
+		@brief 動く壁の連結取得関数
+		@param 動く壁グループ配列
+		@param 開始座標
+		@param 方向加算ベクトル
+		@return 連番最後の座標
+		*/
+		Vec3 GetMoveWallPos(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, const Vec3& addVec)
+		{
+			Vec3 position = pos;
+
+			while (BlockCheck(groupVec, position))
+			{
+				position += addVec;
+			}
+
+			return position;
+		}
+
+		/*!
+		@brief 動く壁グループの取得関数
+		@param gimmickグループ配列
+		@return 動く壁グループ配列
+		*/
+		const vector<weak_ptr<GameObject>> GetMoveWallGroup(const vector<weak_ptr<GameObject>>& groupVec)
+		{
+			vector<weak_ptr<GameObject>> moveWallVec;
+			for (const auto& gimmick : groupVec)
+			{
+				if (!gimmick.lock()) continue;
+
+				const auto& moveWall = dynamic_pointer_cast<MoveWall>(gimmick.lock());
+				if (!moveWall) continue;
+
+				moveWallVec.push_back(moveWall);
+			}
+
+			return moveWallVec;
+		}
 
 		/*!
 		@brief 動く壁から離れたか
@@ -487,9 +531,19 @@ namespace basecross
 			return m_velocity;
 		}
 
-		void CompressedDeath()
+		void UnderCompressedDeath()
 		{
 			if (m_isAliveMoveBlock)
+			{
+				// 死亡時の設定をする
+				m_shieldCount = 0;
+				StartSE(L"SHIELD_D_SE", 1.5f);
+				DeathSetup();
+			}
+		}
+		void LeftRightCompressedDeath()
+		{
+			if (m_isHitMoveBlock)
 			{
 				// 死亡時の設定をする
 				m_shieldCount = 0;

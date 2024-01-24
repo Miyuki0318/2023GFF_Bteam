@@ -98,6 +98,7 @@ namespace basecross
 			}
 
 			// 動く壁から離れたか
+			//m_isHitMoveBlock = false;
 			if (m_currentWall.lock())
 			{
 				MoveWallExit();
@@ -142,7 +143,7 @@ namespace basecross
 
 		// デバッグ文字列
 		//Debug::Log(L"座標 : ", m_position);
-		//Debug::Log(L"移動量 : ", m_velocity);
+		Debug::Log(L"移動量 : ", m_velocity);
 		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
 		//Debug::Log(L"加速度 : ", m_acsel);
 		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
@@ -151,6 +152,7 @@ namespace basecross
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
 		Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
+		Debug::Log(L"左右からブロックに押されている : ", m_isHitMoveBlock);
 	}
 
 	// Aボタンを離した時
@@ -240,7 +242,8 @@ namespace basecross
 		}
 		if (other->FindTag(L"MoveWall"))
 		{
-			MoveWallEnter(other, hitPoint);
+			MoveWallLeftRight(other, hitPoint);
+			BlockEnter(other, hitPoint);
 		}
 		if (other->FindTag(L"Death"))
 		{
@@ -275,7 +278,7 @@ namespace basecross
 		}
 		if (other->FindTag(L"MoveWall"))
 		{
-			MoveWallEnter(other, hitPoint);
+			MoveWallLeftRight(other, hitPoint);
 		}
 		if (other->FindTag(L"Convayor"))
 		{
@@ -836,18 +839,19 @@ namespace basecross
 				BlockUnderHit(objPos, helf);
 				return;
 			}
-
-			// 動く壁に挟まれたら
-			if (!BlockCheck(objPos + DOWN_VEC))
-			{
-				CompressedDeath();
-			}
 		}
 
 		// 左から衝突
 		if (left)
 		{
 			BlockLeftHit(objPos, helf);
+
+			const auto& wall = dynamic_pointer_cast<MoveWall>(cube);
+			if (!wall)
+			{
+				LeftRightCompressedDeath();
+			}
+
 			return;
 		}
 
@@ -855,6 +859,13 @@ namespace basecross
 		if (right)
 		{
 			BlockRightHit(objPos, helf);
+
+			const auto& wall = dynamic_pointer_cast<MoveWall>(cube);
+			if (!wall)
+			{
+				LeftRightCompressedDeath();
+			}
+
 			return;
 		}
 	}
@@ -905,7 +916,7 @@ namespace basecross
 			}
 		}
 
-		CompressedDeath();
+		UnderCompressedDeath();
 	}
 
 	// ブロックの左から衝突した時の応答処理
@@ -1373,65 +1384,126 @@ namespace basecross
 		}
 	}
 
-	void Player::MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos)
+	void Player::MoveWallLeftRight(const shared_ptr<GameObject>& wall, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
-		const auto& cube = dynamic_pointer_cast<CubeObject>(wall);
-		Vec3 objPos = cube->GetSlopePos();
+		const auto& cube = dynamic_pointer_cast<MoveWall>(wall);
+		Vec3 objPos = cube->GetPosition();
 		Vec3 helf = cube->GetScale() / 2.0f;
 
-		const auto& gimmickVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
+		// 動く壁オブジェクト配列等の取得
+		vector<weak_ptr<GameObject>> groupVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
+		Vec3 leftPos = GetMoveWallPos(groupVec, objPos, LEFT_VEC);
+		Vec3 rightPos = GetMoveWallPos(groupVec, objPos, RIGHT_VEC);
+		Vec3 upperPos = GetMoveWallPos(groupVec, objPos, UP_VEC);
+		Vec3 underPos = GetMoveWallPos(groupVec, objPos, DOWN_VEC);
 
-		int count = 0;
-		Vec3 leftPos = objPos;
-		while (BlockCheck(gimmickVec, leftPos))
+		Vec3 pos = GetPosition();
+		Vec3 cornerUL, cornerDR;
+
+		if (!BlockCheck(groupVec, objPos + LEFT_VEC))
 		{
-			count++;
-			leftPos += LEFT_VEC * count;
+			cornerUL = Vec3(-helf.x * 1.25f, helf.y, 0.0f);
+			cornerDR = Vec3(0.0f, -helf.y, 0.0f);
+			if (GetBetween(hitPos, upperPos + cornerUL, underPos + cornerDR))
+			{
+				if (pos.y <= objPos.y + helf.y)
+				{
+					if (cube->GetMoveRatio() > 0.0f)
+					{
+						m_isHitMoveBlock = true;
+						m_isAliveMoveBlock = false;
+						m_currentWall = cube;
+					}
+				}
+			}
 		}
 
-		count = 0;
-		Vec3 rightPos = objPos;
-		while (BlockCheck(gimmickVec, rightPos))
+		if (!BlockCheck(groupVec, objPos + RIGHT_VEC))
 		{
-			count++;
-			rightPos += RIGHT_VEC * count;
+			cornerUL = Vec3(helf.x * 1.25f, helf.y, 0.0f);
+			cornerDR = Vec3(0.0f, -helf.y, 0.0f);
+			if (GetBetween(hitPos, upperPos + cornerUL, underPos + cornerDR))
+			{
+				if (pos.y <= objPos.y + helf.y)
+				{
+					if (cube->GetMoveRatio() > 0.0f)
+					{
+						m_isHitMoveBlock = true;
+						m_isAliveMoveBlock = false;
+						m_currentWall = cube;
+					}
+				}
+			}
 		}
 
-		Vec3 left = leftPos + Vec3(-helf.x, helf.y, 0.0f);
-		Vec3 right = rightPos + Vec3(helf.x, 0.0f, 0.0f);
-
-		// 上から衝突していたら
-		if (!BlockCheck(gimmickVec, objPos + UP_VEC))
+		if (!BlockCheck(groupVec, objPos + UP_VEC))
 		{
-			if (!GetBetween(hitPos, left, right)) return;
+			cornerUL = Vec3(-helf.x, helf.y * 1.25f, 0.0f);
+			cornerDR = Vec3(helf.x, 0.0f, 0.0f);
 
-			// パラメータの設定
-			m_velocity.y = 0.25f;
-			m_acsel = 1.0f;
-			m_isAir = false;
+			if (GetBetween(hitPos, leftPos + cornerUL, rightPos + cornerDR))
+			{
+				m_velocity.y = 0.25f;
+				m_acsel = 1.0f;
+				m_isAir = false;
+
+				pos.y = objPos.y + cube->GetScale().y;
+				SetPosition(pos);
+
+				if (!m_isHitMoveBlock)
+				{
+					m_isAliveMoveBlock = true;
+					m_currentWall = cube;
+				}
+			}
+		}
+
+		if (!BlockCheck(groupVec, objPos + DOWN_VEC))
+		{
+			cornerUL = Vec3(-helf.x, 0.0f, 0.0f);
+			cornerDR = Vec3(helf.x, -helf.y * 1.25f, 0.0f);
+
+			if (GetBetween(hitPos, leftPos + cornerUL, rightPos + cornerDR))
+			{
+				if (!m_isHitMoveBlock)
+				{
+					UnderCompressedDeath();
+				}
+			}
+		}
+
+		cornerUL = Vec3(-helf.x, -helf.y, 0.0f);
+		cornerDR = Vec3(helf.x, helf.x, 0.0f);
+		if (GetBetween(pos, objPos + cornerUL, objPos + cornerDR))
+		{
 			m_isAliveMoveBlock = true;
-			m_currentWall = cube;
-
-			Vec3 pos = GetPosition();
-			pos.y = objPos.y + cube->GetScale().y;
-			SetPosition(pos);
-		}
-		else
-		{
-			BlockEnter(wall, hitPos);
+			UnderCompressedDeath();
 		}
 	}
 
 	void Player::MoveWallExit()
 	{
+		bool reset = false;
+
 		Vec3 pos = m_currentWall.lock()->GetPosition();
 
 		float length = (GetPosition() - pos).length();
 		if (length >= 2.0f)
 		{
-			m_currentWall.reset();
 			m_isAliveMoveBlock = false;
+			m_isHitMoveBlock = false;
+			reset = false;
+		}
+		const auto& wall = dynamic_pointer_cast<MoveWall>(m_currentWall.lock());
+		if (wall->GetMoveRatio() <= 0.0f)
+		{
+			m_isHitMoveBlock = false;
+			reset = false;
+		}
+		if (reset)
+		{
+			m_currentWall.reset();
 		}
 	}
 }

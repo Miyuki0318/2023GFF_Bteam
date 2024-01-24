@@ -65,5 +65,10 @@ namespace basecross
 		void SetTargetButton();
 
 		void MoveWallBlock(const Vec3& start, const Vec3& end);
+
+		const float GetMoveRatio() const
+		{
+			return m_moveRatio;
+		}
 	};
 }

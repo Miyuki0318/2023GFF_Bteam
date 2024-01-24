@@ -374,11 +374,21 @@ namespace basecross
 					gimmick->AddTarget(enemyVec);
 				}
 
-				// バンパー
+				// バンパーと動くバンパー
 				if (num == 250)
 				{
 					shared_ptr<TemplateObject> bumper = nullptr;
 					bumper = AddGameObject<Bumper>(position, scale * 3.0f);
+					gimmickGroup->IntoGroup(bumper);
+				}
+				if (GetBetween(num, 25000, 25199))
+				{
+					const auto type = static_cast<MoveBumper::eMoveType>(atoi(&m_csvData.at(i).at(j).at(2)) / 100);
+					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(3)) / 10);
+					const float speed = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(4)));
+
+					shared_ptr<TemplateObject> bumper = nullptr;
+					bumper = AddGameObject<MoveBumper>(position, scale * 3.0f, type, speed, length);
 					gimmickGroup->IntoGroup(bumper);
 				}
 
