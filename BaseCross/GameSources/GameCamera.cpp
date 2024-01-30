@@ -27,7 +27,7 @@ namespace basecross
 		const float followDistance = 0.2f;
 		const float speed = 4.0f;
 		bool left = (targetPos.x <= -30.5f);
-		bool down = (targetPos.y <= -80.5f);
+		bool down = (targetPos.y <= -87.5f);
 		targetPos.y -= diff;
 		if (left) targetPos.x = -30.5f;
 		if (down) targetPos.y = -87.5f;
