@@ -625,6 +625,7 @@ namespace basecross
 
 			// オブジェクトグループの取得とその配列
 			const auto& enemyVec = GetSharedObjectGroup(L"Enemy")->GetGroupVector();
+			const auto& wallVec = GetSharedObjectGroup(L"Wall")->GetGroupVector();
 			const auto& gimmickVec = GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
 			const auto& updateVec = GetSharedObjectGroup(L"Update")->GetGroupVector();
 			const auto& collectVec = GetSharedObjectGroup(L"Collect")->GetGroupVector();
@@ -633,6 +634,7 @@ namespace basecross
 
 			// パフォーマンス管理関数を実行
 			ObjectPerformance<Enemy>(enemyVec, playerPos, range / 1.5f);
+			ObjectPerformance<Enemy>(wallVec, playerPos, range / 1.5f);
 			ObjectPerformance<Gimmick>(gimmickVec, playerPos, range);
 			ObjectPerformance<Gimmick>(updateVec, playerPos, range / 2.0f);
 			ObjectPerformance<Gimmick>(collectVec, playerPos, range / 1.5f);

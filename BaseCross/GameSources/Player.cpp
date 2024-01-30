@@ -142,8 +142,8 @@ namespace basecross
 
 
 		// デバッグ文字列
-		//Debug::Log(L"座標 : ", m_position);
-		Debug::Log(L"移動量 : ", m_velocity);
+		Debug::Log(L"座標 : ", m_position);
+		//Debug::Log(L"移動量 : ", m_velocity);
 		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
 		//Debug::Log(L"加速度 : ", m_acsel);
 		//Debug::Log(L"ジャンプ回数 : ", m_jumpCount);
@@ -151,8 +151,8 @@ namespace basecross
 		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
 		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 		//Debug::Log(m_cannonFire != false ? L"発射後" : L"通常");
-		Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
-		Debug::Log(L"左右からブロックに押されている : ", m_isHitMoveBlock);
+		//Debug::Log(L"移動ブロックの上か : ", m_isAliveMoveBlock);
+		//Debug::Log(L"左右からブロックに押されている : ", m_isHitMoveBlock);
 	}
 
 	// Aボタンを離した時
@@ -592,6 +592,9 @@ namespace basecross
 				if (cannon->FindTag(L"Goal"))
 				{
 					StartSE(L"CLEAR_SE", 1.0f);
+
+					// コリジョンを非アクティブに
+					m_ptrColl->SetUpdateActive(false);
 				}
 				else
 				{

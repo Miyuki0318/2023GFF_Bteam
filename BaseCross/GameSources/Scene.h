@@ -18,9 +18,14 @@ namespace basecross{
 		enum eGameStage
 		{
 			None,
+			VeryEasy,
 			Easy,
+			ExtraEasy,
+			VeryNormal,
 			Normal,
+			ExtraNormal,
 			Hard,
+			Bornus
 		};
 
 	private:
@@ -37,7 +42,7 @@ namespace basecross{
 		Scene() : SceneBase() 
 		{
 			m_gameStage = None;
-			m_currentStage = "Tutorial";
+			m_currentStage = "VeryEasy";
 		}
 		//--------------------------------------------------------------------------------------
 		/*!
@@ -92,9 +97,14 @@ namespace basecross{
 		void SetCurrentStage(const string& stageName)
 		{
 			m_currentStage = stageName;
+			if (stageName == "VeryEasy") m_gameStage = VeryEasy;
 			if (stageName == "Easy") m_gameStage = Easy;
+			if (stageName == "ExtraEasy") m_gameStage = ExtraEasy;
+			if (stageName == "VeryNormal") m_gameStage = VeryNormal;
 			if (stageName == "Normal") m_gameStage = Normal;
+			if (stageName == "ExtraNormal") m_gameStage = ExtraNormal;
 			if (stageName == "Hard") m_gameStage = Hard;
+			if (stageName == "Bornus") m_gameStage = Bornus;
 		}
 		//--------------------------------------------------------------------------------------
 		/*!
@@ -112,16 +122,40 @@ namespace basecross{
 		*/
 		const string GetNextStage() const
 		{
-			string stageName = "Easy";
+			string stageName = "VeryEasy";
 
 			switch (m_gameStage)
 			{
+			case Scene::VeryEasy:
+				stageName = "Easy";
+				break;
+
 			case Scene::Easy:
+				stageName = "ExtraEasy";
+				break;
+
+			case Scene::ExtraEasy:
+				stageName = "VeryNormal";
+				break;
+
+			case Scene::VeryNormal:
 				stageName = "Normal";
 				break;
 
 			case Scene::Normal:
+				stageName = "ExtraNormal";
+				break;
+
+			case Scene::ExtraNormal:
 				stageName = "Hard";
+				break;
+
+			case Scene::Hard:
+				stageName = "Bornus";
+				break;
+
+			case Scene::Bornus:
+				stageName = "VeryEasy";
 				break;
 
 			default:

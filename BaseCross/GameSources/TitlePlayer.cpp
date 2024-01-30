@@ -46,12 +46,12 @@ namespace basecross
 			EffectUpdate();
 		}
 
-		// デバッグ文字列
-		Debug::Log(L"pos : ", m_position);
-		Debug::Log(L"velo : ", m_velocity);
-		Debug::Log(L"acsel : ", m_acsel);
-		Debug::Log(m_isAir != false ? L"空中" : L"接地");
-		Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
+		//// デバッグ文字列
+		//Debug::Log(L"pos : ", m_position);
+		//Debug::Log(L"velo : ", m_velocity);
+		//Debug::Log(L"acsel : ", m_acsel);
+		//Debug::Log(m_isAir != false ? L"空中" : L"接地");
+		//Debug::Log(m_firePossible != false ? L"発射可" : L"発射不可");
 	}
 
 	void TitlePlayer::OnRushA()
@@ -79,9 +79,9 @@ namespace basecross
 
 			// ステージの分岐
 			const auto& scene = App::GetApp()->GetScene<Scene>();
-			if (m_velocity.x < 0.0f) scene->SetCurrentStage("Normal");
-			if (m_velocity.x > 0.0f) scene->SetCurrentStage("Hard");
-			if (m_velocity.x == 0.0f) scene->SetCurrentStage("Easy");
+			if (m_velocity.x < 0.0f) scene->SetCurrentStage("ExtraNormal");
+			if (m_velocity.x > 0.0f) scene->SetCurrentStage("Bornus");
+			if (m_velocity.x == 0.0f) scene->SetCurrentStage("ExtraEasy");
 
 			// ステージステートを大砲待機に設定
 			SetStageState<TitleStage>(TitleStage::CannonStanby);

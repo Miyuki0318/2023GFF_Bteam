@@ -49,11 +49,11 @@ namespace basecross
 		{
 		case ConvayorGuide::LeftRot:
 			SetRotation(0.0f, 0.0f, XM_PI);
-			SetVerticesColor(COL_BLUE);
+			SetVerticesColor(Col4(0.2f, 0.4f, 1.0f, 1.0f));
 			break;
 		
 		case ConvayorGuide::RightRot:
-			SetVerticesColor(COL_RED);
+			SetVerticesColor(Col4(1.0f, 0.65f, 0.15f, 1.0f));
 			break;
 
 		default:
