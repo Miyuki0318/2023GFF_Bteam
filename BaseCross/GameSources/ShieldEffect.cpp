@@ -44,7 +44,7 @@ namespace basecross
 
 						// ƒXƒP[ƒ‹‚ÌÝ’è
 						const int& shieldCount = player->GetShieldCount();
-						Vec2 scale = Vec2(1.5f + (0.5f * shieldCount));
+						Vec2 scale = Vec2(2.0f + (0.25f * shieldCount));
 						SetScale(scale);
 						outLine->SetScale(scale + Vec2(0.05f));
 
@@ -52,15 +52,15 @@ namespace basecross
 						switch (shieldCount)
 						{
 						case 1:
-							color = Col4(0.0f, 0.0f, 1.0f, 0.25f);
+							color = Col4(0.0f, 0.0f, 1.0f, 0.1f);
 							break;
 
 						case 2:
-							color = Col4(0.0f, 1.0f, 0.0f, 0.25f);
+							color = Col4(0.0f, 1.0f, 0.0f, 0.1f);
 							break;
 
 						case 3:
-							color = Col4(1.0f, 0.0f, 0.0f, 0.25f);
+							color = Col4(1.0f, 0.0f, 0.0f, 0.1f);
 							break;
 
 						default:

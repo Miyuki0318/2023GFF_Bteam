@@ -112,17 +112,17 @@ namespace basecross
 			};
 
 			m_bodyMat.affineTransformation(
-				Vec3(1.0f),
+				Vec3(1.25f),
 				Vec3(0.0f),
 				Vec3(0.0f, -XM_PIDIV2, 0.0f),
 				Vec3(0.0f, -0.65f, 0.0f)
 			);
 
 			m_armMat.affineTransformation(
-				Vec3(1.0f),
+				Vec3(1.25f),
 				Vec3(0.0f),
 				Vec3(0.0f, -XM_PIDIV2, 0.0f),
-				Vec3(0.0f, -1.05f, 0.0f)
+				Vec3(0.0f, -1.35f, 0.0f)
 			);
 		}
 

@@ -6,7 +6,7 @@ namespace basecross
 	void AirJetEffect::OnCreate()
 	{
 		Billboard::OnCreate();
-		SetDrawLayer(1);
+		SetDrawLayer(3);
 	}
 
 	void AirJetEffect::UpdateEffect()
