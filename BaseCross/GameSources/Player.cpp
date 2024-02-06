@@ -617,6 +617,21 @@ namespace basecross
 		{
 			// Œo‰ßŽžŠÔ‚ÌƒŠƒZƒbƒg‚Æ–³“G‚Ì‰ðœ
 			m_isInvincible = false;
+			m_bodyDraw->SetDrawActive(true);
+			m_armDraw->SetDrawActive(true);
+		}
+
+		// –³“G’†‚È‚ç
+		if (m_isInvincible)
+		{
+			// 0.05f(•b)ŠÔŠu‚Å“_–Å‚³‚¹‚é
+			if (SetTimer(0.05f))
+			{
+				// •`‰æ‚µ‚Ä‚é‚©‚Ì^‹U‚ð”½“]‚µ‚ÄŽæ“¾
+				bool oppositeDraw = !m_bodyDraw->GetDrawActive();
+				m_bodyDraw->SetDrawActive(oppositeDraw);
+				m_armDraw->SetDrawActive(oppositeDraw);
+			}
 		}
 	}
 

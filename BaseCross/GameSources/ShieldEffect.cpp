@@ -44,7 +44,7 @@ namespace basecross
 
 						// ƒXƒP[ƒ‹‚ÌÝ’è
 						const int& shieldCount = player->GetShieldCount();
-						Vec2 scale = Vec2(2.0f + (0.25f * shieldCount));
+						Vec2 scale = Vec2(2.5f + (0.25f * shieldCount));
 						SetScale(scale);
 						outLine->SetScale(scale + Vec2(0.05f));
 

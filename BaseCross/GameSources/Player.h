@@ -531,6 +531,9 @@ namespace basecross
 			return m_velocity;
 		}
 
+		/*!
+		@brief ã‰º‚Å‰Ÿ‚µ’×‚³‚ê‚½‚ÌŠÖ”
+		*/
 		void UnderCompressedDeath()
 		{
 			if (m_isAliveMoveBlock)
@@ -541,6 +544,10 @@ namespace basecross
 				DeathSetup();
 			}
 		}
+
+		/*!
+		@brief ¶‰E‚Å‰Ÿ‚µ’×‚³‚ê‚½‚ÌŠÖ”
+		*/
 		void LeftRightCompressedDeath()
 		{
 			if (m_isHitMoveBlock)

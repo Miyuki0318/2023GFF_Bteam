@@ -27,6 +27,12 @@ namespace basecross
 				}
 			}
 
+			// 無敵時間経過
+			if (m_isInvincible)
+			{
+				InvincibleTimer();
+			}
+
 			// プレイヤーの移動関数
 			MovePlayer();
 
