@@ -8,6 +8,16 @@ namespace basecross
 		m_ptrTrans = GetComponent<Transform>();
 	}
 
+	void TemplateObject::StartSE(const wstring& seKey, float volume)
+	{
+		GetTypeStage<BaseStage>()->CreateSE(seKey, volume, ThisPtr);
+	}
+
+	void TemplateObject::StopSE(const wstring& seKey)
+	{
+		GetTypeStage<BaseStage>()->StopSE(seKey, ThisPtr);
+	}
+
 	bool TemplateObject::SetTimer(float time, bool reset)
 	{
 		const auto& timer = GetTypeStage<BaseStage>()->GetTimer();

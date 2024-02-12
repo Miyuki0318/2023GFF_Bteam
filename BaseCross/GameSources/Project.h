@@ -10,6 +10,7 @@
 #include "CSVLoader.h"
 #include "Input.h"
 #include "Timer.h"
+#include "SEManager.h"
 #include "Scene.h"
 #include "GameCamera.h"
 #include "BaseStage.h"

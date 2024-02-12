@@ -118,6 +118,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MoveWall.h">
       <Filter>Gimmick\MoveWall</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SEManager.h">
+      <Filter>Utility\SE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
@@ -230,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)MoveWall.cpp">
       <Filter>Gimmick\MoveWall</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SEManager.cpp">
+      <Filter>Utility\SE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -358,6 +364,9 @@
     </Filter>
     <Filter Include="Gimmick\MoveWall">
       <UniqueIdentifier>{28496720-58ec-486b-877b-05dc7735e0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\SE">
+      <UniqueIdentifier>{ae48ab4c-7540-4f19-a209-b66cc820bf1a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

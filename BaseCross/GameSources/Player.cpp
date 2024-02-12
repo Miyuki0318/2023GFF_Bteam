@@ -140,9 +140,8 @@ namespace basecross
 			m_shieldEffect.lock()->SetDrawShield(false);
 		}
 
-
 		// デバッグ文字列
-		Debug::Log(L"座標 : ", m_position);
+		//Debug::Log(L"座標 : ", m_position);
 		//Debug::Log(L"移動量 : ", m_velocity);
 		//Debug::Log(L"加算移動量 : ", m_meddleVelo);
 		//Debug::Log(L"加速度 : ", m_acsel);

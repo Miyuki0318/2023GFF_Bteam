@@ -10,38 +10,6 @@ namespace basecross
 	{
 	protected:
 
-		// SE管理構造体
-		struct SE
-		{
-			weak_ptr<SoundItem> item; // サウンドアイテム
-			wstring seKey = L""; // ファイルキー
-
-			// コンストラクタ
-			SE(const weak_ptr<SoundItem>& ptr, const wstring& key
-			) :
-				item(ptr),
-				seKey(key)
-			{
-			}
-
-			// コンストラクタ
-			SE(const wstring& key, const weak_ptr<SoundItem>& ptr
-			) :
-				item(ptr),
-				seKey(key)
-			{
-			}
-
-		public:
-
-			// リセット関数
-			void Reset()
-			{
-				item.reset();
-				seKey = L"";
-			}
-		};
-
 		// CSVデータ
 		vector<vector<string>> m_csvData;
 
@@ -53,7 +21,7 @@ namespace basecross
 
 		// BGM・SE
 		weak_ptr<SoundItem> m_bgm;
-		vector<SE> m_seList;
+		shared_ptr<SEManager> m_seManager;
 
 		// 背景オブジェクト
 		weak_ptr<TemplateObject> m_backObj;
@@ -170,15 +138,19 @@ namespace basecross
 		*/
 		virtual void CreateBGM(const wstring& bgmKey, float volume);
 
+		virtual void CreateSEManager();
+
 		/*!
 		@brief SEの再生関数
 		*/
 		virtual void CreateSE(const wstring& seKey, float volume);
+		virtual void CreateSE(const wstring& seKey, float volume, const void* objPtr);
 
 		/*!
 		@brief SEの再生関数
 		*/
 		virtual void StopSE(const wstring& seKey);
+		virtual void StopSE(const wstring& seKey, const void* objPtr);
 
 		/*!
 		@brief ゲームビュー取得関数

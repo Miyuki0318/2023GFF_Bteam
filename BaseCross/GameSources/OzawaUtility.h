@@ -357,7 +357,7 @@ namespace Utility
 
 	 /*!
 	 @brief Thisƒ|ƒCƒ“ƒ^
-	 @return sizeof(static_cast<void*>(ObjectInterface::shared_from_this().get()))
+	 @return static_cast<void*>(ObjectInterface::shared_from_this().get())
 	 */
 #define ThisPtr static_cast<void*>(shared_from_this().get())
 

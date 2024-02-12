@@ -107,7 +107,7 @@ namespace basecross {
 		@return	‚È‚µ
 		*/
 		//--------------------------------------------------------------------------------------
-		void SetUpdateActive(bool b) {
+		virtual void SetUpdateActive(bool b) {
 			m_UpdateActive = b;
 		}
 		//--------------------------------------------------------------------------------------

@@ -102,26 +102,47 @@ namespace basecross
 		m_bgm = audioPtr->Start(bgmKey, XAUDIO2_LOOP_INFINITE, volume);
 	}
 
+	void BaseStage::CreateSEManager()
+	{
+		if (!m_seManager)
+		{
+			m_seManager = make_shared<SEManager>();
+		}
+	}
+
 	void BaseStage::CreateSE(const wstring& seKey, float volume)
 	{
-		const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-		m_seList.push_back(SE(audioPtr->Start(seKey, 0, volume), seKey));
+		if (!m_seManager)
+		{
+			CreateSEManager();
+		}
+
+		m_seManager->StartSE(seKey, volume, ThisPtr);
+	}
+
+	void BaseStage::CreateSE(const wstring& seKey, float volume, const void* objPtr)
+	{
+		if (!m_seManager)
+		{
+			CreateSEManager();
+		}
+
+		m_seManager->StartSE(seKey, volume, objPtr);
 	}
 
 	void BaseStage::StopSE(const wstring& seKey)
 	{
-		if (seKey != L"")
+		if (m_seManager)
 		{
-			for (size_t i = 0; i < m_seList.size(); i++)
-			{
-				if (m_seList.at(i).seKey == seKey)
-				{
-					const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-					audioPtr->Stop(m_seList.at(i).item.lock());
-					m_seList.at(i).Reset();
-					break;
-				}
-			}
+			m_seManager->StopSE(seKey, ThisPtr);
+		}
+	}
+
+	void BaseStage::StopSE(const wstring& seKey, const void* objPtr)
+	{
+		if (m_seManager)
+		{
+			m_seManager->StopSE(seKey, objPtr);
 		}
 	}
 
@@ -364,7 +385,7 @@ namespace basecross
 					gimmick = AddGameObject<Button>(position, scale, number);
 					gimmick->AddTarget(enemyVec);
 				}
-				if (GetBetween(num, 50000, 53999))
+				if (GetBetween(num, 50000, 57999))
 				{
 					const auto type = static_cast<MoveWall::eMoveType>(atoi(&m_csvData.at(i).at(j).at(1)) / 1000);
 					const float length = static_cast<float>(atoi(&m_csvData.at(i).at(j).at(2)) / 100);

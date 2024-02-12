@@ -14,7 +14,11 @@ namespace basecross
 			Down,
 			Up,
 			Left,
-			Right
+			Right,
+			DownSE,
+			UpSE,
+			LeftSE,
+			RightSE
 		};
 
 	private:
@@ -23,12 +27,14 @@ namespace basecross
 		vector<weak_ptr<Button>> m_buttons;
 
 		const eMoveType m_moveType;
+		const Vec3 m_startPos;
 		const int m_number;
 		const float m_moveSpeed;
-		const float m_moveLength;
+		const float m_moveLength;		
+
 		float m_moveRatio;
-		
-		const Vec3 m_startPos;
+		float m_currentRatio;	
+		bool m_currentInput;
 		Vec3 m_movePoint;
 
 	public:
@@ -47,6 +53,8 @@ namespace basecross
 		{
 			m_movePoint = position;
 			m_moveRatio = 0.0f;
+			m_currentRatio = 0.0f;
+			m_currentInput = false;
 
 			m_modelMat.affineTransformation(
 				Vec3(1.35f),
@@ -61,6 +69,8 @@ namespace basecross
 		void OnCreate() override;
 
 		void OnUpdate() override;
+
+		void SetUpdateActive(bool b) override;
 
 		void SetTargetButton();
 

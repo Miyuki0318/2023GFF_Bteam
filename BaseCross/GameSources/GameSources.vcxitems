@@ -31,6 +31,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DrawObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)JumpCountUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MoveWall.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SEManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldCountUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
@@ -83,6 +84,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Rabbit.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Ring.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SEManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldCountUI.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ShieldEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Spike.cpp" />

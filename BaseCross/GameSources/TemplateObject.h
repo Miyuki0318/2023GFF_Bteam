@@ -124,11 +124,9 @@ namespace basecross
 			SetScale(m_scale);
 		}
 
-		virtual void StartSE(const wstring& seKey, float volume)
-		{
-			const auto& audioPtr = App::GetApp()->GetXAudio2Manager();
-			audioPtr->Start(seKey, 0, volume);
-		}
+		virtual void StartSE(const wstring& seKey, float volume);
+
+		virtual void StopSE(const wstring& seKey);
 
 		virtual bool SetTimer(float time, bool reset = false);
 
