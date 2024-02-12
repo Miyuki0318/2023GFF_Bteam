@@ -1281,7 +1281,7 @@ namespace basecross
 		{
 			if (!m_isInvincible)
 			{
-				// シールドが二枚以上あるなら
+				// 大砲発射後なら
 				if (m_cannonFire)
 				{
 					// ウサギのステートを死亡に設定
@@ -1289,29 +1289,22 @@ namespace basecross
 					StartSE(L"RABBIT_DEATH_SE", 0.5f);
 					return;
 				}
-				if (m_shieldCount >= 2)
+
+				// シールドがあるなら
+				if (m_shieldCount > 0)
 				{
 					// ウサギのステートを死亡に設定
 					rabbit->SetState(Rabbit::Death);
 					StartSE(L"RABBIT_DEATH_SE", 0.5f);
-					m_shieldCount--;
 				}
-				else
-				{
-					// 衝突方向真偽
-					Vec3 helfScale = rabbit->GetScale() / 2.0f;
 
-					if (CollHitLeft(hitPos, hitPos, helfScale))
-					{
-						DamageKnockBack(Vec2(1.5f, -0.5f));
-						return;
-					}
-					if (CollHitRight(hitPos, hitPos, helfScale))
-					{
-						DamageKnockBack(Vec2(-1.5f, -0.5f));
-						return;
-					}
+				// 衝突方向真偽
+				if (rabbit->GetPosition().x > hitPos.x)
+				{
+					DamageKnockBack(Vec2(1.5f, -0.5f));
+					return;
 				}
+				DamageKnockBack(Vec2(-1.5f, -0.5f));
 			}
 		}
 	}

@@ -71,8 +71,8 @@ namespace basecross
 		const Vec3 slopeScale = Vec3(1.37f);
 		const Vec3 slopeULeft = Vec3(0.5f, 0.0f, 0.0f);
 		const Vec3 slopeURight = Vec3(-0.5f, 0.0f, 0.0f);
-		const Vec3 slopeDLeft = Vec3(0.5f, 1.0f, 0.0f);
-		const Vec3 slopeDRight = Vec3(-0.5f, 1.0f, 0.0f);
+		const Vec3 slopeDLeft = Vec3(0.5f, 1.05f, 0.0f);
+		const Vec3 slopeDRight = Vec3(-0.5f, 1.05f, 0.0f);
 
 		for (size_t i = 0; i < m_data.size(); i++)
 		{

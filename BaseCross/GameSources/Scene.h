@@ -143,12 +143,12 @@ namespace basecross{
 				break;
 
 			case Scene::Normal:
-				stageName = "Hard";
+				stageName = "ExtraNormal";
 				break;
 
-			//case Scene::ExtraNormal:
-			//	stageName = "Hard";
-			//	break;
+			case Scene::ExtraNormal:
+				stageName = "Hard";
+				break;
 
 			case Scene::Hard:
 				stageName = "Bornus";
