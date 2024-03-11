@@ -1,13 +1,25 @@
+/*!
+@file TitlePlayer.h
+@brief タイトル画面用のプレイヤー
+*/
+
 #pragma once
-#include "stdafx.h"
 #include "Player.h"
 
 namespace basecross
 {
+	/*!
+	@brief タイトル画面用のプレイヤー
+	*/
 	class TitlePlayer : public Player
 	{
 	public:
 
+		/*!
+		@brief コンストラクタ
+		@param ステージポインタ
+		@param ポジション
+		*/
 		TitlePlayer(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position
 		) :
@@ -15,6 +27,9 @@ namespace basecross
 		{
 		}
 
+		/*!
+		@brief デストラクタ
+		*/
 		virtual ~TitlePlayer() {}
 
 		/*!
@@ -30,7 +45,7 @@ namespace basecross
 		/*!
 		@brief エアショックの軌道描画関数
 		*/
-		void RotateAligment() override;
+		void UpdateArrow() override;
 
 		/*!
 		@brief 大砲待機関数

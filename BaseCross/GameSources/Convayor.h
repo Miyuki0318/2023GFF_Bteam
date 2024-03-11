@@ -1,50 +1,67 @@
+/*!
+@file Convayor.h
+@brief ステージギミックのベルトコンベア
+*/
+
 #pragma once
-#include "stdafx.h"
 #include "Gimmick.h"
 #include "Billboard.h"
 
 namespace basecross
 {
+	/*!
+	@brief ベルトコンベア
+	*/
 	class Convayor : public Gimmick
 	{
 	public:
 
-		enum eType
+		// ベルトのタイプenum
+		enum class eBeltType : int8_t
 		{
-			Middle,
-			Side,
+			Middle, // 内側
+			Side,	// 外側
 		};
 
-		enum eRotate
+		// 回転タイプenum
+		enum class eRotType : int8_t
 		{
-			LeftRot,
-			RightRot,
+			LeftRot,  // 左回転
+			RightRot, // 右回転
 		};
 
 	private:
 
-		eRotate m_rotate;
-		const eType m_type;
-		const float m_speed;
-		vector<wstring> m_animeKey;
-		shared_ptr<PNTBoneModelDraw> m_ptrDraw;
+		eRotType m_rotate; // 回転方向
+		const eBeltType m_type; // ベルトタイプ
+		const float m_speed; // ベルトコンベアの速度
+		const array<wstring, 2> m_animeKey; // アニメーションキー
+		shared_ptr<PNTBoneModelDraw> m_ptrDraw; // 描画コンポーネント
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		@param ステージポインタ
+		@param ポジション
+		@param スケール
+		@param 回転方向
+		@param ベルトタイプ
+		@param 速度
+		*/
 		Convayor(const shared_ptr<Stage>& stagePtr,
 			const Vec2& position, const float scale,
-			const eRotate& rotate, const eType& type, float speed
+			const eRotType& rotate, const eBeltType& type, float speed
 		) :
-			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), Up),
+			Gimmick(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(scale), GimmickAngle::eAngle::Up),
 			m_type(type),
 			m_rotate(rotate),
-			m_speed(speed)
-		{
-			m_animeKey = {
+			m_speed(speed),
+			m_animeKey({
 				L"LEFT",
 				L"RIGHT"
-			};
-
+			})
+		{
 			m_modelMat.affineTransformation(
 				Vec3(1.35f, 1.35f, 1.35f),
 				Vec3(0.0f),
@@ -53,60 +70,95 @@ namespace basecross
 			);
 		}
 
+		/*!
+		@brief デストラクタ
+		*/
 		virtual ~Convayor() {}
 
+		/*!
+		@brief 生成時に一度だけ呼び出される関数
+		*/
 		void OnCreate() override;
 
+		/*!
+		@brief 毎フレーム度に呼び出される関数
+		*/
 		void OnUpdate() override;
 
-		void SetRotate(const eRotate& rot)
+		/*!
+		@brief 回転方向設定関数
+		@param eRotType
+		*/
+		void SetRotate(const eRotType& rot)
 		{
+			// 現在の回転方向と相違なら
 			if (rot != m_rotate)
 			{
-				m_rotate = rot;
-				m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(rot));
+				m_rotate = rot; // 回転方向を上書き
+
+				// アニメーションを変更
+				m_ptrDraw->ChangeCurrentAnimation(m_animeKey.at(static_cast<size_t>(rot)));
 			}
 		}
 
-		eRotate GetRotate() const
+		/*!
+		@brief 回転方向取得関数
+		@return eRotType
+		*/
+		eRotType GetRotate() const
 		{
 			return m_rotate;
 		}
 
+		/*!
+		@brief ベルトの速度取得関数
+		@return m_speed
+		*/
 		const float& GetConvayorSpeed() const
 		{
 			return m_speed;
 		}
 	};
 
+	/*!
+	@brief ベルトコンベアの方向ガイド
+	*/
 	class ConvayorGuide : public Billboard
 	{
-	public:
-
-		enum eRotate
-		{
-			LeftRot,
-			RightRot,
-		};
-
 	private:
 
-		eRotate m_rotate;
+		Convayor::eRotType m_rotate; // 回転方向
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		@param ステージポインタ
+		@param ポジション
+		@param スケール
+		@param 回転方向
+		*/
 		ConvayorGuide(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, const float scale, const eRotate& rotate
+			const Vec2& position, const float scale, const Convayor::eRotType& rotate
 		) :
 			Billboard(stagePtr, L"GUIDE_TX", Vec2(scale), Vec3(position.x, position.y, 0.0f)),
 			m_rotate(rotate)
 		{
 		}
 
+		/*!
+		@brief デストラクタ
+		*/
 		virtual ~ConvayorGuide() {}
 
+		/*!
+		@brief 生成時に一度だけ呼び出される関数
+		*/
 		void OnCreate() override;
 
+		/*!
+		@brief 毎フレーム度に呼び出される関数
+		*/
 		void OnUpdate() override;
 	};
 }

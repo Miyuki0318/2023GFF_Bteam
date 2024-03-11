@@ -1,11 +1,18 @@
+/*!
+@file BaseStage.h
+@brief ステージの継承元
+*/
+
 #pragma once
-#include "stdafx.h"
-#include "Sprite.h"
 #include "Timer.h"
+#include "Sprite.h"
 #include "TemplateObject.h"
 
 namespace basecross
 {
+	/*!
+	@brief ステージの継承元
+	*/
 	class BaseStage : public Stage
 	{
 	protected:
@@ -34,7 +41,7 @@ namespace basecross
 		/*!
 		@brief ビューとライトの生成関数
 		*/
-		virtual void CreateViewLight();
+		virtual void CreateViewLight() = 0;
 
 		/*!
 		@brief プレイヤーの生成関数
@@ -50,8 +57,9 @@ namespace basecross
 		void CreateInstanceBlock(const string& fileName);
 
 		/*!
-		@brief オブジェクトのアクティブグループに追加する関数
+		@brief オブジェクトをアクティブグループに追加する関数
 		@param オブジェクトのグループベクター配列
+		@param アクティブグループ
 		@param プレイヤーの座標
 		@param 更新範囲
 		*/
@@ -60,26 +68,34 @@ namespace basecross
 		/*!
 		@brief オブジェクトのパフォーマンス管理関数
 		@param オブジェクトのグループベクター配列
+		@param 座標
 		@param 更新範囲
 		*/
 		template<class T>
 		void ObjectPerformance(const vector<weak_ptr<GameObject>>& groupVec, const Vec3& pos, float updateRange)
 		{
-			const Vec2 margin = Vec2(25.0f);
-			const Vec3 pLeft = Vec3(WINDOW_SIZE + margin, 1.0f);
-			const Vec3 pRight = Vec3(-WINDOW_SIZE - margin, 0.0f);
+			const Vec2 margin = Vec2(25.0f); // 余剰
+			const Vec3 pLeft = Vec3(WINDOW_SIZE + margin, 1.0f); // 左端
+			const Vec3 pRight = Vec3(-WINDOW_SIZE - margin, 0.0f); // 右端
 
+			// オブジェクトの数ループ
 			for (const auto& weakObj : groupVec)
 			{
+				// エラーチェック
 				if (!weakObj.lock()) continue;
 
+				// 型キャスト
 				const auto& sharedObj = dynamic_pointer_cast<T>(weakObj.lock());
 				if (!sharedObj) continue;
 
+				// 座標とオブジェクトの座標の距離が更新範囲内であるか
 				const Vec3& objPos = sharedObj->GetPosition();
 				float length = (objPos - pos).length();
+
+				// 範囲内かで更新処理をアクティブにするか設定
 				sharedObj->SetUpdateActive(length <= updateRange);
 
+				// 2D座標に変換し、画面内にオブジェクトがあれば描画を行う
 				Vec3 point = Utility::ConvertToWorldPosition(m_gameView, objPos);
 				sharedObj->SetDrawActive(Utility::GetBetween(point, pLeft, pRight));
 			}
@@ -91,12 +107,19 @@ namespace basecross
 		*/
 		void GroupObjectRemove(const shared_ptr<GameObjectGroup>& group)
 		{
+			// グループからオブジェクト配列を取得
 			const auto& grouoVec = group->GetGroupVector();
+
+			// オブジェクトの数ループ
 			for (auto& weakObj : grouoVec)
 			{
+				// エラーチェック
 				if (!weakObj.lock()) continue;
 
+				// ステージ側に破棄命令を送る
 				RemoveGameObject<GameObject>(weakObj.lock());
+
+				// グループから除外する
 				group->OutoGroup(weakObj.lock());
 			}
 		}
@@ -135,21 +158,42 @@ namespace basecross
 
 		/*!
 		@brief BGMの再生関数
+		@param BGMキー
+		@param 音量
 		*/
 		virtual void CreateBGM(const wstring& bgmKey, float volume);
 
+		/*!
+		@brief SEマネージャーの生成関数
+		*/
 		virtual void CreateSEManager();
 
 		/*!
 		@brief SEの再生関数
+		@param SEキー
+		@param 音量
 		*/
 		virtual void CreateSE(const wstring& seKey, float volume);
-		virtual void CreateSE(const wstring& seKey, float volume, const void* objPtr);
 
 		/*!
 		@brief SEの再生関数
+		@param SEキー
+		@param 音量
+		@param オブジェクトのポインタ
+		*/
+		virtual void CreateSE(const wstring& seKey, float volume, const void* objPtr);
+
+		/*!
+		@brief SEの停止関数
+		@param SEキー
 		*/
 		virtual void StopSE(const wstring& seKey);
+
+		/*!
+		@brief SEの停止関数
+		@param SEキー
+		@param オブジェクトのポインタ
+		*/
 		virtual void StopSE(const wstring& seKey, const void* objPtr);
 
 		/*!

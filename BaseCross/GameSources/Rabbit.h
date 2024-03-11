@@ -1,88 +1,88 @@
+/*!
+@file Rabbit.h
+@brief メカウサギ
+*/
+
 #pragma once
-#include "stdafx.h"
-#include "Enemy.h"
+#include "TemplateObject.h"
 
 namespace basecross
 {
-	class Rabbit : public Enemy
+	/*!
+	@brief 敵キャラのメカウサギ継承元
+	*/
+	class Rabbit : public TemplateObject
 	{
 	public:
 
-		enum eType
+		// ウサギの行動ステートenum
+		enum class eState : int8_t
 		{
-			Normal,
-			Wall,
+			Patrol,		// パトロール
+			Seek,		// 追跡
+			LostSight,	// 見失う
+			CannonJump,	// 大砲ジャンプ
+			Death,		// 死亡
 		};
 
-		enum eState
+		enum class eStatus : uint8_t
 		{
-			Patrol,
-			Seek,
-			LostSight,
-			CannonJump,
-			Death,
+			IsAir,		// 空中か
+			IsDeath,	// 死んだか
+			IsCannon,	// 大砲待機時か
 		};
 
-	private:
+	protected:
 
-		eType m_type;
-		eState m_state;
-		const Vec2 m_jumpVelo;
-		Vec3 m_currentTargetPos;
-		vector<Vec3> m_aliveBlockPos;		
-		weak_ptr<Cannon> m_activeCannon;
-		weak_ptr<Billboard> m_discovered;
-		vector<vector<Vec3>> m_jumpTargetPos;
+		const Vec2 m_jumpVelo; // ジャンプ時の移動量
+			
+		eState m_state;    // ステート
+		Mat4x4 m_modelMat; // モデルとトランスフォームの差分行列
+		Vec2 m_velocity;   // 移動量
 
-		int m_lostJumpCount;
-		float m_dir;
-		float m_gravity;
-		bool m_isAir;
-		bool m_isDeath;
-		bool m_isCannon;
+		weak_ptr<TemplateObject> m_targetObj;	// ターゲットポインタ
+		shared_ptr<PNTBoneModelDraw> m_ptrDraw; // 描画コンポーネント
+		shared_ptr<CollisionObb> m_ptrColl;		// コリジョンOBBコンポーネント
+
+		const float m_speed;	// 速度
+		const float m_maxAcsel;	// 最大加速度
+		const float m_range;	// 射程
+
+		float m_acsel;   // 加速度
+		float m_dir;	 // 向き
+		float m_gravity; // 重力
+
+		Bool8_t<eStatus> m_status; // 状態ステータス
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		@param ステージポインタ
+		@param ポジション
+		@param スケール
+		*/
 		Rabbit(const shared_ptr<Stage>& stagePtr,
-			const Vec2& position, float scale, eType type
+			const Vec2& position, float scale
 		) :
-			Enemy(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, XM_PI, 0.0f), Vec3(scale), 3.0f, 5.0f, 15.0f),
-			m_type(type),
+			TemplateObject(stagePtr, Vec3(position.x, position.y, 0.0f), Vec3(0.0f, XM_PI, 0.0f), Vec3(scale)),
+			m_speed(3.0f),
+			m_maxAcsel(5.0f),
+			m_range(15.0f),
 			m_jumpVelo(1.0f, -2.0f)
 		{
 			m_velocity = Vec2(-1.0f, 0.0f);
-			m_state = Patrol;
-			m_isAir = true;
-			m_isCannon = false;
+			m_acsel = 1.0f;
 			m_dir = -1.0f;
 			m_gravity = -5.0f;
-			m_lostJumpCount = 0;
-			m_currentTargetPos.zero();
+			m_state = eState::Patrol;
+			m_status.Set(eStatus::IsAir) = true;
 			m_modelMat.affineTransformation(
 				Vec3(1.35f),
 				Vec3(0.0f),
 				Vec3(0.0f, 0.0f, 0.0f),
 				Vec3(0.0f, -0.5f, 0.0f)
 			);
-
-			m_jumpTargetPos = {
-				{
-					Vec3(-2.0f, 0.0f, 0.0f),
-					Vec3(-2.5f, 1.5f, 0.0f),
-					Vec3(-2.5f, 2.5f, 0.0f),
-					Vec3(-1.5f, 2.5f, 0.0f),
-					Vec3(-2.5f, -1.5f, 0.0f),
-					Vec3(-1.0f, 1.0f, 0.0f),
-				},
-				{
-					Vec3(2.0f, 0.0f, 0.0f),
-					Vec3(2.5f, 1.5f, 0.0f),
-					Vec3(2.5f, 2.5f, 0.0f),
-					Vec3(1.5f, 2.5f, 0.0f),
-					Vec3(2.5f, -1.5f, 0.0f),
-					Vec3(1.0f, 1.0f, 0.0f),
-				},
-			};
 		}
 
 		/*!
@@ -96,132 +96,51 @@ namespace basecross
 		void OnCreate() override;
 
 		/*!
-		@brief 毎フレーム度に呼び出される関数
+		@brief ウサギの移動関数
 		*/
-		void OnUpdate() override;
-		
-		/*!
-		@brief 破棄される時に呼び出される関数
-		*/
-		void OnDestroy() override;
+		virtual void MoveRabbit();
 
 		/*!
-		@brief 衝突した瞬間に呼び出される関数
+		@brief ウサギの移動量減少関数
 		*/
-		void OnCollisionEnter(const CollisionPair& Pair) override;
-
-		/*!
-		@brief 衝突している間呼び出される関数
-		*/
-		void OnCollisionExcute(const CollisionPair& Pair) override;
-
-		/*!
-		@brief 衝突している間呼び出される関数
-		@param コリジョンペア(コリジョン情報)
-		*/
-		void OnCollisionExit(const CollisionPair& Pair) override;
-
-		/*!
-		@brief ブロックに衝突した時
-		@param ブロックのポインタ
-		@param 衝突座標
-		*/
-		void BlockEnter(const shared_ptr<GameObject>& block, const Vec3& hitPos);
-
-		/*!
-		@brief ブロックに衝突し続けた時
-		@param ブロックのポインタ
-		@param 衝突座標
-		*/
-		void BlockExcute(const shared_ptr<GameObject>& block, const Vec3& hitPos);
-
-		/*!
-		@brief ベルトコンベアに衝突した時
-		@param ベルトコンベアのポインタ
-		@param 衝突座標
-		*/
-		void ConvayorEnter(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
-
-		/*!
-		@brief ベルトコンベアに衝突し続けた時
-		@param ベルトコンベアのポインタ
-		@param 衝突座標
-		*/
-		void ConvayorExcute(const shared_ptr<GameObject>& convayor, const Vec3& hitPos);
-
-		/*!
-		@brief バンパーに衝突した時
-		@param バンパーのポインタ
-		@param 衝突座標
-		*/
-		void BumperEnter(const shared_ptr<GameObject>& bumper, const Vec3& hitPos);
-
-		void MoveRabbit();
-
 		void MoveReduction();
 
-		void PatrolState();
-
-		void SeekState();
-
-		void LostState();
-
-		void CannonState();
-
-		void DeathState();
-
-		bool SearchPlayer();
-
-		void JumpRabbit();
-
-		void PlayerTargetJump(const Vec3& targetPos);
-
-		void BlockTargetJump(const Vec3& targetPos);
-
-		void StartJumpSE();
-
-		void SetMoveValue(const Vec2& velocity, float acsel) override;
-
-		void CollisiontPerformance();
-
-		const vector<Vec3> GetHitBlockPos(const Vec3& targetPos);
-
-		const Vec3 GetNearPosition(const vector<Vec3>& posVec) const
-		{
-			Vec3 temp;
-			Vec3 pos = GetPosition();
-
-			if (!posVec.empty())
-			{
-				temp = posVec.at(0);
-				for (const auto& alive : posVec)
-				{
-					float lengthA = (temp - pos).length();
-					float lengthB = (alive - pos).length();
-
-					if (lengthA > lengthB)
-					{
-						temp = alive;
-					}
-				}
-			}
-
-			return temp;
-		}
-
+		/*!
+		@brief ステート取得関数
+		@return eState
+		*/
 		const eState& GetState() const
 		{
 			return m_state;
 		}
 
+		/*!
+		@brief ステート設定関数
+		@param eState
+		*/
 		void SetState(const eState& state)
 		{
 			m_state = state;
 		}
 
+		/*!
+		@brief 死亡したかの真偽取得関数
+		@return m_status(eStatus::IsDeath)
+		*/
 		bool GetIsDeath() const
 		{
-			return m_isDeath;
+			return m_status(eStatus::IsDeath);
+		}
+
+		/*!
+		@brief 移動設定関数
+		@param 移動量
+		@param 加速度
+		*/
+		virtual void SetMoveValue(const Vec2& velocity, float acsel)
+		{
+			m_velocity = velocity;
+			m_acsel = acsel < 1.0f ? 1.0f : acsel;
 		}
 	};
 }

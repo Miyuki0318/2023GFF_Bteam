@@ -1,10 +1,17 @@
+/*!
+@file NextStage.h
+@brief 「次のステージへ」ステージ
+*/
+
 #pragma once
-#include "stdafx.h"
 #include "BaseStage.h"
 #include "TemplateObject.h"
 
 namespace basecross
 {
+	/*!
+	@brief 「次のステージへ」ステージ
+	*/
 	class NextStage : public BaseStage
 	{
 	public :
@@ -12,19 +19,19 @@ namespace basecross
 		// ステージステート定数
 		enum eStageState
 		{
-			FadeIn,
-			Select,
-			StageMove,
-			TitleBack,
-			BackFade,
-			FadeOut,
+			FadeIn,		// フェードイン
+			Select,		// 選択肢
+			StageMove,	// ステージへ移動
+			TitleBack,	// タイトルに戻る
+			MetalFade,	// タイトルに戻る用フェード
+			FadeOut,	// フェードアウト
 		};
 
 		// セレクトタイプ
 		enum eSelect
 		{
-			Next,
-			Back,
+			Next,	// 次のステージへ
+			Back,	// タイトルに戻る
 		};
 
 	private:
@@ -39,12 +46,12 @@ namespace basecross
 		eStageState m_stageState;
 
 		// スプライト
-		weak_ptr<Sprite> m_fade;
-		weak_ptr<Sprite> m_logo;
-		weak_ptr<Sprite> m_next;
-		weak_ptr<Sprite> m_back;
-		weak_ptr<Sprite> m_metalLeft;
-		weak_ptr<Sprite> m_metalRight;
+		weak_ptr<Sprite> m_fade;		// フェード用
+		weak_ptr<Sprite> m_logo;		// ロゴ
+		weak_ptr<Sprite> m_next;		// 次へ
+		weak_ptr<Sprite> m_back;		// 戻る
+		weak_ptr<Sprite> m_metalLeft;	// メタルウィンドウ左
+		weak_ptr<Sprite> m_metalRight;	// メタルウィンドウ右
 
 		/*!
 		@brief リソース読み込み関数
@@ -71,14 +78,29 @@ namespace basecross
 		*/
 		void CreateSprites();
 
+		/*!
+		@brief 背景スクロール処理関数
+		*/
 		void SlideBackGround();
-		
+
+		/*!
+		@brief セレクトステート
+		*/
 		void SelectState();
 
-		void BackFadeState();
+		/*!
+		@brief タイトルに戻るフェードステート
+		*/
+		void MetalState();
 
+		/*!
+		@brief フェードインステート
+		*/
 		void FadeInState();
 
+		/*!
+		@brief フェードアウトステート
+		*/
 		void FadeOutState();
 
 	public:

@@ -19,8 +19,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)BaseStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Billboard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BillboardNumber.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)BitFlag.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Block.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Blower.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bool_t.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Bumper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Button.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h" />
@@ -30,11 +32,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DebugLog.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DrawObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)JumpCountUI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)JumpRabbit.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MoveWall.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SEManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ShieldCountUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TemplateObject.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gimmick.h" />
@@ -54,6 +56,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Timer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitlePlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WallRabbit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AirJetEffect.cpp" />
@@ -73,8 +76,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GameCamera.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gimmick.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)JumpCountUI.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)JumpRabbit.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MoveWall.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NextPlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NextStage.cpp" />
@@ -93,6 +96,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitlePlayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WallRabbit.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>
 </Project>

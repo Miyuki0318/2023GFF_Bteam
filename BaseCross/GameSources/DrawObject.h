@@ -1,9 +1,17 @@
+/*!
+@file DrawObject.h
+@brief 描画用オブジェクトの継承元
+*/
+
 #pragma once
 #include "stdafx.h"
 #include "OzawaUtility.h"
 
 namespace basecross
 {
+	/*!
+	@brief 描画用オブジェクトの継承元
+	*/
 	class DrawObject : public GameObject
 	{
 	protected:

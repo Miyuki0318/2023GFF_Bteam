@@ -6,7 +6,7 @@
 
 #pragma once
 #include "stdafx.h"
-#define BASECROSS __has_include("WinMain.cpp")
+#define BASECROSS __has_include("common.h") // BaseCrossのライブラリをインクルードしているかのマクロ
 
 namespace Utility
 {
@@ -153,7 +153,7 @@ namespace Utility
 	T RangeRand(const T& min, const T& max, int digit)
 	{
 		T r = min + static_cast<T>(rand()) * static_cast<T>(max - min) / RAND_MAX;
-		return static_cast<T>(bsm::floor(static_cast<float>(r), digit));
+		return static_cast<T>(basecross::bsm::floor(static_cast<float>(r), digit));
 	}
 
 	/*!
@@ -229,11 +229,10 @@ namespace Utility
 		}
 		else
 		{
-
 #if BASECROSS
 
 			// エラーメッセージを送る
-			throw BaseException(
+			throw basecross::BaseException(
 				L"列挙型以外は指定できません",
 				L"列挙型が指定されてるか確認してください",
 				L"bool GetBetween(T value, T a, T b)"
@@ -241,6 +240,33 @@ namespace Utility
 #endif
 			return false;
 		}
+	}
+
+
+	/*!
+	@brief enum列挙子をsize_tにキャスト
+	@return キャストされたenum
+	*/
+	template <typename Enum>
+	const size_t toSize_t(Enum index)
+	{
+		// 列挙型じゃなければ
+		if (!is_enum<Enum>())
+		{
+#if BASECROSS
+
+			// エラーメッセージを送る
+			throw basecross::BaseException(
+				L"enum以外をsize_tにキャストできません",
+				L"enumを指定してください",
+				L"toSize_t(Enum index)"
+			);
+#endif
+			return 0;
+		}
+
+		// size_tにキャストして返す
+		return static_cast<size_t>(index);
 	}
 
 	/*!
@@ -348,12 +374,6 @@ namespace Utility
 	 @return Vec2(WINDOW_WIDTH, WINDOW_HEIGHT)
 	 */
 #define WINDOW_SIZE Vec2(WINDOW_WIDTH, WINDOW_HEIGHT)
-
-	 /*!
-	 @brief Thisポインタ
-	 @return GameObject::GetThis<GameObject>()
-	 */
-#define This basecross::GameObject::GetThis<GameObject>()
 
 	 /*!
 	 @brief Thisポインタ

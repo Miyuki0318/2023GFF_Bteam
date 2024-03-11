@@ -4,39 +4,38 @@
 */
 
 #pragma once
-#include "stdafx.h"
 #include "BaseStage.h"
 #include "GameCamera.h"
 
 namespace basecross
 {
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス
-	//--------------------------------------------------------------------------------------
-	class GameStage : public BaseStage 
+	/*!
+	@brief ゲーム中のステージ
+	*/
+	class GameStage : public BaseStage
 	{
 	public:
 
 		// ステージステート定数
 		enum eStageState
 		{
-			FadeIn,
-			StartMove,
-			GameNow,
-			Goal,
-			DeathDrop,
-			Death,
-			Select,
-			Metal,
-			Reset,
-			FadeOut,
+			FadeIn,		// フェードイン
+			StartMove,	// 開始時の移動演出
+			GameNow,	// ゲーム中
+			Goal,		// ゴール時
+			DeathDrop,	// 死亡時の落下
+			Death,		// 死亡処理
+			Select,		// 選択肢
+			Metal,		// メタルウィンドウ
+			Reset,		// コンティニューリセット
+			FadeOut,	// フェードアウト
 		};
 
 		// セレクトタイプ
 		enum eSelect
 		{
-			Continue,
-			TitleBack,
+			Continue,	// コンティニュー
+			TitleBack,	// タイトルに戻る
 		};
 
 	private:
@@ -129,6 +128,7 @@ namespace basecross
 
 		/*!
 		@brief コンストラクタ
+		@param ステージのCSVのファイル名
 		*/
 		GameStage(const string& stageName) :BaseStage() 
 		{

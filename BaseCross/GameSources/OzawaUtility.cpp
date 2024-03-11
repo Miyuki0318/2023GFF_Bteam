@@ -205,47 +205,60 @@ namespace Utility
 	@param (axisVec) 直行軸ベクトル
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
+	@return 生成出来たかの真偽
 	*/
 	bool RibonVerticesIndices(const vector<Vec3>& point, vector<basecross::VertexPositionColorTexture>& vertices, vector<uint16_t>& indices, const Vec3& axisVec, float weight, int texLoop)
 	{
-		const int& size = static_cast<int>(point.size());
+		// 節目の数が0なら終了
+		const int& size = static_cast<int>(point.size()); 
 		if (size == 0) return false;
 
-		vertices.clear();
+		vertices.clear(); // 頂点座標の初期化
 
+		// 節目の数ループ
 		for (int i = 0; i < size; i++)
 		{
+			// テクスチャをループするか
 			const int loop = texLoop > 0 ? texLoop : 1;
-			int front = (i - 1) < 0 ? size - 1 : i - 1;
-			int rear = (i + 1) % size;
+
+			int front = (i - 1) < 0 ? size - 1 : i - 1; // 手前
+			int rear = (i + 1) % size; // 後方
+
+			// 方向から外積を求める
 			Vec3 dir = point.at(front) - point.at(rear);
 			Vec3 cross = dir.cross(axisVec).normalize();
 		
+			// 幅分を差し引いて座標を頂点として追加
 			Vec3 pos = point.at(i) - cross * weight;
 			basecross::VertexPositionColorTexture vertexLeft(pos, COL_WHITE, Vec2(0.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexLeft);
 
+			// 幅分を加算した座標を頂点として追加
 			pos = point.at(i) + cross * weight;
 			basecross::VertexPositionColorTexture vertexRight(pos, COL_WHITE, Vec2(1.0f, static_cast<float>(i) / size * loop));
 			vertices.push_back(vertexRight);
 		}
 
+		// 頂点インデックスの元
 		const vector<uint16_t> baseIndices = {
 			0, 1, 2,
 			2, 1, 3
 		};
 
-		indices.clear();
+		indices.clear(); // インデックスの初期化
 
-		for (int i = 0; i < point.size() - 1; i++)
+		// サイズ分より一回少ない数ループ
+		for (int i = 0; i < size - 1; i++)
 		{
-			for (int j = 0; j < 6; j++)
+			// 元サイズ分ループ
+			for (int j = 0; j < baseIndices.size(); j++)
 			{
+				// 元のインデックスに2の倍数を加算させて追加
 				indices.push_back(baseIndices.at(j) + (2 * i));
 			}
 		}
 
-		return true;
+		return true; // 生成出来たのでtrueを返す
 	}
 
 	/*!
@@ -255,9 +268,11 @@ namespace Utility
 	@param (axisVec) 直行軸ベクトル
 	@param (weight) 幅
 	@param (texLoop) テクスチャループ
+	@return 生成出来たかの真偽
 	*/
 	bool RibonVerticesIndices(const vector<Vec3>& point, basecross::VertexData& vertex, const Vec3& axisVec, float weight, int texLoop)
 	{
+		// 頂点データ構造体を分解して生成関数を実行
 		return RibonVerticesIndices(point, vertex.vertices, vertex.indices, axisVec, weight, texLoop);
 	}
 

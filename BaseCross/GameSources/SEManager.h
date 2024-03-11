@@ -1,8 +1,16 @@
+/*!
+@file SEManager.h
+@brief SE管理クラス
+*/
+
 #pragma once
 #include "stdafx.h"
 
 namespace basecross
 {
+	/*!
+	@brief SEマネージャー
+	*/
 	class SEManager
 	{
 	public:
@@ -12,20 +20,15 @@ namespace basecross
 		{
 			weak_ptr<SoundItem> item; // サウンドアイテム
 			wstring seKey = L"";	  // ファイルキー
-			const void* objectPtr = nullptr;   // オブジェクトのポインタ
+			const void* objectPtr = nullptr; // オブジェクトのポインタ
 
-
-			// コンストラクタ
+			/*!
+			@brief コンストラクタ
+			@param サウンドアイテム
+			@param サウンドキー
+			@param 呼び出し元ポインタ
+			*/
 			SE(const weak_ptr<SoundItem>& ptr, const wstring& key, const void* objPtr
-			) :
-				item(ptr),
-				seKey(key),
-				objectPtr(objPtr)
-			{
-			}
-
-			// コンストラクタ
-			SE(const wstring& key, const weak_ptr<SoundItem>& ptr, const void* objPtr
 			) :
 				item(ptr),
 				seKey(key),
@@ -35,7 +38,9 @@ namespace basecross
 
 		public:
 
-			// リセット関数
+			/*!
+			@brief リセット関数
+			*/
 			void Reset()
 			{
 				item.reset();
@@ -46,13 +51,19 @@ namespace basecross
 
 	private:
 
-		vector<SE> m_seList;
+		vector<SE> m_seList; // SE管理配列
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		*/
 		SEManager() {}
 
-		~SEManager() 
+		/*!
+		@brief デストラクタ
+		*/
+		~SEManager()
 		{
 			m_seList.clear();
 		}

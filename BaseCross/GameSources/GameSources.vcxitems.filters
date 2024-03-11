@@ -37,9 +37,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Spike.h">
       <Filter>Gimmick\Spike</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Cannon.h">
       <Filter>Gimmick\Cannon</Filter>
     </ClInclude>
@@ -77,7 +74,7 @@
       <Filter>Player\Player</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Rabbit.h">
-      <Filter>Enemy\Rabbit</Filter>
+      <Filter>Rabbit</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)NextStage.h">
       <Filter>Stage\NextStage</Filter>
@@ -121,13 +118,22 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SEManager.h">
       <Filter>Utility\SE</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BitFlag.h">
+      <Filter>Utility\BitFlag</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Bool_t.h">
+      <Filter>Utility\BitFlag</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)JumpRabbit.h">
+      <Filter>Rabbit\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WallRabbit.h">
+      <Filter>Rabbit\Wall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
       <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Input.cpp">
-      <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Block.cpp">
       <Filter>Block</Filter>
@@ -193,7 +199,7 @@
       <Filter>Player\Title</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Rabbit.cpp">
-      <Filter>Enemy\Rabbit</Filter>
+      <Filter>Rabbit</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)NextStage.cpp">
       <Filter>Stage\NextStage</Filter>
@@ -237,6 +243,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SEManager.cpp">
       <Filter>Utility\SE</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)JumpRabbit.cpp">
+      <Filter>Rabbit\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WallRabbit.cpp">
+      <Filter>Rabbit\Wall</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Stage">
@@ -268,9 +280,6 @@
     </Filter>
     <Filter Include="Gimmick\Spike">
       <UniqueIdentifier>{eccd8bf9-88d2-4e76-96ab-1bdb93c3809b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemy">
-      <UniqueIdentifier>{a7bf6690-ecd5-4bdb-905e-112c1f6684f6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Gimmick\Cannon">
       <UniqueIdentifier>{e6b3f459-05b1-4eb9-8e95-d21a3b35a582}</UniqueIdentifier>
@@ -307,9 +316,6 @@
     </Filter>
     <Filter Include="Player\Player">
       <UniqueIdentifier>{d5049f5c-e3fc-4b20-b70b-1c4cb6206b61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemy\Rabbit">
-      <UniqueIdentifier>{24fd7295-4dc4-4aec-b796-6d0e5e3a6128}</UniqueIdentifier>
     </Filter>
     <Filter Include="Stage\NextStage">
       <UniqueIdentifier>{16db351c-ac8c-4184-8e6b-71fae84c3c81}</UniqueIdentifier>
@@ -367,6 +373,18 @@
     </Filter>
     <Filter Include="Utility\SE">
       <UniqueIdentifier>{ae48ab4c-7540-4f19-a209-b66cc820bf1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\BitFlag">
+      <UniqueIdentifier>{365699dc-92e8-44d8-99e4-4fd2e4787918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rabbit">
+      <UniqueIdentifier>{24fd7295-4dc4-4aec-b796-6d0e5e3a6128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rabbit\Jump">
+      <UniqueIdentifier>{c296b11a-4995-4e06-b603-372255f478d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rabbit\Wall">
+      <UniqueIdentifier>{3c99e597-b291-445f-807f-25410ac930b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

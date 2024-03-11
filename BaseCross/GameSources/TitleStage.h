@@ -1,10 +1,17 @@
+/*!
+@file TitleStage.h
+@brief タイトル用ステージ
+*/
+
 #pragma once
-#include "stdafx.h"
 #include "BaseStage.h"
 #include "TemplateObject.h"
 
 namespace basecross
 {
+	/*!
+	@brief タイトル用のステージ
+	*/
 	class TitleStage : public BaseStage
 	{
 	public:
@@ -12,13 +19,13 @@ namespace basecross
 		// ステージステート定数
 		enum eStageState
 		{
-			FadeIn,
-			PushButton,
-			BackFadeOut,
-			StartMove,
-			ModeSelect,
-			CannonStanby,
-			FadeOut,
+			FadeIn,		  // フェードイン
+			PushButton,	  // プッシュボタン
+			MetalFadeOut, // メタルウィンドウ
+			StartMove,	  // 開始時の移動演出
+			ModeSelect,   // 難易度選択
+			CannonStanby, // 大砲待機
+			FadeOut,      // フェードアウト
 		};
 
 	private:
@@ -30,11 +37,11 @@ namespace basecross
 		weak_ptr<TemplateObject> m_player;
 
 		// スプライト
-		weak_ptr<Sprite> m_fade;
-		weak_ptr<Sprite> m_titleLogo;
-		weak_ptr<Sprite> m_metalLeft;
-		weak_ptr<Sprite> m_metalRight;
-		weak_ptr<Sprite> m_pushButton;
+		weak_ptr<Sprite> m_fade;		// フェード用スプライト
+		weak_ptr<Sprite> m_titleLogo;	// タイトルロゴ
+		weak_ptr<Sprite> m_metalLeft;	// メタルウィンドウ左
+		weak_ptr<Sprite> m_metalRight;	// メタルウィンドウ右
+		weak_ptr<Sprite> m_pushButton;	// プッシュボタン
 
 		/*!
 		@brief リソース読み込み関数
@@ -61,12 +68,24 @@ namespace basecross
 		*/
 		void CreateSprites();
 
-		void BackFadeState();
+		/*!
+		@brief メタルウィンドウステート
+		*/
+		void MetalFadeState();
 
+		/*!
+		@brief プッシュボタンステート
+		*/
 		void PushButtonState();
 
+		/*!
+		@brief 開始時の移動演出ステート
+		*/
 		void StartMoveState();
 
+		/*!
+		@brief フェードアウトステート
+		*/
 		void FadeOutState();
 
 	public:

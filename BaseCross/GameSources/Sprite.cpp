@@ -188,9 +188,14 @@ namespace basecross
 	*/
 	void Sprite::RotateTexture()
 	{
+		// 頂点の数分ループ
 		for (auto& v : m_vertex.vertices)
 		{
+			// 頂点のUV座標を移動量×デルタタイムで加算
 			v.textureCoordinate += m_velocity * DELTA_TIME;
 		}
+
+		// 頂点の更新
+		m_ptrDraw->UpdateVertices(m_vertex.vertices);
 	}
 }

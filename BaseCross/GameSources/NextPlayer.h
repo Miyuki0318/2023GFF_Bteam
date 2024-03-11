@@ -1,26 +1,41 @@
+/*!
+@file NextPlayer.h
+@brief 次のステージへ画面用のプレイヤー
+*/
+
 #pragma once
-#include "stdafx.h"
 #include "Player.h"
 #include "NextStage.h"
 
 namespace basecross
 {
+	/*!
+	@brief 「次のステージへ」中のプレイヤー
+	*/
 	class NextPlayer : public Player
 	{
-		float m_moveAcsel;
+		const float m_moveAcsel; // 移動時の加速度
+		const float m_dropAcsel; // 落下時の加速度
 
 	public:
 
+		/*!
+		@brief コンストラクタ
+		@param ステージポインタ
+		*/
 		NextPlayer(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position
 		) :
-			Player(stagePtr, position)
+			Player(stagePtr, position),
+			m_moveAcsel(5.0f),
+			m_dropAcsel(2.5f)
 		{
-			m_acsel = 5.0f;
-			m_moveAcsel = 5.0f;
 			m_velocity = Vec2(-1.0f, 0.0f);
 		}
 
+		/*!
+		@brief デストラクタ
+		*/
 		virtual ~NextPlayer() {}
 
 		/*!
@@ -46,18 +61,27 @@ namespace basecross
 		/*!
 		@brief 死亡時の設定関数
 		*/
-		void DeathSetup() override;
+		void DropSetup();
 
 		/*!
 		@brief 死亡時の落下関数
 		*/
-		void DeathDrop() override;
+		void TitleDrop();
 
-
+		/*!
+		@brief 選択肢ステート関数
+		*/
 		void SelectState();
 
-		void NextStageMove();
+		/*!
+		@brief 次のステージに移動したかチェックする関数
+		*/
+		void NextStageCheck();
 
-		void UpdateParticle(const Vec2& velo);
+		/*!
+		@brief 煙のエフェクト処理関数
+		@param 移動量
+		*/
+		void SmokeEffect(const Vec2& velo);
 	};
 }

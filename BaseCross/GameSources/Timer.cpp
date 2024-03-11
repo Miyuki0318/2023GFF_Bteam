@@ -1,40 +1,56 @@
+/*!
+@file Timer.cpp
+@brief タイマークラス
+*/
+
 #include "stdafx.h"
 #include "Project.h"
 
 namespace basecross
 {
+	// 毎フレーム更新処理
 	void Timer::OnUpdate()
 	{
+		// タイマーセット数分ループ
 		for (auto& timer : m_timers)
 		{
+			// オブジェクトポインタが空なら
 			if (timer.objectPtr == NULL)
 			{
+				// リセット
 				timer.Reset();
 				continue;
 			}
+
+			// 経過時間が設定時間より大きかったら
 			if (timer.totalTime > timer.limitTime)
 			{
+				// リセット
 				timer.Reset();
 				continue;
 			}
 
-#if BASECROSS
-
+			// ゲームオブジェクト型にキャスト
 			const auto& obj = static_cast<GameObject*>(timer.objectPtr);
 			if (!obj)
 			{
+				// リセット
+				timer.Reset();
 				continue;
 			}
+
+			// 非アクティブなら無視
 			if (!obj->GetUpdateActive())
 			{
 				continue;
 			}
-#endif
+
 			// 経過時間をデルタタイムで加算
 			timer.totalTime += DELTA_TIME;
 		}
 	}
 
+	// タイマーセット
 	bool Timer::SetTimer(void* ptr, float time, bool reset)
 	{
 		// 存在しないポインタかどうかの真偽
@@ -101,6 +117,7 @@ namespace basecross
 		return false;
 	}
 
+	// 経過時間の取得用
 	float Timer::GetTime(void* ptr, float time)
 	{
 		// チェッカー
@@ -122,8 +139,10 @@ namespace basecross
 			}
 		}
 
+		// チェッカがtrueなら
 		if (check)
 		{
+			// 経過時間を返す
 			return m_timers.at(elem).totalTime;
 		}
 

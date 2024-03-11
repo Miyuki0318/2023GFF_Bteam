@@ -202,7 +202,7 @@ namespace basecross {
 	//--------------------------------------------------------------------------------------
 	struct AudioResource::Impl {
 		WAVEFORMATEX m_WaveFormat;	//ウェブフォーマット
-		vector<byte> m_SoundData;	//データ
+		vector<::byte> m_SoundData;	//データ
 		wstring m_FileName;		//ファイルへのパス
 		Impl(const wstring& FileName) :
 			m_FileName(FileName) {}
@@ -376,7 +376,7 @@ namespace basecross {
 	}
 	AudioResource::~AudioResource() {}
 
-	const vector<byte>& AudioResource::GetSoundData()const {
+	const vector<::byte>& AudioResource::GetSoundData()const {
 		return pImpl->m_SoundData;
 	}
 

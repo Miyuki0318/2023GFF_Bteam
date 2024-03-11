@@ -4,7 +4,6 @@
 */
 
 #pragma once
-#include "stdafx.h"
 #include "TemplateObject.h"
 #include "ArrowEffect.h"
 #include "AirJetEffect.h"
@@ -12,9 +11,26 @@
 
 namespace basecross
 {
+	/*!
+	@brief プレイヤーオブジェクト本体
+	*/
 	class Player : public TemplateObject
 	{
 	protected:
+
+		// ステータス管理用enum
+		enum class eStatus : uint8_t
+		{
+			IsAir,				// 空中かどうか
+			IsBlower,			// 送風機に当たっているか
+			IsHighJump,			// 高く跳んでいるか
+			IsInvincible,		// 無敵中か
+			IsAliveMoveBlock,	// 動く壁の上に居るか
+			IsHitMoveBlock,		// 動く壁に衝突しているか
+			IsFirePossible,		// エアショック使用可能か
+			IsCannonFire,		// 大砲発射後か
+			IsCannonStandby		// 大砲待機中か
+		};
 
 		shared_ptr<PNTBoneModelDraw> m_bodyDraw; // 胴の描画コンポーネント
 		shared_ptr<PNTBoneModelDraw> m_armDraw;  // 腕の描画コンポーネント
@@ -33,20 +49,20 @@ namespace basecross
 		weak_ptr<ShieldEffect> m_shieldEffect;	// シールドエフェクト
 		weak_ptr<Cannon> m_activeCannon;		// 大砲ポインタ一時保持用
 		weak_ptr<MultiParticle> m_particle;		// パーティクル
-		weak_ptr<ArrowEffect> m_aligment;		// 軌道描画
+		weak_ptr<ArrowEffect> m_arrow;			// 軌道描画
 		weak_ptr<TemplateObject> m_currentWall; // 前回衝突した動く壁
 
-		const int m_jumpLimit;			 // 規定ジャンプ回数
-		const int m_shieldLimit;		 // 規定シールド枚数
-		const float m_speed;			 // 速度
-		const float m_gravity;			 // 重力
-		const float m_maxAcsel;			 // 最大加速度
-		const float m_veloSpeed;		 // 移動量乗算速度
-		const float m_damageAcsel;		 // ダメージ時加速度
-		const float m_timeSpeed;		 // 時間乗算速度
-		const float m_invincibleTime;	 // 規定無敵時間
-		const float m_jumpRecoveryLimit; // 規定ジャンプ回復時間
-		vector<int> m_sRingLimit;		 // スモールリング規定個数
+		const int m_jumpLimit;			  // 規定ジャンプ回数
+		const int m_shieldLimit;		  // 規定シールド枚数
+		const float m_speed;			  // 速度
+		const float m_gravity;			  // 重力
+		const float m_maxAcsel;			  // 最大加速度
+		const float m_veloSpeed;		  // 移動量乗算速度
+		const float m_damageAcsel;		  // ダメージ時加速度
+		const float m_timeSpeed;		  // 時間乗算速度
+		const float m_invincibleTime;	  // 規定無敵時間
+		const float m_jumpRecoveryLimit;  // 規定ジャンプ回復時間
+		const array<int, 4> m_sRingLimit; // スモールリング規定個数
 
 		int m_jumpCount;			// ジャンプ回数
 		int m_sRingCount;			// スモールリング回収個数
@@ -54,21 +70,14 @@ namespace basecross
 		float m_acsel;				// 加速度
 		float m_jumpRecoveryTime;	// ジャンプ時の回復までの経過時間
 		
-		bool m_isAir;			 // 空中かの真偽
-		bool m_isBlower;		 // 送風機に当たっているかの真偽
-		bool m_isHighJump;		 // 上方向に高く飛んだかの真偽
-		bool m_isInvincible;	 // 無敵中かの真偽
-		bool m_isAliveMoveBlock; // 動く壁の上に居るかの真偽
-		bool m_isHitMoveBlock;	 // 動く壁の左右に居るかの真偽
-		bool m_firePossible;	 // エアショック使用可能かの真偽
-		bool m_cannonFire;		 // 大砲発射後かの真偽
-		bool m_cannonStandby;	 // 大砲発射待機中かの真偽
+		Bool16_t<eStatus> m_status; // 状態フラグ
 
 	public:
 
 		/*!
 		@brief コンストラクタ
 		@param ステージポインタ
+		@param ポジション
 		*/
 		Player(const shared_ptr<Stage>& stagePtr,
 			const Vec3& position
@@ -85,7 +94,8 @@ namespace basecross
 			m_timeSpeed(1.5f),
 			m_invincibleTime(1.0f),
 			m_jumpRecoveryLimit(0.5f),
-			m_deffVelo(0.0f, -1.0f)
+			m_deffVelo(0.0f, -1.0f),
+			m_sRingLimit({ 5, 20, 25, 0	})
 		{
 			m_position = m_startPos;
 			m_rotation.zero();
@@ -97,19 +107,7 @@ namespace basecross
 			m_shieldCount = 1;
 			m_acsel = 7.5f;
 			m_jumpRecoveryTime = 0.0f;
-			m_isAir = true;
-			m_isBlower = false;
-			m_isHighJump = false;
-			m_isInvincible = false;
-			m_firePossible = true;
-			m_cannonFire = false;
-			m_cannonStandby = false;
-			m_isAliveMoveBlock = false;
-			m_isHitMoveBlock = false;
-
-			m_sRingLimit = {
-				5, 20, 25, 0
-			};
+			m_status.Set(eStatus::IsAir, eStatus::IsFirePossible) = true;
 
 			m_bodyMat.affineTransformation(
 				Vec3(1.25f),
@@ -169,6 +167,8 @@ namespace basecross
 		*/
 		void OnCollisionExit(const CollisionPair& Pair) override;
 
+	protected:
+
 		/*!
 		@brief プレイヤーの移動関数
 		*/
@@ -192,7 +192,7 @@ namespace basecross
 		/*!
 		@brief エアショックの軌道描画関数
 		*/
-		virtual void RotateAligment();
+		virtual void UpdateArrow();
 
 		/*!
 		@brief アニメーション更新関数
@@ -209,6 +209,11 @@ namespace basecross
 		@param 加速度
 		*/
 		virtual void CannonStandby(float acsel);
+
+		/*!
+		@brief 大砲発射後関数
+		*/
+		virtual void AftterCannon();
 
 		/*!
 		@brief 死亡時の設定関数
@@ -366,7 +371,18 @@ namespace basecross
 		@param 動く壁のポインタ
 		@param 衝突座標
 		*/
-		void MoveWallLeftRight(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
+		void MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos);
+
+		/*!
+		@brief 動く壁から離れたか
+		*/
+		void MoveWallExit();
+
+		/*!
+		@brief ダメージノックバック処理
+		@param 移動量
+		*/
+		void DamageKnockBack(const Vec2& velocity);
 
 		/*!
 		@brief 動く壁の連結取得関数
@@ -379,7 +395,7 @@ namespace basecross
 		{
 			Vec3 position = pos;
 
-			while (BlockCheck(groupVec, position))
+			while (ObjectCheck(groupVec, position))
 			{
 				position += addVec;
 			}
@@ -409,17 +425,6 @@ namespace basecross
 		}
 
 		/*!
-		@brief 動く壁から離れたか
-		*/
-		void MoveWallExit();
-
-		/*!
-		@brief ダメージノックバック処理
-		@param 移動量
-		*/
-		void DamageKnockBack(const Vec2& velocity);
-
-		/*!
 		@brief シールド追加処理
 		*/
 		void AddShield()
@@ -433,13 +438,46 @@ namespace basecross
 		}
 
 		/*!
-		@brief シールド追加処理
+		@brief 小リング取得処理
 		*/
 		void GetSmallRing()
 		{
-			m_sRingCount++;
+			m_sRingCount++; // 小リングカウンタを増やす
+
+			// ジャンプ回数を減らす
 			m_jumpCount > 0 ? m_jumpCount-- : m_jumpCount = 0;
 		}
+
+
+		/*!
+		@brief 上下で押し潰された時の関数
+		*/
+		void UnderCompressedDeath()
+		{
+			if (m_status(eStatus::IsAliveMoveBlock))
+			{
+				// 死亡時の設定をする
+				m_shieldCount = 0;
+				StartSE(L"SHIELD_D_SE", 1.5f);
+				DeathSetup();
+			}
+		}
+
+		/*!
+		@brief 左右で押し潰された時の関数
+		*/
+		void LeftRightCompressedDeath()
+		{
+			if (m_status(eStatus::IsHitMoveBlock))
+			{
+				// 死亡時の設定をする
+				m_shieldCount = 0;
+				StartSE(L"SHIELD_D_SE", 1.5f);
+				DeathSetup();
+			}
+		}
+
+	public:
 
 		/*!
 		@brief シールドの枚数取得関数
@@ -472,7 +510,7 @@ namespace basecross
 		@brief スモールリング獲得上限数取得関数
 		@return m_sRingLimit
 		*/
-		const vector<int>& GetSRingLimit() const
+		const array<int, 4>& GetSRingLimit() const
 		{
 			return m_sRingLimit;
 		}
@@ -529,34 +567,6 @@ namespace basecross
 		const Vec2& GetVelocity() const
 		{
 			return m_velocity;
-		}
-
-		/*!
-		@brief 上下で押し潰された時の関数
-		*/
-		void UnderCompressedDeath()
-		{
-			if (m_isAliveMoveBlock)
-			{
-				// 死亡時の設定をする
-				m_shieldCount = 0;
-				StartSE(L"SHIELD_D_SE", 1.5f);
-				DeathSetup();
-			}
-		}
-
-		/*!
-		@brief 左右で押し潰された時の関数
-		*/
-		void LeftRightCompressedDeath()
-		{
-			if (m_isHitMoveBlock)
-			{
-				// 死亡時の設定をする
-				m_shieldCount = 0;
-				StartSE(L"SHIELD_D_SE", 1.5f);
-				DeathSetup();
-			}
 		}
 	};
 }

@@ -1,16 +1,20 @@
 /*! 
 @file Player.cpp
-@brief プレイヤーなど実体
+@brief プレイヤー本体
 */
 
 #include "stdafx.h"
 #include "Project.h"
 
-using namespace Input;
-using namespace Utility;
-
 namespace basecross
 {
+	// ネームスペースの省略
+	using namespace Input;
+	using namespace Utility;
+	using namespace CubeParam;
+	using namespace GimmickAngle;
+
+	// 生成時の処理
 	void Player::OnCreate()
 	{
 		// 継承元の生成時の関数を実行する
@@ -19,12 +23,11 @@ namespace basecross
 		// 腕モデル用オブジェクトの生成
 		m_arm = GetStage()->AddGameObject<TemplateObject>();
 
-		// トランスフォームの設定
-		// 胴のトランスフォーム
+		// 胴のトランスフォームの設定
 		SetPosition(m_position);
 		SetScale(m_scale);
 		
-		// 腕のトランスフォーム
+		// 腕のトランスフォームの設定
 		m_arm.lock()->SetPosition(m_position);
 		m_arm.lock()->SetScale(m_scale);
 
@@ -51,11 +54,11 @@ namespace basecross
 		// エフェクトオブジェクトの生成
 		m_airEffect = GetStage()->AddGameObject<AirJetEffect>(GetThis<TemplateObject>());
 		m_shieldEffect = GetStage()->AddGameObject<ShieldEffect>(GetThis<TemplateObject>());
-		m_aligment = GetStage()->AddGameObject<ArrowEffect>(GetThis<TemplateObject>());
+		m_arrow = GetStage()->AddGameObject<ArrowEffect>(GetThis<TemplateObject>());
 		m_particle = GetStage()->AddGameObject<MultiParticle>();
 	}
 
-
+	// 毎フレーム更新処理
 	void Player::OnUpdate()
 	{
 		// ステージとステージステートの取得
@@ -64,49 +67,55 @@ namespace basecross
 		// 開始時の動きからゲーム中の範囲なら
 		if (GetBetween(state, GameStage::StartMove, GameStage::DeathDrop))
 		{
-			// Aボタン入力有無での関数分岐
+			// ゲーム中か
 			if (state == GameStage::GameNow)
 			{
-				if (m_firePossible && m_jumpCount < m_jumpLimit)
+				// エアショック発射可能でジャンプ回数が上限以下か
+				if (m_status(eStatus::IsFirePossible) && m_jumpCount < m_jumpLimit)
 				{
+					// Aボタン入力があったら
 					if (GetPushA()) OnRushA();
 				}
 
 				// 照準の回転処理
-				RotateAligment();
+				UpdateArrow();
 
 				// プレイヤーの回転関数
 				RotatePlayer();
 			}
 
 			// 大砲待機時
-			if (m_cannonStandby)
+			if (m_status(eStatus::IsCannonStandby))
 			{
+				// 大砲発射待機関数(加速度)
 				CannonStandby(10.0f);
 			}
 
-			// 無敵時間経過
-			if (m_isInvincible)
+			// 無敵時間中なら
+			if (m_status(eStatus::IsInvincible))
 			{
+				// 無敵時間のタイマー
 				InvincibleTimer();
 			}
 
 			// ジャンプ回数が0より大きかったら
 			if (m_jumpCount > 0)
 			{
+				// ジャンプ回数のリカバリ
 				RecoveryAirShock();
 			}
 
-			// 動く壁から離れたか
-			//m_isHitMoveBlock = false;
+			// 衝突した動く壁のポインタがあれば
 			if (m_currentWall.lock())
 			{
+				// 動く壁から離れたかの検証
 				MoveWallExit();
 			}
 
 			// 死亡時のドロップステートなら
 			if (state == GameStage::DeathDrop)
 			{
+				// 死亡時の落下処理
 				DeathDrop();
 			}
 
@@ -119,6 +128,9 @@ namespace basecross
 			// 移動時の減少量
 			MoveReduction();
 
+			// 大砲発射後
+			AftterCannon();
+
 			// アニメーションの再生
 			AnimationUpdate();
 
@@ -126,16 +138,19 @@ namespace basecross
 			EffectUpdate();
 		}
 
+		// 開始時の吹っ飛び演出中なら
 		if (state == GameStage::StartMove)
 		{
+			// エアショックのエアショックを非表示
 			m_airEffect.lock()->SetDrawActive(false);
 		}
 
-		// ゴールステートなら
+		// ゴール時または死亡落下中なら
 		if(state == GameStage::Goal || state == GameStage::DeathDrop)
 		{
+			// エフェクトを非表示
 			vector<Vec3> point;
-			m_aligment.lock()->UpdateEffect(point);
+			m_arrow.lock()->UpdateEffect(point);
 			m_airEffect.lock()->SetDrawActive(false);
 			m_shieldEffect.lock()->SetDrawShield(false);
 		}
@@ -154,7 +169,7 @@ namespace basecross
 		//Debug::Log(L"左右からブロックに押されている : ", m_isHitMoveBlock);
 	}
 
-	// Aボタンを離した時
+	// Aボタンを押した時
 	void Player::OnRushA()
 	{
 		// スティック入力を取得し移動ベクトルに保持
@@ -162,16 +177,18 @@ namespace basecross
 		m_velocity = (IsInputLStick() ? stick.round(1) : m_deffVelo) * m_veloSpeed;
 
 		// 地面に居るときに地面に向かって入力していたらY軸を反転
-		if (!m_isAir && stick.y > 0.0f) m_velocity.y = -stick.round(1).y * m_veloSpeed;
+		if (!m_status(eStatus::IsAir) && stick.y > 0.0f) m_velocity.y = -stick.round(1).y * m_veloSpeed;
 		
-		// メンバ変数の設定
-		m_isAir = true;
+		// パラメータの設定
+		m_status.Set(eStatus::IsAir) = true;
+		m_status.Set(eStatus::IsCannonFire) = false;
 		m_acsel = m_maxAcsel;
-		m_cannonFire = false;
 		m_meddleVelo.zero();
 		m_jumpCount++;
 		m_jumpRecoveryTime = 0.0f;
-		m_isHighJump = (stick.y <= -0.75f);
+
+		// スティックのY軸が多めに入力されていたらハイジャンプ状態にする
+		if (stick.y <= -0.75f) m_status.Set(eStatus::IsHighJump) = true;
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
@@ -183,6 +200,7 @@ namespace basecross
 	// コリジョンに衝突したら
 	void Player::OnCollisionEnter(const CollisionPair& Pair)
 	{
+		// 衝突したオブジェクトと衝突座標を取得
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
@@ -200,50 +218,83 @@ namespace basecross
 			}
 		}
 
+		// タグがブロックなら
 		if (other->FindTag(L"Block"))
 		{
+			// ブロックと衝突した瞬間の処理を実行
 			BlockEnter(other, hitPoint);
 		}
+
+		// タグが棘なら
 		if (other->FindTag(L"Spike"))
 		{
+			// 棘と衝突した瞬間の処理を実行
 			SpikeEnter(other, hitPoint);
 		}
+
+		// タグが大砲なら
 		if (other->FindTag(L"Cannon"))
 		{
+			// 大砲と衝突した瞬間の処理を実行
 			CannonEnter(other);
 		}
+
+		// タグがゴールなら
 		if (other->FindTag(L"Goal"))
 		{
+			// ステージからカメラを取得
 			const auto& stage = GetTypeStage<GameStage>();
 			const auto& camera = stage->GetGameCamera();
 			if (camera)
 			{
+				// 大砲と衝突した瞬間の処理を実行
 				CannonEnter(other);
+
+				// カメラのターゲットを外し、ゴール時のステートに切り替え
 				camera->RemoveTarget();
 				stage->SetStageState(GameStage::Goal);
 			}
 		}
+
+		// タグがベルトコンベアなら
 		if (other->FindTag(L"Convayor"))
 		{
+			// ベルトコンベアに衝突した瞬間の処理を実行
 			ConvayorEnter(other, hitPoint);
 		}
+
+		// タグがバンパーなら
 		if (other->FindTag(L"Bumper"))
 		{
+			// バンパーに衝突した瞬間の処理を実行
 			BumperEnter(other, hitPoint);
 		}
+		
+		// タグがリングなら
 		if (other->FindTag(L"Ring"))
 		{
+			// リングに衝突した瞬間の処理を実行
 			RingEnter(other);
 		}
+
+		// タグがウサギなら
 		if (other->FindTag(L"Rabbit"))
 		{
+			// ウサギに衝突した瞬間の処理を実行
 			RabbitEnter(other, hitPoint);
 		}
+
+		// タグが動く壁なら
 		if (other->FindTag(L"MoveWall"))
 		{
-			MoveWallLeftRight(other, hitPoint);
+			// 動く壁に衝突した瞬間の処理を実行
+			MoveWallEnter(other, hitPoint);
+
+			// ブロックに衝突した瞬間の処理を実行
 			BlockEnter(other, hitPoint);
 		}
+
+		// タグが死亡するコリジョンなら
 		if (other->FindTag(L"Death"))
 		{
 			// 死亡時の設定をする
@@ -256,82 +307,110 @@ namespace basecross
 	// コリジョンに衝突し続けたら
 	void Player::OnCollisionExcute(const CollisionPair& Pair)
 	{
+		// 衝突したオブジェクトと衝突座標を取得
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
 
+		// タグがブロックなら
 		if (other->FindTag(L"Block"))
 		{
+			// ブロックに衝突し続けた時の処理を実行
 			BlockExcute(other, hitPoint);
 		}
+
+		// タグが棘なら
 		if (other->FindTag(L"Spike"))
 		{
+			// 棘に衝突し続けた時の処理を実行
 			SpikeExcute(other, hitPoint);
 		}
+
+		// タグがウサギなら
 		if (other->FindTag(L"Rabbit"))
 		{
+			// ウサギに衝突し続けた時の処理を実行
 			RabbitExcute(other, hitPoint);
 		}
+
+		// タグが大砲なら
 		if (other->FindTag(L"Cannon"))
 		{
-			if (!m_cannonStandby) CannonEnter(other);
+			// 大砲発射待機時じゃないなら大砲と衝突した瞬間の処理を実行
+			if (!m_status(eStatus::IsCannonStandby)) CannonEnter(other);
 		}
+
+		// タグが動く壁なら
 		if (other->FindTag(L"MoveWall"))
 		{
-			MoveWallLeftRight(other, hitPoint);
+			// 動く壁に衝突し続けた時の処理を実行
+			MoveWallEnter(other, hitPoint);
 		}
+
+		// タグがベルトコンベアなら
 		if (other->FindTag(L"Convayor"))
 		{
+			// ベルトコンベアに衝突し続けた時の処理を実行
 			ConvayorExcute(other, hitPoint);
 		}
 	}
 
-
+	// コリジョンとの衝突が終わった時
 	void Player::OnCollisionExit(const CollisionPair& Pair)
 	{
+		// 衝突し終わったオブジェクトと衝突座標を取得
 		const shared_ptr<GameObject>& other = Pair.m_Dest.lock()->GetGameObject();
 		const Vec3& hitPoint = Pair.m_CalcHitPoint;
+
+		// タグがブロックまたは動く壁なら
 		if (other->FindTag(L"Block") || other->FindTag(L"MoveWall"))
 		{
+			// 型キャスト
 			const auto& cube = dynamic_pointer_cast<CubeObject>(other);
 			if (cube)
 			{
-				const auto& type = cube->GetAngleType();
-				if (type == CubeObject::Normal)
+				// タイプを取得
+				const auto& type = cube->GetCubeType();
+
+				// 通常タイプなら
+				if (type == CubeParam::eCubeType::Normal)
 				{
-					m_isAir = true;
+					// 空中かの真偽をtrueに
+					m_status.Set(eStatus::IsAir) = true;
 				}
 				else
 				{
+					// スロープで、オブジェクトの位置より最後に衝突した位置が低かったら
 					if (hitPoint.y <= cube->GetPosition().y)
 					{
-						m_isAir = true;
+						// 空中かの真偽をtrueに
+						m_status.Set(eStatus::IsAir) = true;
 					}
 				}
 			}
 		}
 	}
 
+	// コンティニュー時リセット関数
 	void Player::Reset()
 	{
-		SetPosition(m_startPos);
-		m_rotation.zero();
-		m_velocity = Vec2(-5.0f, 0.0f);
-		m_meddleVelo.zero();
-		m_jumpCount = 0;
-		m_sRingCount = 0;
-		m_shieldCount = 1;
-		m_acsel = 7.5f;
-		m_jumpRecoveryTime = 0.0f;
-		m_isAir = true;
-		m_isBlower = false;
-		m_isHighJump = false;
-		m_isInvincible = false;
-		m_isAliveMoveBlock = false;
-		m_firePossible = true;
-		m_cannonFire = false;
-		m_cannonStandby = false;
+		SetPosition(m_startPos);		// 開始座標に更新
+		m_rotation.zero();				// 向きを初期化
+		m_velocity = Vec2(-5.0f, 0.0f); // 移動量を横に吹っ飛ぶ値で更新
+		m_meddleVelo.zero();			// 加算移動量を初期化
+		m_jumpCount = 0;				// ジャンプ回数を初期化
+		m_sRingCount = 0;				// 小リングの数を初期化
+		m_shieldCount = 1;				// シールドを一枚の状態に更新
+		m_acsel = 7.5f;					// 加速度を更新
+		m_jumpRecoveryTime = 0.0f;		// ジャンプリカバリタイムを初期化
+		m_status.Reset();				// 状態フラグを初期化
+
+		// 状態フラグの「空中かに居るか?」と「エアショック発射可能か?」をオンに
+		m_status.Set(eStatus::IsAir, eStatus::IsFirePossible) = true;
+
+		// コリジョンをアクティブに
 		m_ptrColl->SetUpdateActive(true);
 
+		// ステージからカメラを取得して、カメラを初期化
 		const auto& stage = GetTypeStage<GameStage>();
 		const auto& camera = stage->GetGameCamera();
 		camera->ResetCamera();
@@ -350,14 +429,16 @@ namespace basecross
 		m_position.x += -(m_velocity.x + m_meddleVelo.x) * m_speed * m_acsel * deltaTime;
 		m_position.y += -(m_velocity.y + m_meddleVelo.y) * m_speed * m_acsel * deltaTime;
 
+		// 座標と体のモデルのボーンの配列を取得
+		Vec3 armPos = m_position;
+		const auto& bone = m_bodyDraw->GetVecLocalBones();
+
+		// 腕と胴のモデルマトリクスのポジションy軸の差分とボーンのアニメーション量をポジションから差し引く
+		armPos.y -= (m_armMat.getMajor3().y - m_bodyMat.getMajor3().y) - bone.at(1).getTranslation().y;
+
 		// 座標の更新
 		SetPosition(m_position);
-
-		// 腕の座標の更新(腕と胴のモデルマトリクスのポジションy軸の差分をポジションから差し引く)
-		Vec3 pos = m_position;
-		auto& bone = m_bodyDraw->GetVecLocalBones();
-		pos.y -= (m_armMat.getMajor3().y - m_bodyMat.getMajor3().y) - bone.at(1).getTranslation().y;
-		m_arm.lock()->SetPosition(pos);
+		m_arm.lock()->SetPosition(armPos);
 	}
 
 	// 移動減少量
@@ -367,27 +448,21 @@ namespace basecross
 		float deltaTime = DELTA_TIME * m_timeSpeed;
 
 		// 空中なら
-		if (m_isAir)
+		if (m_status(eStatus::IsAir))
 		{
 			// 加速度が1.0より大きかったら加速度分の二倍をデルタタイムで掛けた数で減算、小さかったら1.0に修正
 			m_acsel > 1.0f ? m_acsel -= deltaTime * (m_acsel * 2.0f) : m_acsel = 1.0f;
 
 			// Y軸移動ベクトルを重力とデルタタイムで掛けた数で減算
-			Vec2 tempVelo = m_meddleVelo;
-			tempVelo.x = 0.0f;
+			Vec2 meddleVelo = m_meddleVelo;
+			meddleVelo.x = 0.0f;
 
-			// 送風機に当たっていなく、加算移動量Yが正負とわず0.0より大きかったら
-			if (!m_isBlower && !(tempVelo.length() > 0.0f))
+			// 送風機に当たっていなく、加算移動量Yが正負とわず0.0なら
+			if (!m_status(eStatus::IsBlower) && !(meddleVelo.length() > 0.0f))
 			{
-				if (GetBetween(m_velocity.y, 0.0f, 1.5f))
-				{
-					float dropVal = m_isHighJump ? 0.5f : 1.0f;
-					m_velocity.y -= m_gravity * deltaTime * dropVal;
-				}
-				else
-				{
-					m_velocity.y -= m_gravity * deltaTime;
-				}
+				// 高く跳んでいる状態で、移動量Y軸が0.0から1.5の範囲内なら、落下量を半分にする
+				float dropVal = (m_status(eStatus::IsHighJump) && GetBetween(m_velocity.y, 0.0f, 1.5f)) ? 0.5f : 1.0f;
+				m_velocity.y -= m_gravity * deltaTime * dropVal;
 			}
 		}
 		else
@@ -404,24 +479,9 @@ namespace basecross
 			if (m_velocity.y > 0.25f) m_velocity.y -= DELTA_TIME;
 			else m_velocity.y = 0.25f;
 		}
-
-		// 大砲発射後で、加速度が最大加速度以下になったら　
-		if (m_cannonFire && m_acsel <= m_maxAcsel) 
-		{
-			// 発射後状態を解除
-			m_cannonFire = false;
-		}
-
-		if (m_activeCannon.lock())
-		{
-			if (!m_activeCannon.lock()->GetFire())
-			{
-				// ポインタの保持を解除
-				m_activeCannon.reset();
-			}
-		}
 	}
 
+	// エアショックのリカバリ
 	void Player::RecoveryAirShock()
 	{
 		// ジャンプ回数が0なら終了
@@ -448,7 +508,7 @@ namespace basecross
 		const Vec2& stick = Input::GetLStickValue().round(1);
 
 		// 空中かどうかで分岐
-		if (m_isAir)
+		if (m_status(eStatus::IsAir))
 		{
 			// スティック入力があるかで向きを設定
 			Vec2 dir = IsInputLStick() ? stick : m_velocity;
@@ -472,7 +532,7 @@ namespace basecross
 	}
 
 	// 軌道の回転描画
-	void Player::RotateAligment()
+	void Player::UpdateArrow()
 	{
 		// スティック入力があるかの真偽
 		const bool& stickInput = IsInputLStick();
@@ -500,11 +560,11 @@ namespace basecross
 				points.push_back(Vec3(pos.x, pos.y, 0.0f));
 				mileCount += (decrease / mileNum);
 			}
-			m_aligment.lock()->UpdateEffect(points);
+			m_arrow.lock()->UpdateEffect(points);
 		}
 
 		// 移動ガイドラインを更新
-		m_aligment.lock()->SetDrawActive(stickInput && m_firePossible);
+		m_arrow.lock()->SetDrawActive(stickInput && m_status(eStatus::IsFirePossible));
 	}
 
 	// アニメーションの更新
@@ -525,16 +585,22 @@ namespace basecross
 	// エフェクトの更新
 	void Player::EffectUpdate()
 	{
+		// フラグの取得
+		bool possible, cFire, cStandby;
+		possible = m_status(eStatus::IsFirePossible);
+		cFire = m_status(eStatus::IsCannonFire);
+		cStandby = m_status(eStatus::IsCannonStandby);
+
 		// 各エフェクトオブジェクトの更新処理
 		m_shieldEffect.lock()->UpdateEffect();
-		m_shieldEffect.lock()->SetDrawShield(m_shieldCount > 0 && !m_cannonStandby);
-		m_airEffect.lock()->SetDrawActive(m_firePossible && !m_cannonFire);
+		m_shieldEffect.lock()->SetDrawShield(m_shieldCount > 0 && !cStandby);
+		m_airEffect.lock()->SetDrawActive(possible && !cFire);
 
 		// 発射可能且つ大砲発射後でなければ
-		if (m_firePossible && !m_cannonFire) m_airEffect.lock()->UpdateEffect();
+		if (possible && !cFire) m_airEffect.lock()->UpdateEffect();
 		
 		// 大砲発射後なら
-		if (m_cannonFire)
+		if (cFire)
 		{
 			// 煙パーティクルの初期化
 			const auto& particle = m_particle.lock()->InsertParticle(2);
@@ -568,42 +634,62 @@ namespace basecross
 
 			// 発射時の時間の取得
 			const float& fireTime = cannon->GetFireTime();
-			const auto& drawPtr = cannon->GetComponent<PNTBoneModelDraw>();
-			
+			const auto& animeTime = cannon->GetAnimationTime();
+
 			// 再生時間が発射時の時間を過ぎたら
-			if (drawPtr->GetCurrentAnimationTime() > fireTime)
+			if (animeTime > fireTime)
 			{
 				// メンバ変数の設定
 				m_acsel = acsel;
-				m_isAir = true;
-				m_firePossible = true;
-				m_cannonFire = true;
-				m_cannonStandby = false;
+				m_status.Set(eStatus::IsAir, eStatus::IsFirePossible, eStatus::IsCannonFire) = true;
+				m_status.Set(eStatus::IsCannonStandby) = false;
 				m_meddleVelo.zero();
 
 				// 大砲のZ軸をラジアンに変換し、移動量を設定する
 				float rad = cannon->GetRotation().z - XM_PIDIV2;
-				if (floor(RadToDeg(rad)) == 90.0f) m_acsel -= 2.5f;
-
+				if (floor(RadToDeg(rad)) == 90.0f) m_acsel -= 2.5f; // 下向きの時だけ地面が貫通し易い為少し減速
 				m_velocity = Vec2(cos(rad), sin(rad)).normalize() * 3.5f;
 
-				// SEの再生
+				// タグがゴールなら
 				if (cannon->FindTag(L"Goal"))
 				{
+					// クリア時のSEを再生
 					StartSE(L"CLEAR_SE", 1.0f);
 
 					// コリジョンを非アクティブに
 					m_ptrColl->SetUpdateActive(false);
+					return;
 				}
-				else
-				{
-					StartSE(L"CANNON_SE", 0.75f);
-				}
+
+				// 大砲発射のSEの再生
+				StartSE(L"CANNON_SE", 0.75f);
 			}
 			else
 			{
 				// 自身の座標を大砲の中に設定する
 				SetPosition(cannon->GetPosition());
+			}
+		}
+	}
+
+	// 大砲発射後
+	void Player::AftterCannon() 
+	{
+		// 大砲発射後で、加速度が最大加速度以下になったら　
+		if (m_status(eStatus::IsCannonFire) && m_acsel <= m_maxAcsel)
+		{
+			// 発射後状態を解除
+			m_status.Set(eStatus::IsCannonFire) = false;
+		}
+
+		// 大砲のポインタが保持されていれば
+		if (m_activeCannon.lock())
+		{
+			// 発射前の大砲なら
+			if (!m_activeCannon.lock()->GetFire())
+			{
+				// ポインタの保持を解除
+				m_activeCannon.reset();
 			}
 		}
 	}
@@ -615,13 +701,13 @@ namespace basecross
 		if (SetTimer(m_invincibleTime))
 		{
 			// 経過時間のリセットと無敵の解除
-			m_isInvincible = false;
+			m_status.Set(eStatus::IsInvincible) = false;
 			m_bodyDraw->SetDrawActive(true);
 			m_armDraw->SetDrawActive(true);
 		}
 
 		// 無敵中なら
-		if (m_isInvincible)
+		if (m_status(eStatus::IsInvincible))
 		{
 			// 0.05f(秒)間隔で点滅させる
 			if (SetTimer(0.05f))
@@ -663,7 +749,7 @@ namespace basecross
 	{
 		// 死亡時の座標と現在の座標から長さを求める
 		const auto& stage = GetTypeStage<GameStage>();
-		const Vec3& deathPos = stage->GetGameCamera()->GetCurrentPos();
+		const Vec3& deathPos = stage->GetGameCamera()->GetTargetPos();
 		float length = (deathPos - GetPosition()).length();
 
 		// Z軸回転させ続ける
@@ -690,7 +776,7 @@ namespace basecross
 		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
 
 		// ギミックの角度と送風機の中に居るかの真偽
-		Gimmick::eAngle angle = Gimmick::Up;
+		eAngle angle = eAngle::Up;
 		bool check = false;
 
 		// グループ配列のオブジェクトの数ループ
@@ -717,21 +803,19 @@ namespace basecross
 			// 角度事に加算移動量を設定する
 			switch (angle)
 			{
-			case Gimmick::Up:
-				Debug::Log(L"送風機上");
+			case eAngle::Up:
 				UpMeddleVelocity();
 				break;
 
-			case Gimmick::Down:
-				Debug::Log(L"送風機下");
+			case eAngle::Down:
 				DownMeddleVelocity();
 				break;
 
-			case Gimmick::Left:
+			case eAngle::Left:
 				LeftMeddleVelocity();
 				break;
 
-			case Gimmick::Right:
+			case eAngle::Right:
 				RightMeddleVelocity();
 				break;
 
@@ -742,7 +826,7 @@ namespace basecross
 		else
 		{
 			// 送風機に当たったかの真偽をリセット
-			m_isBlower = false;
+			m_status.Set(eStatus::IsBlower) = false;
 
 			// 加算移動量の減少関数
 			ReductionMeddleVelocity();
@@ -753,7 +837,7 @@ namespace basecross
 	void Player::UpMeddleVelocity()
 	{
 		// 送風機の範囲内かの真偽をtrue
-		m_isBlower = true;
+		m_status.Set(eStatus::IsBlower) = true;
 
 		// 減少量を移動量Y軸の正負に応じてデルタタイムを設定する
 		float decrease = DELTA_TIME;
@@ -831,13 +915,15 @@ namespace basecross
 		if (deg != 0.0f)
 		{
 			// スロープの向きで上から、下からの応答処理を行う
-			const auto& angle = cube->GetAngleType();
-			if (Utility::GetBetween<CubeObject::eType>(angle, CubeObject::SlopeUL, CubeObject::SlopeUR))
+			const auto& angle = cube->GetCubeType();
+			if (GetBetween<eCubeType>(angle, eCubeType::SlopeUL, eCubeType::SlopeUR))
 			{
+				// 上からの応答処理を送る
 				BlockUpperHit(objPos, helf);
 			}
-			if (Utility::GetBetween<CubeObject::eType>(angle, CubeObject::SlopeDL, CubeObject::SlopeDR))
+			if (GetBetween<eCubeType>(angle, eCubeType::SlopeDL, eCubeType::SlopeDR))
 			{
+				// 下からの応答処理を送る
 				BlockUnderHit(objPos, helf);
 			}
 		}
@@ -846,6 +932,7 @@ namespace basecross
 			// コリジョンに対して上から衝突
 			if (upper)
 			{
+				// 上からの応答処理を送る
 				BlockUpperHit(objPos, helf);
 				return;
 			}
@@ -853,6 +940,7 @@ namespace basecross
 			// 下から衝突
 			if (under)
 			{
+				// 下からの応答処理を送る
 				BlockUnderHit(objPos, helf);
 				return;
 			}
@@ -861,28 +949,32 @@ namespace basecross
 		// 左から衝突
 		if (left)
 		{
+			// 左からの応答処理を送る
 			BlockLeftHit(objPos, helf);
 
+			// 動く壁じゃなければ
 			const auto& wall = dynamic_pointer_cast<MoveWall>(cube);
 			if (!wall)
 			{
+				// 左右から圧死してないかの確認処理を送る
 				LeftRightCompressedDeath();
 			}
-
 			return;
 		}
 
 		// 右から衝突
 		if (right)
 		{
+			// 右からの応答処理を送る
 			BlockRightHit(objPos, helf);
 
+			// 動く壁じゃなければ
 			const auto& wall = dynamic_pointer_cast<MoveWall>(cube);
 			if (!wall)
 			{
+				// 左右から圧死してないかの確認処理を送る
 				LeftRightCompressedDeath();
 			}
-
 			return;
 		}
 	}
@@ -894,7 +986,7 @@ namespace basecross
 		if (BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
 		// エアショック使用可能にする
-		m_firePossible = true;
+		m_status.Set(eStatus::IsFirePossible) = true;
 
 		// 移動量が下方向にあり
 		if (m_velocity.y > 0.0f)
@@ -918,7 +1010,7 @@ namespace basecross
 		if (BlockCheck(Vec3(objPos.x, objPos.y - (helf.y * 2.0f), 0.0f))) return;
 
 		// エアショック使用可能にする
-		m_firePossible = true;
+		m_status.Set(eStatus::IsFirePossible) = true;
 
 		// 移動量が上方向なら
 		if (m_velocity.y < 0.0f)
@@ -933,6 +1025,7 @@ namespace basecross
 			}
 		}
 
+		// 下向きで圧死してないかの確認処理を送る
 		UnderCompressedDeath();
 	}
 
@@ -990,22 +1083,22 @@ namespace basecross
 			// パラメータの設定
 			m_velocity.y = 0.25f;
 			m_acsel = 1.0f;
-			m_isAir = false;
+			m_status.Set(eStatus::IsAir) = false;
 
 			// 通常か、スロープかで設定
-			const auto& angle = cube->GetAngleType();
+			const auto& angle = cube->GetCubeType();
 			switch (angle)
 			{
-			case CubeObject::Normal:
-				SetPosition(GetPosition().x, objPos.y + helf.y + (GetScale().y / 2.0f), 0.0f);
+			case CubeParam::eCubeType::Normal:
+				SetPosition(GetPosition().x, objPos.y + helf.y + (GetScale().y / 2.0f), 0.0f); // 接地処理
 				break;
 
-			case CubeObject::SlopeUL:
-				m_velocity.x = 0.175f;
+			case CubeParam::eCubeType::SlopeUL:
+				m_velocity.x = 0.175f; // 左に少し移動させる
 				break;
 
-			case CubeObject::SlopeUR:
-				m_velocity.x = -0.175f;
+			case CubeParam::eCubeType::SlopeUR:
+				m_velocity.x = -0.175f; // 右に少し移動させる
 				break;
 
 			default:
@@ -1018,8 +1111,9 @@ namespace basecross
 	void Player::SpikeEnter(const shared_ptr<GameObject>& obj, const Vec3& hitPos)
 	{
 		// 無敵中ならブロックとして扱う
-		if (m_isInvincible)
+		if (m_status(eStatus::IsInvincible))
 		{
+			// ブロックとの衝突処理を送る
 			BlockEnter(obj, hitPos);
 			return;
 		}
@@ -1035,84 +1129,108 @@ namespace basecross
 		// 衝突方向真偽
 		const auto& groupVec = GetStage()->GetSharedObjectGroup(L"Update")->GetGroupVector();
 		bool upper, under, left, right;
-		upper = CollHitUpper(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(0.0f, scale.y, 0.0f)));
-		under = CollHitUnder(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(0.0f, -scale.y, 0.0f)));
-		left = CollHitLeft(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(-scale.x, 0.0f, 0.0f)));
-		right = CollHitRight(hitPos, spikePos, helfScale) && !BlockCheck(groupVec, Vec3(spikePos + Vec3(scale.x, 0.0f, 0.0f)));
+		upper = CollHitUpper(hitPos, spikePos, helfScale) && !ObjectCheck(groupVec, Vec3(spikePos + Vec3(0.0f, scale.y, 0.0f)));
+		under = CollHitUnder(hitPos, spikePos, helfScale) && !ObjectCheck(groupVec, Vec3(spikePos + Vec3(0.0f, -scale.y, 0.0f)));
+		left = CollHitLeft(hitPos, spikePos, helfScale) && !ObjectCheck(groupVec, Vec3(spikePos + Vec3(-scale.x, 0.0f, 0.0f)));
+		right = CollHitRight(hitPos, spikePos, helfScale) && !ObjectCheck(groupVec, Vec3(spikePos + Vec3(scale.x, 0.0f, 0.0f)));
 
-		// スパイクの方向に応じて処理
+		// スパイクの方向を取得
 		const auto& angle = spike->GetAngle();
 		switch (angle)
 		{
-		case Gimmick::Up:
-			if (upper || left || right)
+		case eAngle::Up: // 上向きの棘に
+
+			// 上・左・右から衝突したら
+			if (upper || left || right) 
 			{
+				// ダメージ処理を送る
 				DamageKnockBack(Vec2(0.9f, -1.0f));
 				return;
 			}
+
+			// 下から衝突したら
 			if (under)
 			{
-				BlockEnter(obj, hitPos);
+				// ブロックとの処理を送る
+				BlockUnderHit(spikePos, helfScale);
 				return;
 			}
 			break;
 
-		case Gimmick::Down:
+		case eAngle::Down: // 下向きの棘に
+
+			// 下・左・右から衝突したら
 			if (under || left || right)
 			{
+				// ダメージ処理を送る
 				DamageKnockBack(Vec2(0.9f, 1.0f));
 				return;
 			}
+
+			// 上から衝突したら
 			if (upper)
 			{
-				BlockEnter(obj, hitPos);
+				// ブロックとの処理を送る
+				BlockUpperHit(spikePos, helfScale);
 				return;
 			}
 			break;
 
-		case Gimmick::Left:
+		case eAngle::Left: // 左向きの棘に
+
+			// 上・下・左から衝突したら
 			if (upper || under || left)
 			{
+				// ダメージ処理を送る
 				DamageKnockBack(Vec2(1.5f, -0.5f));
 				return;
 			}
+
+			// 右から衝突したら
 			if (right)
 			{
-				BlockEnter(obj, hitPos);
+				// ブロックとの処理を送る
+				BlockRightHit(spikePos, helfScale);
 				return;
 			}
 			break;
 
-		case Gimmick::Right:
+		case eAngle::Right: // 右向きの棘に
+
+			// 上・下・右から衝突したら
 			if (upper || under || right)
 			{
+				// ダメージ処理を送る
 				DamageKnockBack(Vec2(-1.5f, -0.5f));
 				return;
 			}
+
+			// 左から衝突したら
 			if (left)
 			{
-				BlockEnter(obj, hitPos);
+				// ブロックとの処理を送る
+				BlockLeftHit(spikePos, helfScale);
 				return;
 			}
 			break;
 
-		case Gimmick::All:
-			if (upper)
+		case eAngle::All: // 全方位の棘に
+			if (upper) // 上から
 			{
 				DamageKnockBack(Vec2(0.9f, -1.0f));
 				return;
 			}
-			if (under)
+			if (under) // 下から
 			{
 				DamageKnockBack(Vec2(0.9f, 1.0f));
 				return;
 			}
-			if (left)
+			if (left) // 左から
 			{
 				DamageKnockBack(Vec2(1.5f, -0.5f));
 				return;
 			}
-			if (right)
+			if (right) // 右から
 			{
 				DamageKnockBack(Vec2(-1.5f, -0.5f));
 				return;
@@ -1136,27 +1254,32 @@ namespace basecross
 
 		// スパイクの方向が下向きなら地面と同じ処理
 		const auto& angle = spike->GetAngle();
-		if (angle == Gimmick::Down)
+		if (angle == eAngle::Down)
 		{
-			m_firePossible = true;
+			// エアショック発射可能にする
+			m_status.Set(eStatus::IsFirePossible) = true;
+
+			// ブロックとの接地処理
 			BlockExcute(obj, hitPos);
 		}
 		else
 		{
-			if (!m_isInvincible)
+			// 無敵時間中じゃなければ棘との衝突処理を送る
+			if (!m_status(eStatus::IsInvincible))
 			{
 				SpikeEnter(obj, hitPos);
 			}
 		}
 	}
 
-	// 大砲と衝突した時
+	// 大砲と衝突した瞬間
 	void Player::CannonEnter(const shared_ptr<GameObject>& cannon)
 	{
 		// 大砲型にキャスト
 		const auto& ptr = dynamic_pointer_cast<Cannon>(cannon);
 		if (ptr)
 		{
+			// 保持している大砲ポインタと違ったら
 			if (m_activeCannon.lock() != ptr)
 			{
 				// 発射準備関数
@@ -1166,10 +1289,9 @@ namespace basecross
 				m_activeCannon.reset();
 				m_activeCannon = ptr;
 
-				// パラメータの設定
-				m_isAir = false;
-				m_firePossible = false;
-				m_cannonStandby = true;
+				// ステータスの設定
+				m_status.Set(eStatus::IsCannonStandby) = true;
+				m_status.Set(eStatus::IsAir, eStatus::IsFirePossible) = false;
 
 				// 実質移動不可に設定
 				m_velocity = Vec2(0.0f);
@@ -1178,7 +1300,7 @@ namespace basecross
 		}
 	}
 
-	// ベルトコンベアと衝突した時
+	// ベルトコンベアと衝突した瞬間
 	void Player::ConvayorEnter(const shared_ptr<GameObject>& convayor, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
@@ -1192,8 +1314,8 @@ namespace basecross
 			// 上にブロックがあるかのチェック
 			if (BlockCheck(Vec3(objPos.x, objPos.y + (helf.y * 2.0f), 0.0f))) return;
 
-			// エアショック使用可能にする
-			m_firePossible = true;
+			// 接地状態にする
+			m_status.Set(eStatus::IsFirePossible) = true;
 			m_velocity.y = 0.0f;
 			m_acsel = 1.0f;
 
@@ -1209,13 +1331,15 @@ namespace basecross
 			// 速度と向きを取得
 			const float& speed = ptr->GetConvayorSpeed();
 			const auto& angle = ptr->GetRotate();
+
+			// 向きに応じて移動量Xに速度を設定
 			switch (angle)
 			{
-			case Convayor::LeftRot:
+			case Convayor::eRotType::LeftRot:
 				m_velocity.x = speed;
 				break;
 
-			case Convayor::RightRot:
+			case Convayor::eRotType::RightRot:
 				m_velocity.x = -speed;
 				break;
 
@@ -1226,7 +1350,7 @@ namespace basecross
 			return;
 		}
 
-		// 上以外から衝突したなら
+		// 上以外から衝突したならブロックとの衝突処理を送る
 		if (CollHitUnder(hitPos, objPos, helf) || CollHitLeft(hitPos, objPos, helf) || CollHitRight(hitPos, objPos, helf))
 		{
 			BlockEnter(convayor, hitPos);
@@ -1255,37 +1379,45 @@ namespace basecross
 		}
 	}
 
+	// バンパーに衝突した瞬間
 	void Player::BumperEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)	
 	{
+		// 型キャスト
 		const auto& bumper = dynamic_pointer_cast<Bumper>(other);
 		if (bumper)
 		{
+			// バンパーの座標と自身の座標から角度を取得
 			const Vec3& bumperPos = bumper->GetPosition();
 			float rad = -atan2f(hitPos.y - bumperPos.y, hitPos.x - bumperPos.x);
+
+			// 角度から移動方向を設定
 			Vec2 velo = Vec2(-cos(rad), sin(rad)).normalize();
 
-			m_velocity = velo * m_speed;
-			m_acsel = m_maxAcsel;
-			m_isAir = true;
+			// パラメータの設定
+			m_velocity = velo * m_speed; // 移動量を移動方向と速度で決定
+			m_acsel = m_maxAcsel; 		 // 加速度を最大加速度に設定
+			m_status.Set(eStatus::IsAir) = true; // 空中かの真偽をオンに
 
+			// バンパーに衝突反応処理を送る
 			bumper->OnHit();
 		}
 	}
 		
-	// 敵のウサギと衝突した時
+	// 敵のウサギと衝突した瞬間
 	void Player::RabbitEnter(const shared_ptr<GameObject>& other, const Vec3& hitPos)
 	{			
 		// ウサギ型にキャスト
 		const auto& rabbit = dynamic_pointer_cast<Rabbit>(other);
 		if (rabbit)
 		{
-			if (!m_isInvincible)
+			// 無敵時間中じゃない時
+			if (!m_status(eStatus::IsInvincible))
 			{
 				// 大砲発射後なら
-				if (m_cannonFire)
+				if (m_status(eStatus::IsCannonFire))
 				{
 					// ウサギのステートを死亡に設定
-					rabbit->SetState(Rabbit::Death);
+					rabbit->SetState(Rabbit::eState::Death);
 					StartSE(L"RABBIT_DEATH_SE", 0.5f);
 					return;
 				}
@@ -1294,17 +1426,13 @@ namespace basecross
 				if (m_shieldCount > 0)
 				{
 					// ウサギのステートを死亡に設定
-					rabbit->SetState(Rabbit::Death);
+					rabbit->SetState(Rabbit::eState::Death);
 					StartSE(L"RABBIT_DEATH_SE", 0.5f);
 				}
 
-				// 衝突方向真偽
-				if (rabbit->GetPosition().x > hitPos.x)
-				{
-					DamageKnockBack(Vec2(1.5f, -0.5f));
-					return;
-				}
-				DamageKnockBack(Vec2(-1.5f, -0.5f));
+				// 衝突処理
+				float knockBackValue = (rabbit->GetPosition().x > hitPos.x) ? 1.5f : -1.5f;
+				DamageKnockBack(Vec2(knockBackValue, -0.5f));
 			}
 		}
 	}
@@ -1313,7 +1441,7 @@ namespace basecross
 	void Player::RabbitExcute(const shared_ptr<GameObject>& rabbit, const Vec3& hitPos)
 	{
 		// 無敵中じゃなければ
-		if (!m_isInvincible)
+		if (!m_status(eStatus::IsInvincible))
 		{
 			// ウサギと衝突した時の関数を実行
 			RabbitEnter(rabbit, hitPos);
@@ -1323,27 +1451,27 @@ namespace basecross
 	// ダメージノックバック
 	void Player::DamageKnockBack(const Vec2& velocity)
 	{
-		// 時間速度を通常速度で上書き
-		m_firePossible = false;
+		// パラメータの設定
+		m_status.Set(eStatus::IsAir) = true;
+		m_status.Set(eStatus::IsFirePossible) = false;
 		m_velocity = velocity;
 		m_acsel = m_damageAcsel;
-		m_isAir = true;
 
 		// アニメーションをダメージ状態にする
 		m_bodyDraw->ChangeCurrentAnimation(L"DAMAGE");
 
 		// 軌道の表示をオフ
-		m_aligment.lock()->SetDrawActive(false);
+		m_arrow.lock()->SetDrawActive(false);
 
 		// 無敵中じゃなければ
-		if (!m_isInvincible)
+		if (!m_status(eStatus::IsInvincible))
 		{
 			// シールドの数が1枚以上なら
 			if (m_shieldCount >= 1)
 			{
 				// シールドを減らし、無敵時間にする
 				m_shieldCount--;
-				m_isInvincible = true;
+				m_status.Set(eStatus::IsInvincible) = true;
 
 				// SEの再生
 				StartSE(L"SHIELD_D_SE", 1.5f);
@@ -1356,10 +1484,10 @@ namespace basecross
 		}
 	}
 
-	// リングに衝突時のチェック関数
+	// リングに衝突した瞬間
 	void Player::RingEnter(const shared_ptr<GameObject>& ring)
 	{
-		// リングに型キャストする
+		// 型キャスト
 		const auto& ringPtr = dynamic_pointer_cast<Ring>(ring);
 		if (ringPtr)
 		{
@@ -1370,14 +1498,16 @@ namespace basecross
 			const auto& size = ringPtr->GetRingSize();
 			switch (size)
 			{
-			case Ring::Big:
-				AddShield();
-				StartSE(L"RING_SE", 0.75f);
+			case Ring::eRingSize::Big: // 大きいリングなら
+				
+				AddShield(); // シールドを追加
+				StartSE(L"RING_SE", 0.75f); // SEの再生
 				break;
 
-			case Ring::Small:
-				GetSmallRing();
-				StartSE(L"RING_SE", 0.35f);
+			case Ring::eRingSize::Small: // 小さいリングなら
+
+				GetSmallRing(); // 小リング取得処理を送る
+				StartSE(L"RING_SE", 0.35f); // SEの再生
 				break;
 
 			default:
@@ -1394,12 +1524,13 @@ namespace basecross
 		}
 	}
 
-	void Player::MoveWallLeftRight(const shared_ptr<GameObject>& wall, const Vec3& hitPos)
+	// 動く壁に衝突した瞬間
+	void Player::MoveWallEnter(const shared_ptr<GameObject>& wall, const Vec3& hitPos)
 	{
 		// ブロックのパラメータを取得
-		const auto& cube = dynamic_pointer_cast<MoveWall>(wall);
-		Vec3 objPos = cube->GetPosition();
-		Vec3 helf = cube->GetScale() / 2.0f;
+		const auto& moveWall = dynamic_pointer_cast<MoveWall>(wall);
+		Vec3 objPos = moveWall->GetPosition();
+		Vec3 helf = moveWall->GetScale() / 2.0f;
 
 		// 動く壁オブジェクト配列等の取得
 		vector<weak_ptr<GameObject>> groupVec = GetStage()->GetSharedObjectGroup(L"Gimmick")->GetGroupVector();
@@ -1408,111 +1539,152 @@ namespace basecross
 		Vec3 upperPos = GetMoveWallPos(groupVec, objPos, UP_VEC);
 		Vec3 underPos = GetMoveWallPos(groupVec, objPos, DOWN_VEC);
 
+		// 座標の設定
 		Vec3 pos = GetPosition();
 		Vec3 cornerUL, cornerDR;
 
-		if (!BlockCheck(groupVec, objPos + LEFT_VEC))
+		// 右から衝突した時の処理
+		// 衝突した動く壁の左側に別の動く壁がなければ
+		if (!ObjectCheck(groupVec, objPos + LEFT_VEC))
 		{
+			// 動く壁の角を設定
 			cornerUL = Vec3(-helf.x * 1.25f, helf.y, 0.0f);
 			cornerDR = Vec3(0.0f, -helf.y, 0.0f);
+
+			// 動く壁の範囲内で衝突したなら
 			if (GetBetween(hitPos, upperPos + cornerUL, underPos + cornerDR))
 			{
+				// 自身の高さが動くオブジェクトの高さ以下なら
 				if (pos.y <= objPos.y + helf.y)
 				{
-					if (cube->GetMoveRatio() > 0.0f)
+					// 壁が動いていたら
+					if (moveWall->GetMoveRatio() > 0.0f)
 					{
-						m_isHitMoveBlock = true;
-						m_isAliveMoveBlock = false;
-						m_currentWall = cube;
+						// パラメータの設定
+						m_status.Set(eStatus::IsHitMoveBlock) = true;
+						m_status.Set(eStatus::IsAliveMoveBlock) = false;
+						m_currentWall = moveWall;
 					}
 				}
 			}
 		}
 
-		if (!BlockCheck(groupVec, objPos + RIGHT_VEC))
+		// 左から衝突した時の処理
+		// 衝突した動く壁の右側に別の動く壁がなければ
+		if (!ObjectCheck(groupVec, objPos + RIGHT_VEC))
 		{
+			// 動く壁の角を設定
 			cornerUL = Vec3(helf.x * 1.25f, helf.y, 0.0f);
 			cornerDR = Vec3(0.0f, -helf.y, 0.0f);
+
+			// 動く壁の範囲内で衝突したなら
 			if (GetBetween(hitPos, upperPos + cornerUL, underPos + cornerDR))
 			{
+				// 自身の高さが動くオブジェクトの高さ以下なら
 				if (pos.y <= objPos.y + helf.y)
 				{
-					if (cube->GetMoveRatio() > 0.0f)
+					// 壁が動いていたら
+					if (moveWall->GetMoveRatio() > 0.0f)
 					{
-						m_isHitMoveBlock = true;
-						m_isAliveMoveBlock = false;
-						m_currentWall = cube;
+						// パラメータの設定
+						m_status.Set(eStatus::IsHitMoveBlock) = true;
+						m_status.Set(eStatus::IsAliveMoveBlock) = false;
+						m_currentWall = moveWall;
 					}
 				}
 			}
 		}
 
-		if (!BlockCheck(groupVec, objPos + UP_VEC))
+		// 上から衝突した時の処理
+		// 衝突した動く壁の上側に別の動く壁がなければ
+		if (!ObjectCheck(groupVec, objPos + UP_VEC))
 		{
+			// 動く壁の角を設定
 			cornerUL = Vec3(-helf.x, helf.y * 1.25f, 0.0f);
 			cornerDR = Vec3(helf.x, 0.0f, 0.0f);
 
+			// 動く壁の範囲内で衝突したなら
 			if (GetBetween(hitPos, leftPos + cornerUL, rightPos + cornerDR))
 			{
+				// パラメータの設定
 				m_velocity.y = 0.25f;
 				m_acsel = 1.0f;
-				m_isAir = false;
+				m_status.Set(eStatus::IsAir) = false;
 
-				pos.y = objPos.y + cube->GetScale().y;
+				// 接地処理
+				pos.y = objPos.y + moveWall->GetScale().y;
 				SetPosition(pos);
 
-				if (!m_isHitMoveBlock)
+				// 左右から動く壁に衝突していなければ
+				if (!m_status(eStatus::IsHitMoveBlock))
 				{
-					m_isAliveMoveBlock = true;
-					m_currentWall = cube;
+					// 動く壁の上に居る状態にする
+					m_status.Set(eStatus::IsAliveMoveBlock) = true;
+					m_currentWall = moveWall;
 				}
 			}
 		}
 
-		if (!BlockCheck(groupVec, objPos + DOWN_VEC))
+		// 下から衝突した時の処理
+		// 衝突した動く壁の下側に別の動く壁がなければ
+		if (!ObjectCheck(groupVec, objPos + DOWN_VEC))
 		{
+			// 動く壁の角を設定
 			cornerUL = Vec3(-helf.x, 0.0f, 0.0f);
 			cornerDR = Vec3(helf.x, -helf.y * 1.25f, 0.0f);
 
+			// 動く壁の範囲内で衝突したなら
 			if (GetBetween(hitPos, leftPos + cornerUL, rightPos + cornerDR))
 			{
-				if (!m_isHitMoveBlock)
+				if (!m_status(eStatus::IsHitMoveBlock))
 				{
 					UnderCompressedDeath();
 				}
 			}
 		}
 
+		// 圧死してないかの処理
+		// 動く壁の角を設定
 		cornerUL = Vec3(-helf.x, -helf.y, 0.0f);
 		cornerDR = Vec3(helf.x, helf.x, 0.0f);
+
+		// 動く壁の中に居たら
 		if (GetBetween(pos, objPos + cornerUL, objPos + cornerDR))
 		{
-			m_isAliveMoveBlock = true;
+			// 圧死処理を送る
+			m_status.Set(eStatus::IsAliveMoveBlock) = true;
 			UnderCompressedDeath();
 		}
 	}
 
+	// 動く壁から離れた時
 	void Player::MoveWallExit()
 	{
-		bool reset = false;
+		bool reset = false; // リセットするかの真偽
+		Vec3 wallPos = m_currentWall.lock()->GetPosition(); // 最後に衝突した動く壁の座標
 
-		Vec3 pos = m_currentWall.lock()->GetPosition();
-
-		float length = (GetPosition() - pos).length();
+		// 距離の比較
+		float length = (GetPosition() - wallPos).length();
 		if (length >= 2.0f)
 		{
-			m_isAliveMoveBlock = false;
-			m_isHitMoveBlock = false;
-			reset = false;
+			// 衝突真偽と上に居るかの真偽をオフ
+			m_status.Set(eStatus::IsHitMoveBlock, eStatus::IsAliveMoveBlock) = false;
+			reset = true;
 		}
+
+		// 壁が動いているか
 		const auto& wall = dynamic_pointer_cast<MoveWall>(m_currentWall.lock());
 		if (wall->GetMoveRatio() <= 0.0f)
 		{
-			m_isHitMoveBlock = false;
-			reset = false;
+			// 衝突真偽をオフ
+			m_status.Set(eStatus::IsHitMoveBlock) = false;
+			reset = true;
 		}
+
+		// リセットするなら
 		if (reset)
 		{
+			// 保持を解除
 			m_currentWall.reset();
 		}
 	}

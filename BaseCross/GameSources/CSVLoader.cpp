@@ -9,14 +9,15 @@ vector<vector<string>> CSVLoader::LoadFile(const string& filePath)
 		ifs.open("./media/CSV/" + filePath + ".csv");
 		if (!ifs.is_open())
 		{
+#if BASECROSS
 			wstring file;
-			Util::ConvertUtf8toWstring(filePath, file);
-			throw BaseException(
+			basecross::Util::ConvertUtf8toWstring(filePath, file);
+			throw basecross::BaseException(
 				L"CSVÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇ‹ÇπÇÒ",
 				file + L".csv",
 				L"CSVLoader::LoadFile"
 			);
-
+#endif
 			vector<vector<string>> empty;
 			return empty;
 		}
