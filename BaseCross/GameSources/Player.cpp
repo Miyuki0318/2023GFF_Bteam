@@ -188,7 +188,7 @@ namespace basecross
 		m_jumpRecoveryTime = 0.0f;
 
 		// スティックのY軸が多めに入力されていたらハイジャンプ状態にする
-		if (stick.y <= -0.75f) m_status.Set(eStatus::IsHighJump) = true;
+		m_status.Set(eStatus::IsHighJump) = (stick.y <= -0.75f);
 
 		// 腕のアニメーションを変更
 		m_armDraw->ChangeCurrentAnimation(L"FIRE");
