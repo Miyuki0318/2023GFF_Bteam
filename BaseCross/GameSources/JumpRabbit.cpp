@@ -30,7 +30,7 @@ namespace basecross
 		m_ptrDraw->UpdateAnimation(DELTA_TIME / 2.0f);
 
 		// ジャンプ可能かの真偽
-		bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_status(eStatus::IsAir, eStatus::IsDeath);
+		bool jumpPossible = m_ptrDraw->IsTargetAnimeEnd() && !m_status(eStatus::IsAir, eStatus::IsDeath) && !m_aliveBlockPos.empty();
 		if (jumpPossible)
 		{
 			// アニメーションの設定
@@ -265,7 +265,7 @@ namespace basecross
 				// 移動量を半減しつつ反転させる
 				m_velocity.x *= -0.5f;
 				m_dir *= -1.0f;
-			}
+			}		
 		}
 	}
 
